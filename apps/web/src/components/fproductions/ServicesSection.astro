@@ -1,34 +1,64 @@
 ---
-const services = [
+/**
+ * "Qué hacemos": bento asimétrico con títulos de neón (Tilt Neon). Sin fotos ni numeración:
+ * el peso visual lo llevan el tamaño del bloque, el color de brillo de cada uno (rosa/violeta)
+ * y los anillos de neón de fondo. Shows en vivo manda; Modelaje cierra a todo el ancho.
+ */
+type Service = {
+  title: string;
+  desc: string;
+  points: string[];
+  hot: boolean;
+  /** Tono de brillo como "r g b" para usar en rgb(var(--tone) / a). */
+  tone: string;
+  toneLight: string;
+  size: "xl" | "s" | "wide";
+};
+
+const services: Service[] = [
   {
-    tag: "Lo más pedido",
     title: "Shows en vivo",
     desc: "Creamos momentos que combinan danza, energía y producción escénica para convertir cualquier evento en una experiencia memorable.",
     points: ["Discotecas & bares", "Aperturas y cierres", "Coreografías temáticas"],
-    featured: true,
+    hot: true,
+    tone: "255 0 106",
+    toneLight: "255 142 196",
+    size: "xl",
   },
   {
-    tag: null,
     title: "Videos musicales",
     desc: "Acompañamos artistas y producciones audiovisuales con dirección de movimiento, interpretación y presencia frente a cámara para potenciar cada escena.",
     points: ["Videoclips", "Contenido audiovisual", "Dirección de movimiento"],
-    featured: false,
+    hot: false,
+    tone: "177 77 255",
+    toneLight: "214 160 255",
+    size: "s",
   },
   {
-    tag: null,
     title: "Animación de eventos",
     desc: "Acompañamos tu evento de principio a fin generando interacción, dinamismo y una experiencia que mantiene al público conectado en todo momento.",
     points: ["Animación", "Recibimiento", "Shows intermedios"],
-    featured: false,
+    hot: false,
+    tone: "255 0 106",
+    toneLight: "255 142 196",
+    size: "s",
   },
   {
-    tag: null,
     title: "Modelaje y potenciación de marcas",
     desc: "Representamos marcas, productos y campañas a través de imagen, presencia y creación de contenido, conectando de forma auténtica con el público y nuestra esencia.",
     points: ["Campañas TikTok / Reels", "Activaciones", "Lanzamientos"],
-    featured: true,
+    hot: true,
+    tone: "177 77 255",
+    toneLight: "214 160 255",
+    size: "wide",
   },
 ];
+
+const spans = {
+  xl: "lg:col-span-4 lg:row-span-2 bento--xl",
+  s: "lg:col-span-2 bento--s",
+  wide: "lg:col-span-6 bento--wide",
+};
 ---
 
 <section id="servicios" class="relative py-24 md:py-36 bg-[#07030b] overflow-hidden">
@@ -37,7 +67,7 @@ const services = [
   <div class="absolute top-0 left-1/3 w-[300px] h-[300px] rounded-full bg-felina-morado/15 blur-[100px] pointer-events-none"></div>
 
   <div class="container px-4 md:px-8 relative z-10">
-    <div data-reveal class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14 md:mb-20">
+    <div data-reveal class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-16">
       <div>
         <p class="font-display font-semibold text-[#ff006a] text-xs tracking-[0.35em] uppercase mb-5 flex items-center gap-3">
           <span class="w-10 h-px bg-[#ff006a]"></span> Qué hacemos
@@ -53,93 +83,185 @@ const services = [
       </p>
     </div>
 
-    <div id="services-list" class="grid md:grid-cols-2 gap-4 md:gap-5">
-      {services.map((s, i) => (
-        <div
+    <div id="services-list" class="grid grid-cols-1 lg:grid-cols-6 gap-4 md:gap-5 lg:auto-rows-[minmax(16rem,auto)]">
+      {services.map((s) => (
+        <article
           data-reveal
           data-spotlight-item
-          class:list={[
-            "service-card group relative rounded-2xl border border-white/10 bg-white/[0.025] p-7 md:p-9 transition-all duration-500 overflow-hidden",
-            s.featured && "md:col-span-2",
-          ]}
+          class={`bento ${spans[s.size]}`}
+          style={`--tone:${s.tone};--tone-l:${s.toneLight}`}
         >
-          <!-- Wash de fondo: aparece suave con el hover/spot, sin invertir el texto -->
-          <div class="absolute inset-0 bg-gradient-to-br from-[#ff006a]/0 via-[#ff006a]/0 to-felina-morado/0 group-hover:from-[#ff006a]/10 group-hover:via-[#ff006a]/[0.04] group-hover:to-felina-morado/10 group-data-[spot=true]:from-[#ff006a]/10 group-data-[spot=true]:via-[#ff006a]/[0.04] group-data-[spot=true]:to-felina-morado/10 transition-colors duration-500 pointer-events-none"></div>
+          <!-- Anillos de neón: sustituyen a la foto como elemento gráfico del bloque -->
+          <span class="bento-rings" aria-hidden="true"></span>
+          <span class="bento-corner bento-corner--tl" aria-hidden="true"></span>
+          <span class="bento-corner bento-corner--br" aria-hidden="true"></span>
 
-          <!-- Barra de acento izquierda -->
-          <span class="absolute left-0 top-7 bottom-7 md:top-9 md:bottom-9 w-[3px] rounded-full bg-white/10 group-hover:bg-[#ff006a] group-data-[spot=true]:bg-[#ff006a] transition-colors duration-500"></span>
-
-          <div class="relative z-10 flex flex-col h-full pl-5">
-            <div class="flex items-start justify-between gap-4 mb-4">
-              <span class="font-display font-black text-white/15 text-3xl md:text-4xl leading-none group-hover:text-[#ff006a]/40 group-data-[spot=true]:text-[#ff006a]/40 transition-colors duration-500">
-                0{i + 1}
-              </span>
-              {s.tag && (
-                <span class="neon-tag neon-tag--badge inline-flex items-center text-[9px] font-bold uppercase tracking-[0.2em] rounded-full px-3 py-1.5">
-                  {s.tag}
-                </span>
-              )}
-            </div>
-
-            <h3 class="font-display font-black text-2xl md:text-3xl text-white tracking-tight leading-tight mb-3">
-              {s.title}
-            </h3>
-
-            <p class="text-sm md:text-base text-white/60 leading-relaxed mb-6 max-w-md">{s.desc}</p>
-
-            <ul class="flex flex-wrap gap-2 mt-auto">
-              {s.points.map((pt) => (
-                <li class="neon-tag text-[11px] font-semibold uppercase tracking-wide rounded-full px-3.5 py-1.5">
-                  {pt}
-                </li>
-              ))}
+          <div class="bento-content">
+            {s.hot && <span class="bento-hot">Lo más pedido</span>}
+            <h3 class="bento-title" data-neon-title>{s.title}</h3>
+            <p>{s.desc}</p>
+            <ul>
+              {s.points.map((pt) => <li>{pt}</li>)}
             </ul>
           </div>
-        </div>
+        </article>
       ))}
     </div>
   </div>
 </section>
 
 <style>
-  .service-card {
-    transform: translateY(0);
-    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s ease;
+  .bento {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-end;
+    min-height: 20rem;
+    border-radius: 1.5rem;
+    border: 1px solid rgb(var(--tone) / 0.35);
+    background:
+      radial-gradient(120% 90% at 100% 0%, rgb(var(--tone) / 0.14), transparent 60%),
+      linear-gradient(180deg, #0d0613 0%, #08030c 100%);
+    box-shadow: inset 0 0 28px rgb(var(--tone) / 0.06);
+    transition: border-color 0.5s ease, box-shadow 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
-  .service-card:hover,
-  .service-card[data-spot="true"] {
-    transform: translateY(-4px);
-    border-color: rgba(255, 0, 106, 0.35);
+  .bento:hover,
+  .bento[data-spot="true"] {
+    transform: translateY(-3px);
+    border-color: rgb(var(--tone) / 0.85);
+    box-shadow: 0 0 30px rgb(var(--tone) / 0.28), inset 0 0 30px rgb(var(--tone) / 0.1);
+  }
+  .bento--xl { min-height: 30rem; }
+  .bento--wide { min-height: 16rem; align-items: center; }
+  @media (min-width: 1024px) {
+    .bento--xl, .bento--s { min-height: 0; }
   }
 
-  /* Tags tipo neón: fondo casi negro para que el trazo y el texto "brillen" de verdad. */
-  .neon-tag {
-    color: #ff5ba8;
-    background: rgba(8, 2, 6, 0.6);
-    border: 1px solid rgba(255, 0, 106, 0.4);
-    text-shadow: 0 0 6px rgba(255, 91, 168, 0.7), 0 0 16px rgba(255, 0, 106, 0.3);
-    box-shadow: 0 0 8px rgba(255, 0, 106, 0.15), inset 0 0 6px rgba(255, 0, 106, 0.08);
-    transition: box-shadow 0.5s ease, border-color 0.5s ease, text-shadow 0.5s ease, color 0.5s ease;
+  /* Anillos concéntricos recortados en la esquina: dan profundidad sin imagen. */
+  .bento-rings {
+    position: absolute;
+    z-index: -1;
+    width: 34rem;
+    height: 34rem;
+    right: -12rem;
+    top: -12rem;
+    border-radius: 999px;
+    background: repeating-radial-gradient(circle at center, transparent 0 2.2rem, rgb(var(--tone) / 0.22) 2.2rem calc(2.2rem + 1.5px));
+    -webkit-mask-image: radial-gradient(circle, #000 20%, transparent 70%);
+    mask-image: radial-gradient(circle, #000 20%, transparent 70%);
+    transition: transform 1.2s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.6s ease;
+    opacity: 0.7;
+  }
+  .bento--xl .bento-rings { width: 48rem; height: 48rem; right: -16rem; top: -14rem; }
+  .bento--wide .bento-rings { top: auto; bottom: -22rem; right: -8rem; }
+  .bento:hover .bento-rings,
+  .bento[data-spot="true"] .bento-rings { transform: scale(1.12); opacity: 1; }
+
+  .bento-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 38rem;
+    padding: 1.75rem;
+  }
+  @media (min-width: 768px) { .bento-content { padding: 2.4rem; } }
+  .bento--wide .bento-content { max-width: 44rem; }
+
+  .bento-hot {
+    align-self: flex-start;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgb(var(--tone-l));
+    border: 1px solid rgb(var(--tone) / 0.6);
+    border-radius: 999px;
+    padding: 0.35rem 0.85rem;
+    background: rgba(8, 2, 6, 0.55);
+    text-shadow: 0 0 6px rgb(var(--tone-l) / 0.8);
+    box-shadow: 0 0 14px rgb(var(--tone) / 0.3), inset 0 0 8px rgb(var(--tone) / 0.12);
   }
 
-  /* El badge "Lo más pedido" siempre brilla: es la etiqueta que debe destacar sola. */
-  .neon-tag--badge {
-    color: #ff8ec4;
-    border-color: rgba(255, 0, 106, 0.55);
-    text-shadow: 0 0 6px rgba(255, 142, 196, 0.85), 0 0 18px rgba(255, 0, 106, 0.5);
-    box-shadow: 0 0 14px rgba(255, 0, 106, 0.3), inset 0 0 8px rgba(255, 0, 106, 0.12);
+  /* Neón: Montserrat Black relleno (la fuente del sitio) con el brillo en capas de text-shadow. */
+  .bento-title {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+    color: #fff4fa;
+    font-size: clamp(1.7rem, 2.9vw, 2.4rem);
+    text-shadow:
+      0 0 4px rgb(var(--tone-l) / 0.9),
+      0 0 14px rgb(var(--tone) / 0.85),
+      0 0 34px rgb(var(--tone) / 0.55),
+      0 0 70px rgb(var(--tone) / 0.3);
+  }
+  .bento--xl .bento-title { font-size: clamp(2.6rem, 5.6vw, 4.8rem); line-height: 0.92; }
+  .bento--wide .bento-title { font-size: clamp(1.9rem, 3.8vw, 3.2rem); }
+
+  .bento p { color: rgba(255, 255, 255, 0.68); font-size: 0.92rem; line-height: 1.65; max-width: 32rem; }
+
+  .bento ul { display: flex; flex-direction: column; gap: 0.55rem; margin-top: 0.4rem; }
+  .bento--xl ul, .bento--wide ul { flex-direction: row; flex-wrap: wrap; column-gap: 1.75rem; }
+  .bento li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgb(var(--tone-l));
+    text-shadow: 0 0 8px rgb(var(--tone) / 0.6);
+  }
+  .bento li::before {
+    content: "";
+    width: 1.1rem;
+    height: 2px;
+    border-radius: 2px;
+    background: rgb(var(--tone));
+    box-shadow: 0 0 8px rgb(var(--tone)), 0 0 16px rgb(var(--tone) / 0.6);
   }
 
-  .service-card:hover .neon-tag,
-  .service-card[data-spot="true"] .neon-tag {
-    border-color: rgba(255, 0, 106, 0.75);
-    box-shadow: 0 0 16px rgba(255, 0, 106, 0.4), inset 0 0 10px rgba(255, 0, 106, 0.15);
-    text-shadow: 0 0 8px rgba(255, 91, 168, 0.9), 0 0 22px rgba(255, 0, 106, 0.55);
+  /* Esquinas de marco neón (arriba-izq / abajo-der) */
+  .bento-corner {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgb(var(--tone-l));
+    filter: drop-shadow(0 0 6px rgb(var(--tone)));
+    pointer-events: none;
   }
+  .bento-corner--tl { top: 14px; left: 14px; border-right: 0; border-bottom: 0; border-top-left-radius: 10px; }
+  .bento-corner--br { bottom: 14px; right: 14px; border-left: 0; border-top: 0; border-bottom-right-radius: 10px; }
 
   @media (prefers-reduced-motion: reduce) {
-    .service-card {
-      transition-duration: 0.01ms;
-    }
+    .bento, .bento-rings { transition-duration: 0.01ms; }
   }
 </style>
+
+<script>
+  import { gsap, reduceMotion } from "../../scripts/gsap";
+
+  // Encendido tipo letrero: parpadeo corto la primera vez que cada título entra a pantalla.
+  if (!reduceMotion()) {
+    const titles = Array.from(document.querySelectorAll<HTMLElement>("[data-neon-title]"));
+    gsap.set(titles, { opacity: 0.2 });
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (!en.isIntersecting) return;
+          io.unobserve(en.target);
+          gsap.to(en.target, { keyframes: { opacity: [0.2, 1, 0.35, 1, 0.6, 1] }, duration: 0.9, ease: "none" });
+        });
+      },
+      { threshold: 0.6 }
+    );
+    titles.forEach((t) => io.observe(t));
+  }
+</script>
