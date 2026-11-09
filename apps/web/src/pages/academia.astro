@@ -38,8 +38,9 @@ import maePantherImg from "../assets/academia/mae-panther-hero.webp";
 
 <script>
   // Orquestador único de la página: todas las timelines se registran acá.
-  import { initReveals, initSlideReveals, initCounters, initAmbient, initScrollActive, initParallaxY, initMosaic } from "../scripts/animations";
+  import { initReveals, initSlideReveals, initCounters, initAmbient, initScrollActive, initParallaxY, initMosaic, initClassStage, initCurtain, initMarquee } from "../scripts/animations";
   import { revealPage } from "../scripts/loader";
+  import { ScrollTrigger } from "gsap/ScrollTrigger";
 
   // initReveals()/initSlideReveals() ocultan sus elementos YA (gsap.set, sin medir
   // layout): tiene que pasar antes del primer paint o el usuario ve el contenido
@@ -48,6 +49,7 @@ import maePantherImg from "../assets/academia/mae-panther-hero.webp";
   const wireReveals = initReveals();
   const wireSlideReveals = initSlideReveals();
   const wireMosaic = initMosaic();
+  const wireCurtain = initCurtain();
 
   // revealPage() también va temprano: solo arma promesas, no depende de lo de abajo.
   revealPage();
@@ -55,12 +57,24 @@ import maePantherImg from "../assets/academia/mae-panther-hero.webp";
   // El resto crea ScrollTrigger con forced reflow para toda la página; diferirlo un
   // frame deja pintar primero sin que se note (nadie scrollea más rápido que eso).
   requestAnimationFrame(() => {
+    // El escenario anclado va PRIMERO: su pin agrega cientos de px de scroll, y todo trigger creado
+    // antes mediría posiciones sin ese espacio (las secciones de abajo aparecían tarde o en blanco).
+    initClassStage();
     wireReveals();
     wireSlideReveals();
     wireMosaic();
+    wireCurtain();
+    initMarquee();
     initCounters();
     initAmbient();
     initScrollActive();
     initParallaxY();
+
+    // Las imágenes lazy y las fuentes cambian la altura de la página después de medir: se remide
+    // cuando todo terminó de cargar, para que ningún trigger quede desfasado.
+    const refresh = () => ScrollTrigger.refresh();
+    if (document.readyState === "complete") setTimeout(refresh, 300);
+    else window.addEventListener("load", () => setTimeout(refresh, 300), { once: true });
+    document.fonts?.ready.then(refresh);
   });
 </script>

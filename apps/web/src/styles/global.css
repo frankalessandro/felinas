@@ -173,6 +173,94 @@ html:has(.academia-page)::-webkit-scrollbar-thumb {
     line-height: 0.9;
     font-size: clamp(2.5rem, 7vw, 5.5rem);
   }
+  /* Tarjetas de planes: las tres pestañas usan estas mismas clases. Cada plan trae su tono en las
+     variables --t1/--t2/--tint (ver scripts/planTones.ts): una franja de color arriba, un tinte suave
+     de fondo y el mismo color en el nombre, el bloque de clases y el botón. El plan destacado
+     (.plan-card-featured) es el único dorado champagne, con borde de marca. */
+  .plan-card,
+  .plan-card-featured { position: relative; border-radius: 1.5rem; }
+  .plan-card::before,
+  .plan-card-featured::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 6px;
+    border-radius: 1.5rem 1.5rem 0 0;
+    background: linear-gradient(90deg, var(--t1, #ff006a), var(--t2, #b5179e));
+  }
+  .plan-card {
+    overflow: hidden; /* recorta la franja de color a la curva de las esquinas */
+    background: linear-gradient(180deg, var(--tint, rgb(255 0 106 / 0.07)) 0%, #fff 42%);
+    border: 1px solid color-mix(in srgb, var(--t1, #ff006a) 22%, transparent);
+    transition: box-shadow 0.3s, transform 0.3s;
+  }
+  .plan-card:hover {
+    box-shadow: 0 26px 50px -30px color-mix(in srgb, var(--t1, #ff006a) 55%, transparent);
+  }
+  .plan-card-featured {
+    background: linear-gradient(160deg, #fbf5ea 0%, #ecdfc8 45%, #f8efde 100%);
+    color: #231b12;
+    border: 2px solid hsl(var(--primary));
+    box-shadow: inset 0 6px 0 #d4b36a, 0 32px 60px -34px rgb(255 0 106 / 0.45);
+  }
+  /* En la destacada la franja dorada es una sombra interior: así sigue la curva del borde sin recortes. */
+  .plan-card-featured::before { display: none; }
+  .plan-name { color: var(--t1, #ff006a); }
+  .plan-count {
+    background: color-mix(in srgb, var(--t1, #ff006a) 9%, #fff);
+  }
+  .plan-card-featured .plan-count { background: rgb(255 255 255 / 0.6); }
+  .plan-cta {
+    border: 1px solid color-mix(in srgb, var(--t1, #ff006a) 45%, transparent);
+    color: var(--t1, #ff006a);
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  }
+  .plan-cta:hover { background: var(--t1, #ff006a); border-color: var(--t1, #ff006a); color: #fff; }
+
+  /* Botón principal de marca: degradado rosa a morado que se desplaza al pasar el cursor, un brillo que
+     lo cruza, brillo interior en el borde superior y la flecha que avanza. Sin cápsula con ícono dentro
+     (ese era el diseño anterior). */
+  .btn-felina {
+    position: relative;
+    overflow: hidden;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.7rem;
+    padding: 1rem 1.75rem;
+    border-radius: 999px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(120deg, #ff006a 0%, #d10f86 50%, #9b1fd1 100%);
+    background-size: 170% 100%;
+    background-position: 0% 0;
+    box-shadow: 0 14px 28px -14px rgb(255 0 106 / 0.65), inset 0 1px 0 rgb(255 255 255 / 0.3);
+    transition: background-position 0.5s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .btn-felina::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgb(255 255 255 / 0.38) 50%, transparent 70%);
+    transform: translateX(-130%);
+    transition: transform 0.8s ease;
+    pointer-events: none;
+  }
+  .btn-felina:hover {
+    background-position: 100% 0;
+    transform: translateY(-2px);
+    box-shadow: 0 22px 36px -14px rgb(255 0 106 / 0.7), inset 0 1px 0 rgb(255 255 255 / 0.35);
+  }
+  .btn-felina:hover::after { transform: translateX(130%); }
+  .btn-felina:active { transform: translateY(0) scale(0.98); }
+  .btn-felina .btn-arrow { flex: none; transition: transform 0.3s ease; }
+  .btn-felina:hover .btn-arrow { transform: translateX(4px); }
+  .btn-felina-lg { padding: 1.2rem 2.4rem; font-size: 0.9rem; }
+
   .title-accent {
     display: inline-block;
     padding-right: 0.06em; /* evita que bg-clip recorte el último glifo */

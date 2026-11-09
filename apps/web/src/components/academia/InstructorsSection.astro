@@ -1,7 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import maeImg from "../../assets/academia/clase-twerk-avanzado.webp";
-import andreaImg from "../../assets/academia/clase-flex.webp";
+import andreaImg from "../../assets/academia/profe-andrea.webp";
 import hipHopImg from "../../assets/academia/clase-hip-hop.webp";
 import breakingImg from "../../assets/academia/clase-breaking.webp";
 
@@ -9,62 +9,88 @@ type Instructor = {
   name: string;
   classes: string[];
   social: string;
-  handle: string;
   image: ImageMetadata;
+  /** Encuadre de la foto dentro del 3:4. */
+  pos: string;
+  /** Misma familia rosa-morado de las clases: cada persona tiene su tono y todos se ven hermanos. */
+  tone: { from: string; to: string };
 };
 
 const instructors: Instructor[] = [
-  { name: "Mae", classes: ["Twerk Recreativo", "Twerk Avanzado"], social: "https://www.instagram.com/mae.aleja", handle: "@mae.aleja", image: maeImg },
-  { name: "Angélica", classes: ["Urbano"], social: "https://www.instagram.com/angee.ortizg", handle: "@angee.ortizg", image: hipHopImg },
-  { name: "Jahn Evels", classes: ["Breaking"], social: "https://www.instagram.com/bboyevelss", handle: "@bboyevelss", image: breakingImg },
-  { name: "Andrea Altamirano", classes: ["Flex", "Yoga", "Gimnasia"], social: "https://www.instagram.com/andrealtamirano_", handle: "@andrealtamirano_", image: andreaImg },
+  { name: "Mae", classes: ["Twerk Recreativo", "Twerk Avanzado"], social: "https://www.instagram.com/mae.aleja", image: maeImg, pos: "50% 30%", tone: { from: "#ff006a", to: "#b5179e" } },
+  { name: "Angélica", classes: ["Urbano"], social: "https://www.instagram.com/angee.ortizg", image: hipHopImg, pos: "50% 30%", tone: { from: "#e0127f", to: "#7b2cbf" } },
+  { name: "Jahn Evels", classes: ["Breaking"], social: "https://www.instagram.com/bboyevelss", image: breakingImg, pos: "50% 35%", tone: { from: "#c2188f", to: "#4a1d96" } },
+  { name: "Andrea Altamirano", classes: ["Flex", "Yoga", "Gimnasia"], social: "https://www.instagram.com/andrealtamirano_", image: andreaImg, pos: "50% 12%", tone: { from: "#d946ef", to: "#7c3aed" } },
 ];
 ---
 
-<section id="instructores" class="relative py-24 md:py-36 bg-secondary text-white overflow-hidden">
-  <div class="absolute -top-24 left-1/4 w-[520px] h-[520px] rounded-full bg-primary/15 blur-[130px] pointer-events-none"></div>
-  <div class="absolute bottom-0 right-0 w-[420px] h-[420px] rounded-full bg-felina-morado/20 blur-[120px] pointer-events-none"></div>
+<!-- El degradado termina en el color de la sección de membresías (bg-muted): así no hay línea de unión. -->
+<section id="instructores" class="relative py-24 md:py-32 bg-gradient-to-b from-white via-[#fdf2f7] to-muted overflow-hidden">
+  <div class="absolute top-24 right-1/4 w-[480px] h-[480px] rounded-full bg-primary/[0.04] blur-[130px] pointer-events-none"></div>
+  <div class="absolute top-1/3 -left-24 w-[420px] h-[420px] rounded-full bg-[#9b1fd1]/[0.05] blur-[120px] pointer-events-none"></div>
+  <!-- Mitad superior del resplandor que Membresías dibuja en su mitad inferior: juntas forman el círculo completo y la unión no deja línea. -->
+  <div class="absolute bottom-0 left-1/4 w-[500px] h-[500px] rounded-full bg-primary/10 blur-[110px] translate-y-1/2 pointer-events-none"></div>
+
+  <span class="instructors-logo absolute top-20 -right-20 h-[400px] w-[440px] pointer-events-none hidden md:block" aria-hidden="true"></span>
 
   <div class="container px-4 relative z-10">
-    <div data-reveal class="max-w-3xl mb-16 md:mb-24">
-      <h2 class="text-white">
+    <div data-reveal class="max-w-3xl mb-14 md:mb-20">
+      <h2 class="text-foreground">
         <span class="title-eyebrow">Quienes te guían</span>
         <span class="title-main" style="font-size: clamp(1.8rem, 8.6vw, 5.5rem);">TUS <span class="title-accent">INSTRUCTORES</span></span>
       </h2>
-      <p class="mt-6 text-white/60 text-base md:text-lg leading-relaxed font-light">
+      <p class="mt-5 text-muted-foreground text-base md:text-lg leading-relaxed font-light max-w-xl">
         Bailarines y entrenadores en activo. Cada clase la dicta quien vive ese estilo, en grupos de máximo 6 personas.
       </p>
     </div>
 
-    <ul class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-14">
+    <!-- Entrada tipo telón (initCurtain): la foto se destapa de abajo hacia arriba mientras la imagen
+         se asienta y el nombre sube desde una máscara. Una persona tras otra. -->
+    <ul data-curtain class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-14 pb-6">
       {instructors.map((p, i) => (
-        <li data-reveal class:list={["instructor group", i % 2 === 1 && "lg:mt-14"]}>
+        <li data-curtain-tile class:list={["instructor group", i % 2 === 1 && "lg:mt-12"]} style={`--g1:${p.tone.from};--g2:${p.tone.to}`}>
           <a href={p.social} target="_blank" rel="noopener noreferrer" aria-label={`${p.name} en Instagram`} class="block">
-            <div class="relative aspect-[3/4] overflow-hidden rounded-2xl bg-white/5">
-              <Image
-                src={p.image}
-                alt={p.name}
-                widths={[360, 560, 800]}
-                sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 22vw"
-                loading="lazy"
-                class="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                style="object-position: 50% 30%"
-              />
-              <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/10 to-transparent"></div>
-              <span class="absolute top-4 left-4 font-display font-black text-sm tracking-[0.2em] text-primary">{String(i + 1).padStart(2, "0")}</span>
-              <span class="instructor-ig absolute top-3 right-3 w-9 h-9 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white" aria-hidden="true">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" /></svg>
-              </span>
-              <div class="absolute inset-x-0 bottom-0 p-5">
-                <p class="font-display font-black uppercase text-2xl md:text-3xl leading-[0.95] tracking-tight">{p.name}</p>
-                <p class="mt-1 text-xs text-white/50 tracking-widest">{p.handle}</p>
+            <div class="relative">
+              <!-- Luz de color detrás: apenas un tinte del tono de la persona; el color fuerte queda dentro de la tarjeta, que es donde da contraste -->
+              <!-- El wrapper lleva la animación (autoAlpha) y el interior su opacidad propia: si fueran el mismo elemento, la animación pisaría la opacidad baja -->
+              <div data-curtain-glow class="absolute -inset-3 -z-10 pointer-events-none">
+                <div class="instructor-glow h-full w-full rounded-[2.5rem] blur-2xl opacity-[0.12] transition-opacity duration-500 group-hover:opacity-25"></div>
+              </div>
+
+              <div data-curtain-photo class="instructor-card relative aspect-[3/4] overflow-hidden rounded-3xl bg-white transition-transform duration-500 ease-out group-hover:-translate-y-2">
+                <Image
+                  data-curtain-img
+                  src={p.image}
+                  alt={p.name}
+                  widths={[360, 560, 800]}
+                  sizes="(max-width: 640px) 90vw, (max-width: 1024px) 45vw, 22vw"
+                  loading="lazy"
+                  class="absolute inset-0 w-full h-full max-w-none object-cover scale-[1.12] transition-transform duration-700 ease-out group-hover:scale-[1.18]"
+                  style={`object-position: ${p.pos}`}
+                />
+                <!-- Contraste del nombre: degradado de color solo en la franja inferior, más una sombra en el texto.
+                     Funciona igual sobre la foto clara de Andrea que sobre la oscura de Jahn. -->
+                <div class="instructor-fade absolute inset-0 pointer-events-none"></div>
+                <div class="instructor-spot absolute inset-0 pointer-events-none"></div>
+
+                <span class="instructor-ig absolute top-3 right-3 w-9 h-9 rounded-full bg-white text-primary shadow-md flex items-center justify-center" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" /></svg>
+                </span>
+
+                <div class="absolute inset-x-0 bottom-0 p-5 text-white">
+                  <div class="overflow-hidden pb-1">
+                    <p data-curtain-name class="instructor-name font-display font-black uppercase text-2xl md:text-[1.7rem] leading-[0.95] tracking-tight">{p.name}</p>
+                  </div>
+                </div>
               </div>
             </div>
-            <ul class="mt-4 flex flex-wrap gap-2">
-              {p.classes.map((c) => (
-                <li class="text-[11px] font-bold uppercase tracking-[0.15em] px-3 py-1 rounded-full border border-primary/40 text-primary">{c}</li>
+
+            <!-- Las clases van como línea de texto, sin etiquetas -->
+            <p class="mt-5 text-[11px] font-bold uppercase tracking-[0.18em] text-muted-foreground">
+              {p.classes.map((c, k) => (
+                <>{k > 0 && <span class="instructor-sep mx-2">/</span>}<span>{c}</span></>
               ))}
-            </ul>
+            </p>
           </a>
         </li>
       ))}
@@ -73,6 +99,42 @@ const instructors: Instructor[] = [
 </section>
 
 <style>
+  /* Marca de agua del logo, teñida y casi invisible (aparición sutil; la marcada está en la franja y el pie). */
+  .instructors-logo {
+    background: linear-gradient(135deg, #ff006a, #9b1fd1);
+    -webkit-mask: url(/assets/PanteraFelinasLogo.svg) center / contain no-repeat;
+    mask: url(/assets/PanteraFelinasLogo.svg) center / contain no-repeat;
+    opacity: 0.05;
+  }
+  .instructor-glow { background: linear-gradient(135deg, var(--g1), var(--g2)); }
+  .instructor-card {
+    box-shadow: 0 26px 44px -30px color-mix(in srgb, var(--g1) 28%, transparent), 0 8px 20px -10px rgb(0 0 0 / 0.14);
+  }
+  .instructor:hover .instructor-card {
+    box-shadow: 0 34px 56px -30px color-mix(in srgb, var(--g1) 38%, transparent), 0 10px 24px -10px rgb(0 0 0 / 0.18);
+  }
+  /* Degradado corto: solo lo que ocupa el nombre (~35% inferior), sin subir a la mitad de la foto. */
+  .instructor-fade {
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, var(--g2) 94%, black) 0%,
+      color-mix(in srgb, var(--g2) 72%, transparent) 15%,
+      color-mix(in srgb, var(--g1) 20%, transparent) 28%,
+      transparent 38%
+    );
+  }
+  .instructor-name { text-shadow: 0 2px 14px rgb(0 0 0 / 0.4); }
+  .instructor-sep { color: var(--g1); }
+
+  /* Brillo que sigue al cursor (solo cambia el fondo de una capa) */
+  .instructor-spot {
+    opacity: 0;
+    background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 40%), rgb(255 255 255 / 0.3), transparent 60%);
+    mix-blend-mode: soft-light;
+    transition: opacity 0.4s;
+  }
+  .instructor:hover .instructor-spot { opacity: 1; }
+
   .instructor-ig {
     opacity: 0;
     transform: translateY(-6px);
@@ -83,11 +145,24 @@ const instructors: Instructor[] = [
     opacity: 1;
     transform: none;
   }
-  /* Sin hover (táctil) el icono queda siempre visible: es la pista de que es un enlace */
-  @media (hover: none) {
+  /* En pantallas chicas y táctiles el logo queda fijo: es la pista de que la tarjeta lleva a sus redes */
+  @media (hover: none), (max-width: 1023px) {
     .instructor-ig {
       opacity: 1;
       transform: none;
     }
   }
 </style>
+
+<script>
+  // Brillo con el cursor, solo con puntero fino
+  const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+  document.querySelectorAll<HTMLElement>(".instructor-card").forEach((card) => {
+    card.addEventListener("pointermove", (e) => {
+      if (!fine.matches) return;
+      const r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+      card.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+    });
+  });
+</script>

@@ -1,33 +1,139 @@
 ---
+import { Image } from "astro:assets";
+import escenarioFrente from "../../assets/academia/comunidad-escenario-frente.webp";
+import cypherBn from "../../assets/academia/comunidad-cypher-bn.webp";
+import circuloParque from "../../assets/academia/comunidad-circulo-parque.webp";
+import escenarioEspalda from "../../assets/academia/comunidad-escenario-espalda.webp";
+import sonrisaParque from "../../assets/academia/comunidad-sonrisa-parque.webp";
+import cypherSuelo from "../../assets/academia/comunidad-cypher-suelo.webp";
+import grupoEstudio from "../../assets/academia/comunidad-1.webp";
+import grupoTwerkExpedition from "../../assets/academia/comunidad-2.webp";
+import grupoNoche from "../../assets/academia/comunidad-3.webp";
+
 const WHATSAPP_URL = "https://wa.me/573203426558?text=%C2%A1Hola!%20Quiero%20agendar%20mi%20clase%20en%20Felinas";
+
+type Shot = { img: ImageMetadata; alt: string };
+
+/**
+ * Dos columnas de la galería, intercaladas vertical/horizontal para que ninguna se sienta repetitiva.
+ * Entre las dos están TODAS las fotos de comunidad (9). Para sumar fotos: agregar a una columna.
+ */
+const columns: { dir: "up" | "down"; duration: number; shots: Shot[] }[] = [
+  {
+    dir: "up",
+    duration: 52,
+    shots: [
+      { img: escenarioFrente, alt: "Bailarina de Felinas sobre la tarima con el público alrededor" },
+      { img: grupoEstudio, alt: "Alumnas de Felinas posando juntas en el estudio" },
+      { img: cypherSuelo, alt: "Bailarina durante un cypher con el público alrededor" },
+      { img: circuloParque, alt: "Círculo de comunidad Felinas sentada en el parque" },
+      { img: grupoNoche, alt: "Comunidad Felinas reunida de noche en la cancha" },
+    ],
+  },
+  {
+    dir: "down",
+    duration: 60,
+    shots: [
+      { img: cypherBn, alt: "Bailarina de Felinas en el cypher, en blanco y negro" },
+      { img: escenarioEspalda, alt: "Bailarina de Felinas de espaldas en el escenario" },
+      { img: grupoTwerkExpedition, alt: "Grupo de Felinas en el Twerk Expedition" },
+      { img: sonrisaParque, alt: "Alumna de Felinas sonriendo en pleno cypher" },
+    ],
+  },
+];
 ---
 
-<section class="relative py-24 md:py-36 overflow-hidden">
-  <div class="absolute inset-0 bg-gradient-dark"></div>
-  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(340_82%_52%/0.3),transparent_60%)]"></div>
+<!--
+  Cierre de la página: el llamado a la acción. Claro, como el resto, y con la misma lógica de las
+  secciones de arriba (panel blanco con franja de marca, fotos de la comunidad) para que se sienta
+  el final del recorrido y no un bloque aparte. El texto es el de siempre.
+  A la derecha, una galería automática: dos columnas de fotos que corren en sentidos opuestos sin
+  parar (initMarquee), se frenan al pasar el cursor y se detienen fuera de pantalla.
+-->
+<section class="relative py-20 md:py-28 overflow-hidden bg-gradient-to-b from-white via-[#fdf2f7] to-[#f8e3ee]">
+  <div class="absolute -top-32 left-1/3 w-[520px] h-[520px] rounded-full bg-primary/[0.06] blur-[130px] pointer-events-none"></div>
+  <div class="absolute bottom-0 right-0 w-[460px] h-[460px] rounded-full bg-[#9b1fd1]/[0.06] blur-[120px] pointer-events-none"></div>
 
-  <div class="container relative z-10 px-4 text-center">
-    <h2 data-reveal class="mb-8 text-white">
-      <span class="title-eyebrow">¿Lista para descubrir</span>
-      <span class="title-main" style="font-size: clamp(2.8rem, 9vw, 6.5rem);">TU <span class="title-accent">FELINA</span> INTERIOR?</span>
-    </h2>
-    <p data-reveal class="text-white/70 text-lg md:text-xl mb-10 max-w-md mx-auto font-light">
-      Únete a la comunidad y agenda tu primera clase.
-    </p>
-    <div data-reveal>
-      <a
-        href={WHATSAPP_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline-flex items-center gap-3 bg-primary hover:bg-felina-rosa-glow text-white font-display font-bold uppercase tracking-widest rounded-full pl-8 pr-3 py-3 text-sm transition-colors group"
-        data-ambient="glow"
-      >
-        Agenda tu clase
-        <span class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
-        </span>
-      </a>
-      <p class="mt-5 text-white/40 text-xs tracking-[0.25em] uppercase">Te respondemos por WhatsApp</p>
+  <div class="container px-4 relative z-10">
+    <div class="relative overflow-hidden rounded-[2rem] md:rounded-[3rem] border border-primary/15 bg-white shadow-2xl shadow-primary/10">
+      <div class="absolute inset-x-0 top-0 h-1.5 bg-gradient-to-r from-primary to-[#9b1fd1] z-20"></div>
+      <!-- Logo de marca de fondo, teñido y casi invisible (mismo recurso que la tarjeta de comunidad) -->
+      <span class="cta-logo absolute -left-16 -bottom-20 h-[380px] w-[420px] pointer-events-none" aria-hidden="true"></span>
+
+      <div class="relative grid items-center gap-8 lg:gap-12 lg:grid-cols-12 p-8 sm:p-12 lg:p-16 lg:pr-12">
+        <!-- Texto -->
+        <div class="lg:col-span-6 text-center lg:text-left">
+          <h2 data-reveal class="mb-6 text-foreground">
+            <span class="title-eyebrow">¿Lista para descubrir</span>
+            <span class="title-main" style="font-size: clamp(2.6rem, 6.2vw, 5.6rem);">TU <span class="title-accent">FELINA</span> INTERIOR?</span>
+          </h2>
+          <p data-reveal class="text-muted-foreground text-lg md:text-xl mb-9 max-w-md mx-auto lg:mx-0 font-light leading-relaxed">
+            Únete a la comunidad y agenda tu primera clase.
+          </p>
+          <div data-reveal class="flex flex-col items-center lg:items-start gap-4">
+            <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" class="btn-felina btn-felina-lg">
+              Agenda tu clase
+              <svg class="btn-arrow" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+            </a>
+            <p class="flex items-center gap-2.5 text-muted-foreground text-xs tracking-[0.25em] uppercase">
+              <span class="relative flex h-2 w-2" aria-hidden="true">
+                <span class="absolute inline-flex h-full w-full rounded-full bg-[#25d366]/60" data-ambient="pulse"></span>
+                <span class="relative inline-flex h-2 w-2 rounded-full bg-[#25d366]"></span>
+              </span>
+              Te respondemos por WhatsApp
+            </p>
+          </div>
+        </div>
+
+        <!-- Galería automática -->
+        <div data-reveal-x="right" class="lg:col-span-6 relative">
+          <div class="cta-gallery grid grid-cols-2 gap-3 h-[380px] sm:h-[460px] lg:h-[540px]" role="group" aria-label="Galería de la comunidad Felinas">
+            {columns.map((col, ci) => (
+              <div data-marquee data-marquee-dir={col.dir} data-marquee-duration={col.duration} class:list={["overflow-hidden", ci === 1 && "pt-0"]}>
+                <div data-marquee-track class="will-change-transform">
+                  {/* Dos copias seguidas: al desplazar exactamente la mitad, el ciclo vuelve al inicio sin salto. */}
+                  {[0, 1].map((copy) => (
+                    <div class="flex flex-col gap-3 pb-3" aria-hidden={copy === 1 ? "true" : undefined}>
+                      {col.shots.map((s) => (
+                        <div class="cta-tile" style={`aspect-ratio: ${s.img.width} / ${s.img.height}`}>
+                          <Image
+                            src={s.img}
+                            alt={copy === 0 ? s.alt : ""}
+                            widths={[280, 440, 600]}
+                            sizes="(max-width: 1024px) 45vw, 260px"
+                            loading="lazy"
+                            class="h-full w-full object-cover"
+                          />
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
+
+<style>
+  .cta-logo {
+    background: linear-gradient(135deg, #ff006a, #9b1fd1);
+    -webkit-mask: url(/assets/PanteraFelinasLogo.svg) center / contain no-repeat;
+    mask: url(/assets/PanteraFelinasLogo.svg) center / contain no-repeat;
+    opacity: 0.05;
+  }
+  .cta-tile {
+    overflow: hidden;
+    border-radius: 1.25rem;
+    background: #f3eef2;
+    box-shadow: 0 14px 28px -18px rgb(0 0 0 / 0.35);
+  }
+  /* Las fotos entran y salen difuminadas arriba y abajo: se lee como un flujo continuo, no como un recorte. */
+  .cta-gallery {
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+    mask-image: linear-gradient(to bottom, transparent 0, #000 12%, #000 88%, transparent 100%);
+  }
+</style>

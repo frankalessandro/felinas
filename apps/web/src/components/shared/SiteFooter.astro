@@ -79,14 +79,19 @@ const year = new Date().getFullYear();
     </a>
 
     <div class="ft-cols">
+      <!-- Columna de marca: isotipo protagonista, nombre pequeño debajo y la frase. -->
       <div class="ft-brand">
-        <div class="ft-brand-top">
+        <!-- Solo el isotipo; el nombre va como texto oculto para lectores de pantalla. -->
+        <div class="ft-lockup">
           <span class="ft-brand-mark" aria-hidden="true"></span>
-          <span class="ft-brand-word">{wordmark}</span>
+          <span class="sr-only">{wordmark}</span>
         </div>
         <p>{claim}</p>
       </div>
 
+      <!-- Los tres bloques de enlaces forman un grupo: se centran juntos respecto a la columna de marca,
+           así sus encabezados quedan alineados entre sí. -->
+      <div class="ft-links">
       <nav class="ft-col" aria-label="Secciones">
         <h2>Explora</h2>
         <ul>
@@ -114,6 +119,7 @@ const year = new Date().getFullYear();
         <a class="ft-phone" href={whatsapp} target="_blank" rel="noopener noreferrer">{phone}</a>
         <p class="ft-col-note">Respondemos por WhatsApp</p>
       </div>
+      </div>
     </div>
 
     <div class="ft-bottom">
@@ -127,7 +133,7 @@ const year = new Date().getFullYear();
   .ft {
     position: relative;
     overflow: hidden;
-    padding: clamp(3.5rem, 9vw, 6rem) clamp(1.25rem, 5vw, 4rem) 2rem;
+    padding: clamp(2.5rem, 6vw, 4rem) clamp(1.25rem, 5vw, 4rem) 1.5rem;
     font-family: "Inter", sans-serif;
     font-size: 0.9rem;
 
@@ -155,9 +161,17 @@ const year = new Date().getFullYear();
     transform-origin: left;
   }
 
+  /* Ancho máximo ~1250px: en pantallas grandes los datos no se separan tanto que se pierda el hilo entre
+     la marca y los enlaces, y en pantallas menores el pie se encoge con ellas (nunca más ancho que la ventana). */
   .ft-inner {
-    max-width: 76rem;
+    width: 100%;
+    max-width: 78rem;
     margin: 0 auto;
+  }
+
+  .ft-inner > *,
+  .ft-cols > * {
+    min-width: 0;
   }
 
   /* --- Puente al otro lado --- */
@@ -166,7 +180,7 @@ const year = new Date().getFullYear();
     display: grid;
     gap: 0.35rem;
     padding: clamp(1.5rem, 4vw, 2.5rem);
-    margin-bottom: clamp(2.5rem, 6vw, 4rem);
+    margin-bottom: clamp(1.75rem, 4vw, 2.75rem);
     border: 1px solid var(--line);
     border-radius: 1.25rem;
     text-decoration: none;
@@ -233,37 +247,36 @@ const year = new Date().getFullYear();
     display: grid;
     grid-template-columns: 1fr;
     gap: clamp(2rem, 5vw, 3rem);
-    padding-bottom: 2.5rem;
+    padding-bottom: 1.75rem;
   }
 
-  .ft-brand-top {
+  /* --- Columna de marca: isotipo protagonista; el nombre es secundario --- */
+  .ft-brand {
     display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+
+  .ft-lockup {
+    display: flex;
+    flex-direction: column;
     align-items: center;
     gap: 0.7rem;
-    margin-bottom: 0.85rem;
+    width: fit-content;
   }
 
   .ft-brand-mark {
     display: block;
-    height: 2.1rem;
-    aspect-ratio: 1158 / 1020;
     flex: none;
-    background-image: var(--brand-gradient);
+    /* 20% menos que antes (7.5 / 14vw / 10.5rem): pie más compacto, con el isotipo como acento. */
+    height: clamp(6rem, 11.2vw, 8.4rem);
+    aspect-ratio: 1158 / 1020;
+    /* Más claro que el degradado del nombre: sobre negro el isotipo necesita luz para imponerse. */
+    background-image: linear-gradient(150deg, color-mix(in srgb, var(--accent) 45%, #fff) 0%, var(--accent) 55%, color-mix(in srgb, var(--accent) 78%, #000) 100%);
     -webkit-mask: url("/assets/PanteraFelinasLogo.svg") center / contain no-repeat;
     mask: url("/assets/PanteraFelinasLogo.svg") center / contain no-repeat;
-    filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 45%, transparent));
-  }
-
-  .ft-brand-word {
-    font-family: "Montserrat", sans-serif;
-    font-weight: 900;
-    font-size: 1.15rem;
-    letter-spacing: 0.12em;
-    background-image: var(--brand-gradient);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 26px color-mix(in srgb, var(--accent) 50%, transparent));
   }
 
   .ft-brand p {
@@ -332,7 +345,7 @@ const year = new Date().getFullYear();
     align-items: center;
     justify-content: space-between;
     gap: 0.75rem;
-    padding-top: 1.5rem;
+    padding-top: 1.25rem;
     border-top: 1px solid var(--line);
     font-size: 0.72rem;
     color: var(--ink-faint);
@@ -348,6 +361,11 @@ const year = new Date().getFullYear();
     color: var(--accent);
   }
 
+  /* Hasta 1024px los enlaces fluyen como columnas normales de la grilla de arriba. */
+  .ft-links {
+    display: contents;
+  }
+
   @media (min-width: 640px) {
     .ft-cols {
       grid-template-columns: repeat(2, 1fr);
@@ -356,7 +374,17 @@ const year = new Date().getFullYear();
 
   @media (min-width: 1024px) {
     .ft-cols {
-      grid-template-columns: 1.6fr 1fr 1fr 1fr;
+      grid-template-columns: 1fr 2fr;
+      gap: clamp(2rem, 6vw, 6rem);
+    }
+
+    /* El grupo de enlaces se centra respecto a la columna de marca (la más alta): no queda vacío debajo. */
+    .ft-links {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: clamp(1.5rem, 3vw, 3rem);
+      align-self: center;
+      align-items: start;
     }
   }
 </style>

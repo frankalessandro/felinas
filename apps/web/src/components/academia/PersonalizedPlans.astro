@@ -1,5 +1,6 @@
 ---
 import { planWhatsappURL } from "../../scripts/whatsapp";
+import { planToneStyle } from "../../scripts/planTones";
 
 /** 12345 → "12.345". Manual para no depender del ICU del entorno de build. */
 const fmt = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -12,6 +13,7 @@ const plans = [
   perPerson: p.duo / 2,
   // Lo que se ahorra una pareja frente a contratar dos planes individuales.
   saving: p.solo * 2 - p.duo,
+  tone: planToneStyle(p.name),
   hrefSolo: planWhatsappURL(p.name + " (Personalizado 1 persona)", "$" + fmt(p.solo)),
   hrefDuo: planWhatsappURL(p.name + " (Personalizado dúo)", "$" + fmt(p.duo)),
 }));
@@ -24,26 +26,27 @@ const includes = [
 ---
 
 <div data-personalized data-mode="solo">
-  <div class="mb-12 flex justify-center">
-    <div role="radiogroup" aria-label="Para cuántas personas" class="relative grid w-full max-w-md grid-cols-2 rounded-full border border-border bg-background p-1.5 shadow-sm">
-      <span data-thumb class="absolute inset-y-1.5 left-1.5 w-[calc(50%-0.375rem)] rounded-full bg-primary shadow-md shadow-primary/30" aria-hidden="true"></span>
+  <!-- Selector secundario: pegado a las pestañas de arriba (margen negativo) y más pequeño que ellas -->
+  <div class="-mt-5 mb-8 flex justify-center">
+    <div role="radiogroup" aria-label="Para cuántas personas" class="relative grid w-full max-w-[17rem] sm:max-w-[19rem] grid-cols-2 rounded-full border border-border bg-background p-1 shadow-sm">
+      <span data-thumb class="absolute inset-y-1 left-1 w-[calc(50%-0.25rem)] rounded-full bg-primary shadow-md shadow-primary/30" aria-hidden="true"></span>
 
-      <button type="button" role="radio" aria-checked="true" data-set-mode="solo" class="relative z-10 flex items-center justify-center gap-3 rounded-full py-3 text-white transition-colors">
-        <span class="h-3.5 w-3.5 rounded-full bg-current" aria-hidden="true"></span>
+      <button type="button" role="radio" aria-checked="true" data-set-mode="solo" class="relative z-10 flex items-center justify-center gap-2 rounded-full py-2 text-white transition-colors">
+        <span class="h-3 w-3 rounded-full bg-current" aria-hidden="true"></span>
         <span class="text-left leading-tight">
-          <span class="block font-display text-sm font-black uppercase tracking-wide">Felina</span>
-          <span class="block text-[10px] font-semibold uppercase tracking-[0.18em] opacity-70">1 persona</span>
+          <span class="block font-display text-xs font-black uppercase tracking-wide">Felina</span>
+          <span class="block text-[9px] font-semibold uppercase tracking-[0.16em] opacity-70">1 persona</span>
         </span>
       </button>
 
-      <button type="button" role="radio" aria-checked="false" data-set-mode="duo" class="relative z-10 flex items-center justify-center gap-3 rounded-full py-3 text-foreground/60 transition-colors">
-        <span class="relative block h-3.5 w-6" aria-hidden="true">
-          <span class="absolute left-0 h-3.5 w-3.5 rounded-full bg-current opacity-90"></span>
-          <span class="absolute left-2.5 h-3.5 w-3.5 rounded-full bg-current opacity-55"></span>
+      <button type="button" role="radio" aria-checked="false" data-set-mode="duo" class="relative z-10 flex items-center justify-center gap-2 rounded-full py-2 text-foreground/60 transition-colors">
+        <span class="relative block h-3 w-5" aria-hidden="true">
+          <span class="absolute left-0 h-3 w-3 rounded-full bg-current opacity-90"></span>
+          <span class="absolute left-2 h-3 w-3 rounded-full bg-current opacity-55"></span>
         </span>
         <span class="text-left leading-tight">
-          <span class="block font-display text-sm font-black uppercase tracking-wide">Dúo Felinas</span>
-          <span class="block text-[10px] font-semibold uppercase tracking-[0.18em] opacity-70">Parejas</span>
+          <span class="block font-display text-xs font-black uppercase tracking-wide">Dúo Felinas</span>
+          <span class="block text-[9px] font-semibold uppercase tracking-[0.16em] opacity-70">Parejas</span>
         </span>
       </button>
     </div>
@@ -54,43 +57,44 @@ const includes = [
       <div
         data-reveal
         data-pcard
+        style={p.tone}
         data-solo={p.solo}
         data-duo={p.duo}
         data-href-solo={p.hrefSolo}
         data-href-duo={p.hrefDuo}
-        class="relative flex flex-col overflow-hidden rounded-3xl bg-felina-negro p-7 text-white xl:p-9"
+        class="plan-card relative flex flex-col overflow-hidden p-6 xl:p-8"
       >
-        <div class="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-primary/35 blur-3xl"></div>
-        <div class="pointer-events-none absolute -bottom-24 -left-16 h-56 w-56 rounded-full bg-felina-morado/50 blur-3xl"></div>
+        <div class="pointer-events-none absolute -right-16 -top-20 h-52 w-52 rounded-full blur-3xl opacity-[0.12]" style="background: var(--t1);"></div>
 
         <div class="relative flex items-center justify-between">
-          <h3 class="rounded-full bg-white/10 px-4 py-1.5 font-display text-xs font-bold uppercase tracking-[0.22em] text-white ring-1 ring-white/15">{p.name}</h3>
+          <h3 class="plan-name font-display text-xs font-bold uppercase tracking-[0.22em]">{p.name}</h3>
+          <!-- Una persona = un punto; dúo = dos (el segundo entra al cambiar de modo) -->
           <span class="relative block h-8 w-14" aria-hidden="true">
-            <span class="absolute left-0 h-8 w-8 rounded-full bg-primary"></span>
-            <span data-dot2 class="absolute left-5 h-8 w-8 rounded-full bg-white/80" style="transform: scale(0); opacity: 0;"></span>
+            <span class="absolute left-0 h-8 w-8 rounded-full" style="background: var(--t1);"></span>
+            <span data-dot2 class="absolute left-5 h-8 w-8 rounded-full" style="background: var(--t2); transform: scale(0); opacity: 0;"></span>
           </span>
         </div>
 
         <div class="relative mt-8" style="container-type: inline-size;">
           <p class="flex items-start gap-1.5">
-            <span class="mt-2 font-display text-xl font-bold text-white/55">$</span>
+            <span class="mt-2 font-display text-xl font-bold text-foreground/50">$</span>
             <span data-price class="font-display font-black leading-none tracking-tighter" style="font-size: clamp(2.8rem, 17cqw, 4.6rem);">{fmt(p.solo)}</span>
           </p>
           <div class="mt-3 min-h-[3.25rem]">
-            <p class="only-solo text-xs font-semibold uppercase tracking-[0.18em] text-white/55">al mes · 1 persona</p>
+            <p class="only-solo text-xs font-semibold uppercase tracking-[0.18em] text-foreground/50">al mes · 1 persona</p>
             <div class="only-duo">
-              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-white/55">al mes · 2 personas</p>
-              <p class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-white/85">
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-foreground/50">al mes · 2 personas</p>
+              <p class="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1.5 text-sm text-foreground/80">
                 <span><strong class="font-display font-black">${fmt(p.perPerson)}</strong> por persona</span>
-                <span class="rounded-full bg-primary/25 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-white ring-1 ring-primary/40">Ahorran ${fmt(p.saving)}</span>
+                <span class="rounded-full bg-primary/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-primary">Ahorran ${fmt(p.saving)}</span>
               </p>
             </div>
           </div>
         </div>
 
-        <div class="relative mt-6 flex items-center gap-4 rounded-2xl bg-white/[0.07] px-5 py-4 ring-1 ring-white/10">
-          <span class="font-display font-black leading-none tracking-tighter" style="font-size: 2.6rem;">{p.classes}</span>
-          <span class="text-xs font-bold uppercase leading-snug tracking-[0.18em] text-white/60">clases<br />al mes</span>
+        <div class="plan-count relative mt-6 flex items-center gap-4 rounded-2xl px-5 py-4">
+          <span class="font-display font-black leading-none tracking-tighter text-foreground" style="font-size: 2.6rem;">{p.classes}</span>
+          <span class="text-xs font-bold uppercase leading-snug tracking-[0.18em] text-foreground/60">clases<br />al mes</span>
         </div>
 
         <a
@@ -98,7 +102,7 @@ const includes = [
           href={p.hrefSolo}
           target="_blank"
           rel="noopener noreferrer"
-          class="group relative mt-8 flex w-full items-center justify-center gap-2 rounded-full bg-primary py-3.5 font-display text-xs font-bold uppercase tracking-widest text-white shadow-lg shadow-primary/30 transition-colors hover:bg-felina-rosa-glow"
+          class="plan-cta group relative mt-8 flex w-full items-center justify-center gap-2 rounded-full py-3.5 font-display text-xs font-bold uppercase tracking-widest"
         >
           Elegir este plan
           <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform group-hover:translate-x-1" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>

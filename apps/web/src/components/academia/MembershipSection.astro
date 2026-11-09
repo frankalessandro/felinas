@@ -1,5 +1,6 @@
 ---
 import { planWhatsappURL } from "../../scripts/whatsapp";
+import { planToneStyle } from "../../scripts/planTones";
 import SingleClassCard from "./SingleClassCard.astro";
 import PersonalizedPlans from "./PersonalizedPlans.astro";
 
@@ -14,9 +15,9 @@ interface Plan {
 }
 
 const tabs: { id: TabId; label: string }[] = [
-  { id: "combo", label: "Twerk + Urbano" },
-  { id: "twerk", label: "Twerk grupal" },
-  { id: "personalizado", label: "Personalizado" },
+  { id: "combo", label: "Twerk + Urbano", short: "Combo" },
+  { id: "twerk", label: "Solo Twerk", short: "Twerk" },
+  { id: "personalizado", label: "Personalizado", short: "Personalizado" },
 ];
 
 /** "4 clases al mes" sale de la lista y se muestra como dato grande: es lo que más se compara entre planes. */
@@ -40,6 +41,8 @@ const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" 
     singles: ["twerk", "urbano"],
     sections: [
       {
+        title: "Clan Felinas",
+        subtitle: "Grupal · Twerk y Urbano",
         cols: "grid sm:grid-cols-2 lg:grid-cols-4 gap-6",
         cards: [
           { name: "Despierta", price: "$120.000", features: ["4 clases al mes"], breakdown: { twerk: 3, urbano: 1 } },
@@ -55,7 +58,7 @@ const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" 
     sections: [
       {
         title: "Clan Felinas",
-        subtitle: "Grupal · 3 a 6 felinas",
+        subtitle: "Grupal · Solo Twerk · 3 a 6 felinas",
         tag: "Twerk grupal",
         cols: "grid sm:grid-cols-2 lg:grid-cols-3 gap-6",
         cards: [
@@ -69,7 +72,7 @@ const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" 
 };
 ---
 
-<section id="membresias" class="py-24 md:py-36 relative">
+<section id="membresias" class="pt-24 pb-12 md:pt-36 md:pb-16 relative">
   <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[110px] -translate-y-1/2 pointer-events-none"></div>
   <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-felina-morado/10 rounded-full blur-[100px] translate-y-1/3 pointer-events-none"></div>
 
@@ -85,7 +88,7 @@ const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" 
     </div>
 
     <div class="max-w-6xl mx-auto" id="membership-tabs">
-      <div role="tablist" aria-label="Tipo de plan" class="flex max-w-2xl mx-auto mb-14 md:mb-16 bg-background border border-border rounded-full p-1.5 shadow-sm">
+      <div role="tablist" aria-label="Tipo de plan" class="grid grid-cols-3 max-w-2xl mx-auto mb-10 md:mb-12 bg-background border border-border rounded-full p-1 sm:p-1.5 shadow-sm gap-0.5">
         {tabs.map((tab, i) => (
           <button
             type="button"
@@ -93,11 +96,12 @@ const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" 
             aria-selected={i === 0 ? "true" : "false"}
             data-tab={tab.id}
             class:list={[
-              "flex-1 rounded-full font-display font-bold uppercase tracking-[0.15em] text-[11px] sm:text-xs py-3 transition-colors",
+              "min-w-0 rounded-full px-1 font-display font-bold uppercase tracking-[0.04em] sm:tracking-[0.15em] text-[10px] sm:text-xs py-3.5 sm:py-3 transition-colors whitespace-nowrap",
               i === 0 ? "bg-primary text-white shadow-md shadow-primary/30" : "text-foreground/60 hover:text-primary",
             ]}
           >
-            {tab.label}
+            <span class="sm:hidden">{tab.short}</span>
+            <span class="hidden sm:inline">{tab.label}</span>
           </button>
         ))}
       </div>
@@ -122,11 +126,10 @@ const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" 
               return (
                 <div
                   data-reveal
+                  style={planToneStyle(p.name)}
                   class:list={[
-                    "relative flex flex-col rounded-3xl p-6 xl:p-8 transition-shadow duration-300",
-                    p.popular
-                      ? "plan-featured border-2 border-primary shadow-2xl shadow-primary/20 lg:-my-4 lg:py-10"
-                      : "bg-card border border-border hover:shadow-xl hover:shadow-primary/10",
+                    "relative flex flex-col p-6 xl:p-8",
+                    p.popular ? "plan-card-featured lg:-my-4 lg:py-10" : "plan-card",
                   ]}
                 >
                   {p.popular && (
@@ -135,7 +138,7 @@ const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" 
                     </span>
                   )}
 
-                  <h3 class:list={["font-display font-bold uppercase tracking-[0.22em] text-xs", p.popular ? "text-primary" : "text-foreground/60"]}>{p.name}</h3>
+                  <h3 class:list={["font-display font-bold uppercase tracking-[0.22em] text-xs", p.popular ? "text-primary" : "plan-name"]}>{p.name}</h3>
 
                   <div class="mt-4" style="container-type: inline-size;">
                     <p class="flex items-start gap-1 text-foreground">
@@ -146,7 +149,7 @@ const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" 
                   </div>
 
                   {n && (
-                    <div class:list={["mt-6 rounded-2xl px-5 py-4 flex items-center gap-4", p.popular ? "bg-white/60" : "plan-count"]}>
+                    <div class:list={["mt-6 rounded-2xl px-5 py-4 flex items-center gap-4", "plan-count"]}>
                       <span class="font-display font-black leading-none tracking-tighter text-foreground" style="font-size: 2.6rem;">{n}</span>
                       <span class="text-xs font-bold uppercase tracking-[0.18em] leading-snug text-foreground/60">clases<br />al mes</span>
                     </div>
@@ -186,7 +189,7 @@ const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" 
                     rel="noopener noreferrer"
                     class:list={[
                       "group flex items-center justify-center gap-2 w-full rounded-full font-display font-bold uppercase tracking-widest py-3.5 text-xs transition-colors",
-                      p.popular ? "bg-primary text-white shadow-lg shadow-primary/30 hover:bg-felina-rosa-glow" : "border border-primary/40 text-primary hover:bg-primary hover:text-white hover:border-primary",
+                      p.popular ? "btn-felina !py-3.5 !text-xs" : "plan-cta",
                     ]}
                   >
                     Elegir este plan
@@ -209,18 +212,6 @@ const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" 
     </div>
   </div>
 </section>
-
-<style>
-  /* Plan destacado: champagne metálico (misma familia que las cifras) + borde y sello rosa.
-     Destaca por calidez y color de marca, no por ser el único bloque oscuro. */
-  .plan-featured {
-    background: linear-gradient(160deg, #fbf5ea 0%, #ecdfc8 45%, #f8efde 100%);
-    color: #231b12;
-  }
-  .plan-count {
-    background: #f6f1e8;
-  }
-</style>
 
 <script>
   import { gsap } from "../../scripts/gsap";
