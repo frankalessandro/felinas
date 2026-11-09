@@ -1,0 +1,83 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  ogImage?: string;
+}
+
+const {
+  title = "Felinas — Academia de danza urbana y shows en vivo",
+  description = "Empoderamiento femenino a través de la danza. Twerk, hip hop, breaking y más.",
+  ogImage = "/felinas-og.jpg",
+} = Astro.props;
+
+// Solo los pesos que se usan de verdad: Montserrat para display, Inter para texto.
+const FONTS_HREF =
+  "https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600&display=swap";
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImageURL = new URL(ogImage, Astro.site);
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Marca JS activo antes del primer paint: el CSS usa `.js` para ocultar los
+         elementos que animan de entrada ([data-reveal], [data-hero-fade]…) y evitar
+         el flash de contenido sin animar en Safari, donde el módulo de GSAP puede
+         ejecutarse después de que el loader ya se fue. `anim-fallback` es la red de
+         seguridad: si algún script falla, a los 5 s se muestra todo igual. -->
+    <script is:inline>
+      (function () {
+        var d = document.documentElement;
+        d.classList.add("js");
+        setTimeout(function () {
+          d.classList.add("anim-fallback");
+        }, 5000);
+      })();
+    </script>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#050505" />
+
+    <link rel="icon" type="image/svg+xml" href="/assets/PanteraFelinasLogo.svg" />
+    <link rel="apple-touch-icon" href="/favicon-180.png" />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Las fuentes venían de un @import dentro del CSS: eso encadena dos peticiones
+         antes de poder pintar. Con preconnect + link en paralelo se gana el primer render. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href={FONTS_HREF} />
+
+    <title>{title}</title>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Felinas" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Felinas — academia de danza y shows en vivo" />
+    <meta property="og:locale" content="es_AR" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImageURL} />
+    <meta name="twitter:image:alt" content="Felinas — academia de danza y shows en vivo" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

@@ -1,0 +1,299 @@
+---
+interface Props {
+  bg1: string;
+  bg2: string;
+  /** Encuadre nativo de cada imagen (px). El sujeto de ambas empata cuando se
+   *  renderizan a estos tamaños, ancladas abajo y centradas. La base llena la
+   *  altura (100%); la revelada se escala relativa a ella para no desalinearse. */
+  baseSize?: { w: number; h: number };
+  spotSize?: { w: number; h: number };
+}
+const {
+  bg1,
+  bg2,
+  baseSize = { w: 703, h: 590 },
+  spotSize = { w: 687, h: 577 },
+} = Astro.props;
+
+const WA = "https://wa.me/573203426558?text=%C2%A1Hola!%20Quiero%20agendar%20mi%20clase%20en%20Felinas";
+
+// La revelada empata con la base a escala uniforme: su alto es (spot/base)·100%.
+const spotHeightPct = (spotSize.h / baseSize.h) * 100;
+
+const baseImgStyle = (height: string) =>
+  [
+    "position:absolute",
+    "bottom:0",
+    "left:50%",
+    "transform:translateX(-50%)",
+    `height:${height}`,
+    "width:auto",
+    "max-width:none",
+    "pointer-events:none",
+    "object-fit:contain",
+    "object-position:bottom center",
+    "filter:drop-shadow(0 24px 60px rgba(0,0,0,0.14)) drop-shadow(-8px 0 30px rgba(0,0,0,0.06)) drop-shadow(8px 0 30px rgba(0,0,0,0.06)) drop-shadow(0 0 50px rgba(233,30,140,0.18))",
+  ].join(";");
+
+const imgStyle = baseImgStyle("100%");
+const spotImgStyle = baseImgStyle(`${spotHeightPct.toFixed(4)}%`);
+---
+
+<section id="inicio" class="relative min-h-screen flex items-center overflow-hidden bg-background">
+  <!-- Ambient glows -->
+  <div
+    class="absolute top-0 right-0 w-[800px] h-[800px] rounded-full -translate-y-1/2 translate-x-1/2 pointer-events-none z-[1]"
+    style="background: hsl(340 82% 52% / 0.10); filter: blur(120px);"
+  ></div>
+  <div
+    class="absolute bottom-0 left-0 w-[600px] h-[600px] rounded-full translate-y-1/2 -translate-x-1/3 pointer-events-none z-[1]"
+    style="background: hsl(300 100% 27% / 0.08); filter: blur(100px);"
+  ></div>
+
+  <!-- DANCE ghost text -->
+  <div class="absolute top-1/4 -right-20 md:right-10 opacity-[0.09] pointer-events-none select-none z-[2] overflow-hidden">
+    <h2 class="font-display font-black leading-[0.8]" style="font-size: clamp(10rem, 20vw, 25rem); color: transparent; -webkit-text-stroke: 2px hsl(340 82% 52%);">
+      DANCE
+    </h2>
+  </div>
+
+  <div class="container relative z-[10] px-4 py-20 lg:py-0 w-full">
+    <div class="flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-8">
+      <!-- Left column — text content -->
+      <div class="w-full lg:w-1/2">
+        <p data-hero-fade class="font-display font-semibold text-primary text-sm md:text-base tracking-[0.4em] uppercase mb-6 border-l-2 border-primary pl-4">
+          COMUNIDAD DE DANZA Y MOVIMIENTO
+        </p>
+
+        <h1
+          data-hero-fade
+          class="mb-8 text-foreground"
+        >
+          <span class="title-eyebrow">Descubre</span>
+          <span class="title-main" style="font-size: clamp(3.5rem, 8vw, 6.5rem);">TU FELINA <span class="title-accent">INTERIOR</span></span>
+        </h1>
+
+        <p
+          data-hero-fade
+          class="text-lg md:text-xl max-w-md mb-10 font-light border-l-2 border-primary/30 pl-4"
+          style="color: hsl(var(--muted-foreground));"
+        >
+          Felinas es una comunidad donde la danza se convierte en una herramienta para aprender, expresarse, conectar y crecer.
+          Un espacio para descubrir tu movimiento, desarrollar tu confianza y crear conexiones auténticas.
+        </p>
+
+        <div data-hero-fade class="flex flex-col sm:flex-row gap-6">
+          <a
+            href={WA}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-felina-rosa-glow text-white font-display font-bold rounded-full px-8 py-4 text-base transition-all hover:scale-105 hover:shadow-[0_0_28px_hsl(340_82%_52%/0.5)] group"
+          >
+            AGENDA TU CLASE
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Right column — spotlight image area -->
+      <div id="hero-image-area" data-hero-fade class="w-full lg:w-1/2 relative h-[500px] md:h-[600px] lg:h-[700px] overflow-hidden">
+        <!-- Image wrapper — la máscara desvanece todos los bordes -->
+        <div
+          class="absolute inset-0"
+          style="
+            -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 85%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 12%, black 82%, transparent 100%);
+            mask-image: linear-gradient(to right, transparent 0%, black 12%, black 85%, transparent 100%), linear-gradient(to bottom, transparent 0%, black 12%, black 82%, transparent 100%);
+            -webkit-mask-composite: destination-in;
+            mask-composite: intersect;
+          "
+        >
+          <!-- Imagen base (MaeHero) -->
+          <img src={bg1} alt="" width={baseSize.w} height={baseSize.h} fetchpriority="high" decoding="async" style={imgStyle} />
+
+          <!-- Revelado spotlight (PanterHero).
+               El disco tiene una máscara radial FIJA y solo se traslada; su contenido se traslada
+               en sentido contrario para quedar alineado con la imagen base. Así nunca se recalcula
+               la máscara: son dos transforms, que van por compositor. -->
+          <div id="hero-spot" class="pointer-events-none">
+            <div id="hero-spot-inner">
+              <img src={bg2} alt="" width={spotSize.w} height={spotSize.h} decoding="async" style={spotImgStyle} />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll indicator -->
+  <div class="absolute bottom-10 left-8 md:left-14 z-50 flex flex-col items-center gap-2" data-ambient="bounce">
+    <span
+      class="text-[10px] uppercase font-bold tracking-widest font-display"
+      style="color: hsl(var(--muted-foreground)); writing-mode: vertical-rl;"
+    >
+      SCROLL
+    </span>
+    <button
+      id="hero-scroll-btn"
+      aria-label="Scroll down"
+      class="w-8 h-8 rounded-full border flex items-center justify-center transition-colors hover:bg-pink-500/10 hover:border-pink-500/50"
+      style="border-color: hsl(var(--border)); background: rgba(255,255,255,0.7); backdrop-filter: blur(8px); color: hsl(var(--muted-foreground));"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 12 15 18 9" />
+      </svg>
+    </button>
+  </div>
+</section>
+
+<style>
+  /* Disco del spotlight: tamaño fijo, máscara fija. Solo cambia su transform. */
+  #hero-spot {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 520px;
+    height: 520px;
+    will-change: transform;
+    /* El radio va explícito (260px = mitad de la caja). Sin él, radial-gradient usa
+       farthest-corner (368px acá) y el degradado nunca llega a transparente dentro de
+       la caja: el borde del contenedor aparece como un corte recto. */
+    -webkit-mask-image: radial-gradient(
+      circle 260px at center,
+      rgba(255, 255, 255, 1) 40%,
+      rgba(255, 255, 255, 0.75) 60%,
+      rgba(255, 255, 255, 0.4) 75%,
+      rgba(255, 255, 255, 0.12) 88%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      circle 260px at center,
+      rgba(255, 255, 255, 1) 40%,
+      rgba(255, 255, 255, 0.75) 60%,
+      rgba(255, 255, 255, 0.4) 75%,
+      rgba(255, 255, 255, 0.12) 88%,
+      transparent 100%
+    );
+    /* Sin no-repeat la máscara se mosaiquea sobre el contenido que desborda la caja
+       y el revelado aparece en cuadrícula en vez de un solo círculo. */
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: center;
+    mask-position: center;
+    overflow: hidden;
+  }
+
+  /* Copia exacta del área de la imagen, contra-trasladada dentro del disco. */
+  #hero-spot-inner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform;
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger, initHeroIntro } from "../../scripts/animations";
+
+  const SPOT_R = 260; // debe coincidir con el tamaño de #hero-spot en el CSS (520px)
+  const OFFSCREEN = -SPOT_R * 4;
+
+  const section = document.getElementById("inicio")!;
+  const area = document.getElementById("hero-image-area")!;
+  const spot = document.getElementById("hero-spot")!;
+  const inner = document.getElementById("hero-spot-inner")!;
+  const isTouch = window.matchMedia("(hover: none)").matches;
+  const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  initHeroIntro(section);
+
+  document.getElementById("hero-scroll-btn")?.addEventListener("click", () => {
+    document.getElementById("comunidad-section")?.scrollIntoView({ behavior: "smooth" });
+  });
+
+  /**
+   * Coloca el disco. El contenido se contra-traslada para que la imagen revelada
+   * siga alineada con la de abajo: dos transforms, cero recálculo de máscara.
+   */
+  const setSpot = (x: number, y: number) => {
+    const left = x - SPOT_R;
+    const top = y - SPOT_R;
+    gsap.set(spot, { x: left, y: top });
+    gsap.set(inner, { x: -left, y: -top });
+  };
+
+  // El rect del área solo cambia al hacer scroll o resize, no en cada frame:
+  // leerlo dentro del bucle forzaba un reflow sincrónico por frame.
+  let areaRect = area.getBoundingClientRect();
+  const track = () => (areaRect = area.getBoundingClientRect());
+  const resize = () => {
+    track();
+    // El interior replica el tamaño del área; solo cambia al redimensionar.
+    inner.style.width = `${areaRect.width}px`;
+    inner.style.height = `${areaRect.height}px`;
+  };
+  resize();
+  window.addEventListener("resize", resize);
+  window.addEventListener("scroll", track, { passive: true });
+
+  setSpot(OFFSCREEN, OFFSCREEN);
+
+  if (reduce) {
+    // Sin movimiento: el revelado se queda quieto en un punto legible.
+    setSpot(areaRect.width * 0.5, areaRect.height * 0.42);
+  } else if (isTouch) {
+    // Móvil: el barrido lo maneja ScrollTrigger, que solo dispara mientras hay scroll.
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top top",
+      end: "bottom top",
+      onUpdate: (self) => {
+        // 1.6x comprime el barrido para que Pantera aparezca al ~30% del scroll
+        const p = Math.min(self.progress * 1.6, 1);
+        setSpot(-SPOT_R + p * (areaRect.width + SPOT_R * 2), areaRect.height * 0.38);
+      },
+    });
+  } else {
+    const mouse = { x: OFFSCREEN, y: OFFSCREEN };
+    const smooth = { x: OFFSCREEN, y: OFFSCREEN };
+    let awake = false; // el bucle duerme cuando el puntero se detiene
+    let visible = true;
+
+    const tick = () => {
+      if (!awake || !visible) return;
+
+      smooth.x += (mouse.x - smooth.x) * 0.2;
+      smooth.y += (mouse.y - smooth.y) * 0.2;
+
+      setSpot(smooth.x - areaRect.left, smooth.y - areaRect.top);
+
+      // Ya alcanzó al puntero: no hay nada que animar hasta el próximo movimiento.
+      if (Math.abs(mouse.x - smooth.x) < 0.4 && Math.abs(mouse.y - smooth.y) < 0.4) awake = false;
+    };
+
+    gsap.ticker.add(tick);
+
+    section.addEventListener("mousemove", (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      awake = true;
+    });
+    section.addEventListener("mouseleave", () => {
+      mouse.x = OFFSCREEN;
+      mouse.y = OFFSCREEN;
+      awake = true;
+    });
+
+    // Con el hero fuera de pantalla el bucle no tiene por qué seguir corriendo.
+    ScrollTrigger.create({
+      trigger: section,
+      start: "top bottom",
+      end: "bottom top",
+      onToggle: (self) => {
+        visible = self.isActive;
+        if (visible) awake = true;
+      },
+    });
+  }
+</script>

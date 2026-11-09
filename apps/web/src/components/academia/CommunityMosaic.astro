@@ -1,0 +1,165 @@
+---
+import { Image } from "astro:assets";
+import escenarioFrente from "../../assets/academia/comunidad-escenario-frente.webp";
+import cypherBn from "../../assets/academia/comunidad-cypher-bn.webp";
+import circuloParque from "../../assets/academia/comunidad-circulo-parque.webp";
+import escenarioEspalda from "../../assets/academia/comunidad-escenario-espalda.webp";
+import sonrisaParque from "../../assets/academia/comunidad-sonrisa-parque.webp";
+import cypherSuelo from "../../assets/academia/comunidad-cypher-suelo.webp";
+import grupoEstudio from "../../assets/academia/comunidad-1.webp";
+import grupoTwerkExpedition from "../../assets/academia/comunidad-2.webp";
+import grupoNoche from "../../assets/academia/comunidad-3.webp";
+
+/** Iconos de los valores: trazos SVG 24x24 (estilo lucide), un solo <svg> para los cuatro. */
+const values = [
+  { label: "Empoderamiento femenino", paths: ["M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"] },
+  { label: "Autoconfianza sin límites", paths: ["M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"] },
+  { label: "Conexión con tu cuerpo", paths: ["M9 18V5l12-2v13", "M3 18a3 3 0 1 0 6 0a3 3 0 1 0-6 0", "M15 16a3 3 0 1 0 6 0a3 3 0 1 0-6 0"] },
+  { label: "Comunidad auténtica", paths: ["M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2", "M5 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0", "M22 21v-2a4 4 0 0 0-3-3.87", "M16 3.13a4 4 0 0 1 0 7.75"] },
+];
+
+type Stat = { value: number; suffix: string; label: string };
+
+type Tile =
+  | { kind: "photo"; img: ImageMetadata; alt: string; caption?: string; cell: string; pos?: string; stat?: Stat }
+  | { kind: "stat"; stat: Stat; tone: "pink" | "light"; cell: string; bar?: boolean };
+
+/**
+ * El mosaico es UNA sola grilla donde conviven fotos, datos y el texto: así las cifras
+ * dejan de ser un bloque aparte. Las clases `lg:` ubican cada pieza en una grilla de
+ * 12 columnas x 13 filas; en móvil son 2 columnas y el orden del arreglo es el de lectura.
+ *
+ *   c1-6 : texto (r1-5) · círculo (r6-8, c1-4) + estilos (r6-8, c5-6) · sonrisa (r9-10)
+ *   c7-9 : tarima frente (r1-5) · tarima espalda (r6-10)
+ *   c10-12: cypher B/N + 9+ (r1-3) · 80% (r4-5) · cypher suelo (r6-10)
+ *   r11-13: tres fotos grupales en tira (4 columnas cada una)
+ */
+const tiles: Tile[] = [
+  { kind: "photo", img: escenarioFrente, caption: "Pisando tarima", alt: "Bailarina de Felinas sobre la tarima con el público alrededor", cell: "row-span-2 lg:col-start-7 lg:col-span-3 lg:row-start-1 lg:row-span-5" },
+  { kind: "photo", img: cypherBn, alt: "Bailarina de Felinas en el cypher, en blanco y negro", cell: "lg:col-start-10 lg:col-span-3 lg:row-start-1 lg:row-span-3", stat: { value: 9, suffix: "+", label: "Años de experiencia" } },
+  { kind: "stat", stat: { value: 80, suffix: "%", label: "Enfoque personalizado" }, tone: "pink", bar: true, cell: "lg:col-start-10 lg:col-span-3 lg:row-start-4 lg:row-span-2" },
+  { kind: "photo", img: circuloParque, caption: "Círculo en el parque", alt: "Círculo de comunidad Felinas sentada en el parque", cell: "col-span-2 lg:col-start-1 lg:col-span-4 lg:row-start-6 lg:row-span-3" },
+  { kind: "photo", img: escenarioEspalda, caption: "Sin miedo al escenario", alt: "Bailarina de Felinas de espaldas en el escenario", cell: "row-span-2 lg:col-start-7 lg:col-span-3 lg:row-start-6 lg:row-span-5" },
+  { kind: "stat", stat: { value: 5, suffix: "", label: "Estilos de danza" }, tone: "light", cell: "lg:col-start-5 lg:col-span-2 lg:row-start-6 lg:row-span-3" },
+  { kind: "photo", img: sonrisaParque, alt: "Alumna de Felinas sonriendo en pleno cypher", pos: "object-[50%_25%]", cell: "lg:col-start-1 lg:col-span-6 lg:row-start-9 lg:row-span-2", stat: { value: 5, suffix: "", label: "Clases semanales" } },
+  { kind: "photo", img: cypherSuelo, caption: "Dándolo todo en una salida", alt: "Bailarina en el suelo durante un cypher con el público alrededor", cell: "col-span-2 lg:col-start-10 lg:col-span-3 lg:row-start-6 lg:row-span-5" },
+  { kind: "photo", img: grupoEstudio, caption: "Siempre en equipo", alt: "Alumnas de Felinas posando juntas en el estudio", cell: "col-span-2 lg:col-start-1 lg:col-span-4 lg:row-start-11 lg:row-span-3" },
+  { kind: "photo", img: grupoTwerkExpedition, caption: "Twerk Expedition", alt: "Grupo de Felinas en el Twerk Expedition", cell: "col-span-2 lg:col-start-5 lg:col-span-4 lg:row-start-11 lg:row-span-3" },
+  { kind: "photo", img: grupoNoche, caption: "Twerk al parque", alt: "Comunidad Felinas reunida de noche en la cancha", cell: "col-span-2 lg:col-start-9 lg:col-span-4 lg:row-start-11 lg:row-span-3" },
+];
+
+// Numeración solo de las fotos con leyenda (las que llevan cifra no tienen), en el orden del arreglo.
+let photoCount = 0;
+const photoNumber = tiles.map((t) => (t.kind === "photo" && t.caption ? ++photoCount : 0));
+---
+
+<section id="comunidad-section" class="relative py-20 md:py-28 overflow-hidden bg-gradient-to-b from-white via-[#fdf2f7] to-white">
+  <div class="absolute -top-40 -left-32 w-[560px] h-[560px] rounded-full bg-primary/15 blur-[130px] pointer-events-none"></div>
+  <div class="absolute bottom-0 -right-32 w-[560px] h-[560px] rounded-full bg-[#9b1fd1]/10 blur-[130px] pointer-events-none"></div>
+
+  <div class="container px-4 relative z-10">
+    <div data-mosaic class="mosaic grid grid-cols-2 auto-rows-[minmax(38vw,auto)] gap-3 md:gap-4 lg:grid-cols-12 lg:auto-rows-[var(--row)] [grid-auto-flow:dense]">
+
+      <!-- Texto: la pieza que ancla el mosaico -->
+      <div data-mosaic-tile class="col-span-2 lg:col-start-1 lg:col-span-6 lg:row-start-1 lg:row-span-5 relative overflow-hidden rounded-3xl border border-primary/15 bg-white p-6 sm:p-8 lg:p-10 flex flex-col justify-between shadow-xl shadow-primary/10">
+        <div class="absolute -top-24 -right-24 w-72 h-72 rounded-full bg-gradient-to-br from-primary/25 to-[#9b1fd1]/10 blur-3xl pointer-events-none"></div>
+        <!-- Logo como máscara: el SVG es claro, así que se tiñe con el degradado de marca en vez de usarlo como <img> -->
+        <span class="logo-mark absolute right-4 top-4 sm:right-6 sm:top-6 h-24 w-28 sm:h-32 sm:w-36 lg:h-36 lg:w-40 pointer-events-none" aria-hidden="true"></span>
+
+        <div class="relative">
+          <p class="font-display font-semibold text-primary text-xs tracking-[0.4em] uppercase mb-3">Nuestra esencia</p>
+          <h2 class="text-foreground mb-4 lg:mb-5 [&_.title-main]:text-[clamp(2rem,9.2vw,3.2rem)] lg:[&_.title-main]:text-[clamp(2.8rem,4.8vw,4.4rem)] [&_.title-eyebrow]:text-[clamp(0.8rem,3.4vw,1.1rem)] lg:[&_.title-eyebrow]:text-[clamp(0.9rem,1.4vw,1.2rem)]">
+            <span class="title-eyebrow">Más que una academia</span>
+            <span class="title-main"><span class="title-accent">UNA COMUNIDAD</span></span>
+          </h2>
+          <p class="text-sm sm:text-base xl:text-lg text-muted-foreground leading-relaxed font-light max-w-lg">
+            Felinas nació con la idea de crear un espacio donde las personas puedan expresarse con libertad, fortalecer su confianza y descubrir nuevas formas de conectar a través de la danza.
+            Un lugar donde cada proceso es bienvenido, sin importar la experiencia o el nivel.
+          </p>
+        </div>
+
+        <ul class="relative mt-6 lg:mt-5 grid grid-cols-2 gap-x-4 gap-y-3 border-t border-primary/15 pt-5">
+          {values.map((v) => (
+            <li class="flex items-center gap-3">
+              <span class="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-gradient-to-br from-primary to-[#9b1fd1] text-white shadow-md shadow-primary/30">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  {v.paths.map((d) => <path d={d} />)}
+                </svg>
+              </span>
+              <span class="text-xs sm:text-sm font-semibold leading-tight text-foreground">{v.label}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {tiles.map((t, i) =>
+        t.kind === "photo" ? (
+          <figure data-mosaic-tile class={`group relative overflow-hidden rounded-3xl bg-muted shadow-lg shadow-primary/10 ${t.cell}`}>
+            <Image
+              data-mosaic-img
+              src={t.img}
+              alt={t.alt}
+              class:list={["absolute inset-0 h-full w-full max-w-none object-cover scale-[1.15] transition-transform duration-[1200ms] ease-out group-hover:scale-[1.22]", t.pos]}
+              widths={[420, 720, 1000]}
+              sizes="(max-width: 1024px) 50vw, 30vw"
+              loading="lazy"
+            />
+            <!-- Luz rosada de esquina: degradado simple que une la foto con la paleta sin apagarla -->
+            <div class="absolute inset-0 bg-gradient-to-tr from-primary/30 via-transparent to-transparent mix-blend-soft-light pointer-events-none"></div>
+            <!-- Leyenda como pestaña: pegada a la esquina inferior, del mismo blanco que las tarjetas, así
+                 se lee como parte del marco y no como un objeto flotando sobre la foto. Las fotos con cifra no llevan.-->
+            {t.caption && <figcaption class:list={["mosaic-tab absolute bottom-0 z-10 flex items-center gap-2 bg-white px-3.5 pt-2 pb-2 sm:px-4 text-[10px] sm:text-xs font-bold uppercase tracking-[0.18em] text-foreground", "left-0 rounded-tr-2xl"]}>
+              <span class="text-primary">{String(photoNumber[i]).padStart(2, "0")}</span>
+              <span class="h-px w-3 bg-primary/40"></span>
+              {t.caption}
+            </figcaption>}
+            {t.stat && (
+              <>
+                <div class="absolute inset-x-0 bottom-0 h-3/4 bg-gradient-to-t from-primary/85 via-primary/35 to-transparent pointer-events-none"></div>
+                <div class="absolute left-5 bottom-5 sm:left-7 sm:bottom-6 text-white">
+                  <p class="font-display font-black leading-[0.85] tracking-tighter text-6xl sm:text-7xl flex items-start">
+                    <span data-counter={t.stat.value}>{t.stat.value}</span>
+                    {t.stat.suffix && <span class="text-[0.45em] mt-[0.12em] ml-[0.06em]">{t.stat.suffix}</span>}
+                  </p>
+                  <p class="mt-2 text-[10px] sm:text-xs font-bold uppercase tracking-[0.22em]">{t.stat.label}</p>
+                </div>
+              </>
+            )}
+          </figure>
+        ) : (
+          <div
+            data-mosaic-tile
+            class:list={[
+              "relative overflow-hidden rounded-3xl p-5 sm:p-7 lg:p-8 flex flex-col justify-end shadow-lg shadow-primary/10",
+              t.tone === "pink" ? "bg-gradient-to-br from-primary via-[#e0127f] to-[#9b1fd1] text-white" : "bg-gradient-to-b from-white to-[#fbe3ee] border border-primary/15 text-foreground",
+              t.cell,
+            ]}
+          >
+            {t.tone === "pink" && <div class="absolute -top-16 -right-16 w-56 h-56 rounded-full bg-white/20 blur-3xl pointer-events-none"></div>}
+            <p class="relative font-display font-black leading-[0.85] tracking-tighter flex items-start text-6xl sm:text-7xl lg:text-8xl">
+              <span data-counter={t.stat.value} class={t.tone === "light" ? "title-accent" : ""}>{t.stat.value}</span>
+              {t.stat.suffix && <span class="text-[0.45em] mt-[0.12em] ml-[0.06em]">{t.stat.suffix}</span>}
+            </p>
+            <p class:list={["relative mt-3 text-[10px] sm:text-xs font-bold uppercase tracking-[0.22em]", t.tone === "pink" ? "text-white/85" : "text-foreground/70"]}>{t.stat.label}</p>
+            {t.bar && (
+              <div class="relative mt-4 h-1.5 rounded-full bg-white/25 overflow-hidden">
+                <div data-mosaic-bar={t.stat.value / 100} class="h-full w-full origin-left rounded-full bg-white"></div>
+              </div>
+            )}
+          </div>
+        ),
+      )}
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Altura de fila de la grilla de escritorio: crece con el ancho para que las fotos conserven proporción. */
+  .logo-mark {
+    background: linear-gradient(135deg, #ff006a, #9b1fd1);
+    -webkit-mask: url(/assets/PanteraFelinasLogo.svg) center / contain no-repeat;
+    mask: url(/assets/PanteraFelinasLogo.svg) center / contain no-repeat;
+    opacity: 0.16;
+  }
+  .mosaic { --row: clamp(78px, 7.6vw, 104px); }
+</style>

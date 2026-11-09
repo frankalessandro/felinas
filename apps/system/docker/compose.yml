@@ -1,0 +1,47 @@
+# Postgres local para pruebas: mismo esquema que Supabase (migraciones + seed), sin Auth real.
+# Uso: pnpm db:up · pnpm db:psql · pnpm db:reset (borra todo y recrea desde las migraciones).
+name: felinas-dev
+
+services:
+  db:
+    image: postgres:17
+    container_name: felinas-dev-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+      TZ: America/Bogota
+    ports:
+      - "54329:5432"
+    volumes:
+      - felinas-dev-data:/var/lib/postgresql/data
+      # Los scripts de init corren solo la primera vez que el volumen está vacío.
+      - ./init:/docker-entrypoint-initdb.d:ro
+      # Las migraciones reales del proyecto: una sola fuente de verdad.
+      - ../supabase:/supabase:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  # API REST sobre la misma base: es lo que usa la app con VITE_USE_LOCAL_DB=true.
+  postgrest:
+    image: postgrest/postgrest:latest
+    container_name: felinas-dev-postgrest
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGRST_DB_URI: postgres://authenticator:authenticator@db:5432/postgres
+      PGRST_DB_SCHEMAS: public
+      PGRST_DB_ANON_ROLE: anon
+      # Solo desarrollo: el mismo valor va en VITE_LOCAL_JWT_SECRET (.env).
+      PGRST_JWT_SECRET: felinas-local-dev-secret-not-for-production
+    ports:
+      - "54330:3000"
+
+volumes:
+  felinas-dev-data:

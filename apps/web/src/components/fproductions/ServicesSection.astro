@@ -1,0 +1,145 @@
+---
+const services = [
+  {
+    tag: "Lo más pedido",
+    title: "Shows en vivo",
+    desc: "Creamos momentos que combinan danza, energía y producción escénica para convertir cualquier evento en una experiencia memorable.",
+    points: ["Discotecas & bares", "Aperturas y cierres", "Coreografías temáticas"],
+    featured: true,
+  },
+  {
+    tag: null,
+    title: "Videos musicales",
+    desc: "Acompañamos artistas y producciones audiovisuales con dirección de movimiento, interpretación y presencia frente a cámara para potenciar cada escena.",
+    points: ["Videoclips", "Contenido audiovisual", "Dirección de movimiento"],
+    featured: false,
+  },
+  {
+    tag: null,
+    title: "Animación de eventos",
+    desc: "Acompañamos tu evento de principio a fin generando interacción, dinamismo y una experiencia que mantiene al público conectado en todo momento.",
+    points: ["Animación", "Recibimiento", "Shows intermedios"],
+    featured: false,
+  },
+  {
+    tag: null,
+    title: "Modelaje y potenciación de marcas",
+    desc: "Representamos marcas, productos y campañas a través de imagen, presencia y creación de contenido, conectando de forma auténtica con el público y nuestra esencia.",
+    points: ["Campañas TikTok / Reels", "Activaciones", "Lanzamientos"],
+    featured: true,
+  },
+];
+---
+
+<section id="servicios" class="relative py-24 md:py-36 bg-[#07030b] overflow-hidden">
+  <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#ff006a]/25 to-transparent"></div>
+  <div class="absolute bottom-0 right-1/4 w-[500px] h-[500px] rounded-full bg-[#ff006a]/10 blur-[130px] pointer-events-none"></div>
+  <div class="absolute top-0 left-1/3 w-[300px] h-[300px] rounded-full bg-felina-morado/15 blur-[100px] pointer-events-none"></div>
+
+  <div class="container px-4 md:px-8 relative z-10">
+    <div data-reveal class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14 md:mb-20">
+      <div>
+        <p class="font-display font-semibold text-[#ff006a] text-xs tracking-[0.35em] uppercase mb-5 flex items-center gap-3">
+          <span class="w-10 h-px bg-[#ff006a]"></span> Qué hacemos
+        </p>
+        <h2 class="text-white">
+          <span class="title-eyebrow">Lo que podemos</span>
+          <span class="title-main"><span class="title-accent">CREAR JUNTOS</span></span>
+        </h2>
+      </div>
+      <p class="text-white/60 max-w-sm text-sm md:text-base leading-relaxed">
+        Nos adaptamos a la esencia de tu proyecto para crear experiencias que conectan con tu público.
+        Cuéntanos tu idea y diseñemos juntos la mejor forma de hacerla realidad.
+      </p>
+    </div>
+
+    <div id="services-list" class="grid md:grid-cols-2 gap-4 md:gap-5">
+      {services.map((s, i) => (
+        <div
+          data-reveal
+          data-spotlight-item
+          class:list={[
+            "service-card group relative rounded-2xl border border-white/10 bg-white/[0.025] p-7 md:p-9 transition-all duration-500 overflow-hidden",
+            s.featured && "md:col-span-2",
+          ]}
+        >
+          <!-- Wash de fondo: aparece suave con el hover/spot, sin invertir el texto -->
+          <div class="absolute inset-0 bg-gradient-to-br from-[#ff006a]/0 via-[#ff006a]/0 to-felina-morado/0 group-hover:from-[#ff006a]/10 group-hover:via-[#ff006a]/[0.04] group-hover:to-felina-morado/10 group-data-[spot=true]:from-[#ff006a]/10 group-data-[spot=true]:via-[#ff006a]/[0.04] group-data-[spot=true]:to-felina-morado/10 transition-colors duration-500 pointer-events-none"></div>
+
+          <!-- Barra de acento izquierda -->
+          <span class="absolute left-0 top-7 bottom-7 md:top-9 md:bottom-9 w-[3px] rounded-full bg-white/10 group-hover:bg-[#ff006a] group-data-[spot=true]:bg-[#ff006a] transition-colors duration-500"></span>
+
+          <div class="relative z-10 flex flex-col h-full pl-5">
+            <div class="flex items-start justify-between gap-4 mb-4">
+              <span class="font-display font-black text-white/15 text-3xl md:text-4xl leading-none group-hover:text-[#ff006a]/40 group-data-[spot=true]:text-[#ff006a]/40 transition-colors duration-500">
+                0{i + 1}
+              </span>
+              {s.tag && (
+                <span class="neon-tag neon-tag--badge inline-flex items-center text-[9px] font-bold uppercase tracking-[0.2em] rounded-full px-3 py-1.5">
+                  {s.tag}
+                </span>
+              )}
+            </div>
+
+            <h3 class="font-display font-black text-2xl md:text-3xl text-white tracking-tight leading-tight mb-3">
+              {s.title}
+            </h3>
+
+            <p class="text-sm md:text-base text-white/60 leading-relaxed mb-6 max-w-md">{s.desc}</p>
+
+            <ul class="flex flex-wrap gap-2 mt-auto">
+              {s.points.map((pt) => (
+                <li class="neon-tag text-[11px] font-semibold uppercase tracking-wide rounded-full px-3.5 py-1.5">
+                  {pt}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .service-card {
+    transform: translateY(0);
+    transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.5s ease;
+  }
+  .service-card:hover,
+  .service-card[data-spot="true"] {
+    transform: translateY(-4px);
+    border-color: rgba(255, 0, 106, 0.35);
+  }
+
+  /* Tags tipo neón: fondo casi negro para que el trazo y el texto "brillen" de verdad. */
+  .neon-tag {
+    color: #ff5ba8;
+    background: rgba(8, 2, 6, 0.6);
+    border: 1px solid rgba(255, 0, 106, 0.4);
+    text-shadow: 0 0 6px rgba(255, 91, 168, 0.7), 0 0 16px rgba(255, 0, 106, 0.3);
+    box-shadow: 0 0 8px rgba(255, 0, 106, 0.15), inset 0 0 6px rgba(255, 0, 106, 0.08);
+    transition: box-shadow 0.5s ease, border-color 0.5s ease, text-shadow 0.5s ease, color 0.5s ease;
+  }
+
+  /* El badge "Lo más pedido" siempre brilla: es la etiqueta que debe destacar sola. */
+  .neon-tag--badge {
+    color: #ff8ec4;
+    border-color: rgba(255, 0, 106, 0.55);
+    text-shadow: 0 0 6px rgba(255, 142, 196, 0.85), 0 0 18px rgba(255, 0, 106, 0.5);
+    box-shadow: 0 0 14px rgba(255, 0, 106, 0.3), inset 0 0 8px rgba(255, 0, 106, 0.12);
+  }
+
+  .service-card:hover .neon-tag,
+  .service-card[data-spot="true"] .neon-tag {
+    border-color: rgba(255, 0, 106, 0.75);
+    box-shadow: 0 0 16px rgba(255, 0, 106, 0.4), inset 0 0 10px rgba(255, 0, 106, 0.15);
+    text-shadow: 0 0 8px rgba(255, 91, 168, 0.9), 0 0 22px rgba(255, 0, 106, 0.55);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .service-card {
+      transition-duration: 0.01ms;
+    }
+  }
+</style>

@@ -1,0 +1,350 @@
+---
+import { Image } from "astro:assets";
+
+import posterReel3155 from "../../assets/fproductions/posters/reel-3155.webp";
+import posterReel3410 from "../../assets/fproductions/posters/reel-3410.webp";
+import posterReel3413 from "../../assets/fproductions/posters/reel-3413.webp";
+import posterReel9167 from "../../assets/fproductions/posters/reel-9167.webp";
+
+type Reel = {
+  file: string;
+  poster: ImageMetadata;
+  alt: string;
+  tag: string;
+  title: string;
+};
+
+/**
+ * Reels con audio: se abren en lightbox al click. Los clips mudos de acompañamiento
+ * viven en GallerySection, intercalados con las fotos.
+ */
+const REELS: Reel[] = [
+  { file: "reel-9167", poster: posterReel9167, alt: "Presentación de F Productions", tag: "Producción", title: "Puesta en escena" },
+  { file: "reel-3413", poster: posterReel3413, alt: "Show de F Productions en vivo", tag: "Main stage", title: "El show completo" },
+  { file: "reel-3155", poster: posterReel3155, alt: "Coreografía de F Productions", tag: "Coreografía", title: "Ensayo y precisión" },
+  { file: "reel-3410", poster: posterReel3410, alt: "Show de F Productions en discoteca", tag: "Discotecas", title: "Noche cerrada" },
+];
+---
+
+<section id="reels" class="relative py-24 md:py-36 bg-[#07030b] overflow-hidden">
+  <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-felina-morado/25 to-transparent"></div>
+  <div
+    class="pointer-events-none absolute left-[15%] top-1/2 -translate-y-1/2 h-[70vh] w-[60vw] rounded-full bg-felina-morado/20 blur-[130px]"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="container px-4 md:px-8 relative z-10">
+    <div data-reveal class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14 md:mb-20">
+      <h2 class="text-white">
+        <span class="title-eyebrow">No te lo contamos</span>
+        <span class="title-main"><span class="title-accent">MÍRALO</span></span>
+      </h2>
+      <p class="text-white/60 max-w-sm text-sm md:text-base leading-relaxed">
+        Shows, ensayos y producciones <span class="text-white font-medium">con sonido</span>. Elegí
+        uno de la lista y miralo completo.
+      </p>
+    </div>
+
+    <!--
+      En móvil este bloque se pinnea y el scroll cambia de reel (ver initStage).
+      Por eso ocupa casi toda la pantalla ahí: mientras está fijo, el escenario es
+      lo único que se ve. En desktop vuelve a ser una fila normal de dos columnas.
+    -->
+    <div
+      data-reel-stage
+      class="grid lg:grid-cols-12 gap-10 lg:gap-16 items-center content-center min-h-[100svh] lg:min-h-0"
+    >
+      <!--
+        Escenario. En móvil va primero: hay que ver QUÉ se está eligiendo antes de
+        tener la lista debajo. En desktop pasa a la derecha, para que el índice
+        numerado arranque en el margen izquierdo como un sumario editorial.
+      -->
+      <div class="relative flex flex-col items-center justify-center lg:block lg:col-span-5 lg:order-2">
+        <div class="stage relative mx-auto w-full lg:max-w-none aspect-[9/16]">
+          <!-- Placas de desregistro: el mismo recurso del retrato del hero -->
+          <span data-stage-plate="a" class="stage-cut absolute inset-0 bg-[#ff006a]" aria-hidden="true"></span>
+          <span data-stage-plate="b" class="stage-cut absolute inset-0 bg-felina-morado" aria-hidden="true"></span>
+
+          <button
+            data-reel-stage-play
+            type="button"
+            class="stage-cut group/stage absolute inset-0 overflow-hidden bg-[#11081a] cursor-pointer"
+          >
+            {
+              REELS.map((reel, i) => (
+                <Image
+                  data-stage-poster={i}
+                  src={reel.poster}
+                  alt={reel.alt}
+                  widths={[320, 520, 720]}
+                  sizes="(max-width: 1024px) 76vw, 30vw"
+                  loading={i === 0 ? "eager" : "lazy"}
+                  class:list={[
+                    "absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-out group-hover/stage:scale-105",
+                    i === 0 ? "opacity-100" : "opacity-0",
+                  ]}
+                />
+              ))
+            }
+
+            <span class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30" aria-hidden="true"></span>
+
+            <span class="absolute top-4 left-4 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm border border-white/20">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5 text-[#ff006a]">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+              </svg>
+              <span class="text-[9px] font-bold uppercase tracking-[0.25em] text-white">Con sonido</span>
+            </span>
+
+            <span class="absolute inset-0 grid place-items-center">
+              <span class="grid place-items-center w-20 h-20 rounded-full border-2 border-white/50 bg-black/30 backdrop-blur-sm transition-all duration-500 group-hover/stage:scale-110 group-hover/stage:bg-[#ff006a] group-hover/stage:border-[#ff006a]">
+                <svg viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7 text-white translate-x-[2px]">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </span>
+            </span>
+
+            <span data-stage-title class="absolute bottom-5 left-5 right-5 text-left font-display font-bold text-white text-lg leading-tight">
+              {REELS[0].title}
+            </span>
+          </button>
+        </div>
+
+        <!--
+          Controles de móvil. En desktop no existen: ahí la navegación es el índice
+          numerado, que se ve entero de un vistazo.
+        -->
+        <div class="lg:hidden mt-6 flex flex-col items-center gap-3">
+          <div class="flex items-center gap-2.5" aria-hidden="true">
+            {
+              REELS.map((_, i) => (
+                <span
+                  data-stage-dot
+                  class:list={[
+                    "block h-[3px] rounded-full transition-all duration-500",
+                    i === 0 ? "w-8 bg-[#ff006a]" : "w-3 bg-white/25",
+                  ]}
+                />
+              ))
+            }
+          </div>
+
+          <p data-stage-counter class="text-white/40 text-[11px] font-bold uppercase tracking-[0.3em]">
+            01 / 0{REELS.length}
+          </p>
+
+          <!--
+            Se retira apenas el usuario empieza a scrollear. Va en position:absolute
+            a propósito: si ocupara lugar en el flujo, seguiría reservando su espacio
+            después de desvanecerse y dejaría el escenario descentrado hacia arriba.
+          -->
+          <div
+            data-stage-hint
+            class="absolute top-full mt-4 inset-x-0 flex flex-col items-center gap-2 pointer-events-none text-center"
+            aria-hidden="true"
+          >
+            <span class="text-white/45 text-[10px] font-semibold uppercase tracking-[0.3em]">
+              Scrollea para ver más
+            </span>
+            <div class="w-6 h-9 rounded-full border border-white/25 flex justify-center pt-1.5" data-ambient="bounce">
+              <span class="w-1 h-1.5 rounded-full bg-[#ff006a]"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Índice: la navegación en desktop. Cada fila es un botón que abre su reel. -->
+      <ul class="hidden lg:col-span-7 lg:order-1 lg:flex flex-col">
+        {
+          REELS.map((reel, i) => (
+            <li class="border-t border-white/10 last:border-b">
+              <button
+                data-reel-row
+                data-reel-hero
+                data-reel-group="reels"
+                data-index={i}
+                data-src={`/videos/${reel.file}.mp4`}
+                data-caption={reel.title}
+                type="button"
+                aria-current={i === 0 ? "true" : "false"}
+                aria-label={`Reproducir con sonido: ${reel.title}`}
+                class="reel-row group/row relative w-full flex items-baseline gap-4 md:gap-7 py-5 md:py-7 text-left cursor-pointer"
+              >
+                {/* Barra que entra desde la izquierda al activarse */}
+                <span class="row-bar absolute left-0 top-0 bottom-0 w-[3px] bg-[#ff006a] origin-top" aria-hidden="true"></span>
+
+                <span class="row-index shrink-0 pl-4 md:pl-6 font-display font-black text-sm md:text-base text-white/35 transition-colors duration-300">
+                  0{i + 1}
+                </span>
+
+                <span class="min-w-0 flex-1">
+                  <span class="row-title block font-display font-black tracking-tighter leading-[0.95] text-[clamp(1.6rem,5vw,3rem)]">
+                    {reel.title}
+                  </span>
+                  <span class="row-tag block mt-1 text-[10px] font-bold uppercase tracking-[0.28em] text-white/40 transition-colors duration-300">
+                    {reel.tag}
+                  </span>
+                </span>
+
+                <span class="row-arrow shrink-0 self-center pr-1 text-[#ff006a] transition-all duration-400">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-7 md:h-7">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                  </svg>
+                </span>
+              </button>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!--
+  Lightbox único para todos los reels. Vive fuera de la sección para que el overlay
+  no herede transforms ni overflow.
+-->
+<div
+  data-reel-lightbox
+  hidden
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Reproductor de video"
+  class="fixed inset-0 z-[100] grid place-items-center bg-black/92 backdrop-blur-md p-4"
+>
+  <button
+    data-reel-close
+    type="button"
+    aria-label="Cerrar video"
+    class="absolute top-5 right-5 z-20 grid place-items-center w-12 h-12 rounded-full bg-white/10 border border-white/20 text-white transition-colors hover:bg-[#ff006a]"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="w-6 h-6">
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  </button>
+
+  <button
+    data-reel-prev
+    type="button"
+    aria-label="Reel anterior"
+    class="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 z-20 grid place-items-center w-11 h-11 md:w-14 md:h-14 rounded-full bg-white/10 border border-white/20 text-white transition-colors hover:bg-[#ff006a]"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-6 md:h-6">
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+  </button>
+  <button
+    data-reel-next
+    type="button"
+    aria-label="Reel siguiente"
+    class="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 z-20 grid place-items-center w-11 h-11 md:w-14 md:h-14 rounded-full bg-white/10 border border-white/20 text-white transition-colors hover:bg-[#ff006a]"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-6 md:h-6">
+      <path d="m9 18 6-6-6-6" />
+    </svg>
+  </button>
+
+  <div data-reel-lightbox-panel class="relative w-full max-w-[min(420px,88vw)] transition-[max-width] duration-200">
+    <video
+      controls
+      playsinline
+      preload="none"
+      class="w-full aspect-[9/16] rounded-2xl bg-black object-cover shadow-[0_0_80px_rgba(168,85,247,0.25)]"
+    ></video>
+    <p data-reel-lightbox-caption class="mt-4 text-center font-display font-bold text-white text-lg"></p>
+    <p data-reel-lightbox-counter class="mt-1 text-center text-white/40 text-[11px] uppercase tracking-[0.3em]"></p>
+  </div>
+</div>
+
+<style>
+  [data-reel-lightbox][hidden] {
+    display: none;
+  }
+
+  /* Esquinas cortadas, compartidas por las tres capas del escenario: es lo que hace
+     que el desregistro se lea como intencional. Mismo criterio que el retrato del hero. */
+  .stage-cut {
+    clip-path: polygon(0 0, 92% 0, 100% 6%, 100% 100%, 8% 100%, 0 94%);
+  }
+
+  .stage {
+    filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.6));
+  }
+
+  /*
+   * Móvil: el escenario se dimensiona contra la ALTURA disponible, no contra un
+   * ancho fijo. Con un max-width en rem, en pantallas altas sobraba espacio vertical
+   * sin usar. El ancho es el menor entre el que cabe a lo ancho y el que pide la
+   * altura elegida, así nunca desborda ni en teléfonos angostos ni en pantallas
+   * bajas. Se usa svh (no vh) para que la barra del navegador no lo recorte.
+   */
+  @media (max-width: 1023px) {
+    .stage {
+      width: min(80vw, calc(64svh * 9 / 16));
+      max-width: none;
+    }
+  }
+
+  /*
+   * Índice: los títulos inactivos van en contorno y solo el activo se rellena.
+   * Es el mismo recurso de las palabras fantasma del hero, acá puesto a trabajar
+   * como estado — el contraste entre contorno y sólido señala dónde estás parado
+   * sin necesidad de ningún adorno extra.
+   */
+  .row-title {
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(255, 255, 255, 0.45);
+    transition: color 0.35s ease, -webkit-text-stroke-color 0.35s ease;
+  }
+
+  .row-bar {
+    transform: scaleY(0);
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .row-arrow {
+    opacity: 0;
+    transform: translateX(-0.75rem);
+  }
+
+  .reel-row:hover .row-title,
+  .reel-row:focus-visible .row-title,
+  .reel-row[aria-current="true"] .row-title {
+    color: #fff;
+    -webkit-text-stroke-color: transparent;
+  }
+
+  .reel-row:hover .row-bar,
+  .reel-row:focus-visible .row-bar,
+  .reel-row[aria-current="true"] .row-bar {
+    transform: scaleY(1);
+  }
+
+  .reel-row:hover .row-arrow,
+  .reel-row:focus-visible .row-arrow,
+  .reel-row[aria-current="true"] .row-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .reel-row:hover .row-index,
+  .reel-row[aria-current="true"] .row-index {
+    color: #ff006a;
+  }
+
+  .reel-row:hover .row-tag,
+  .reel-row[aria-current="true"] .row-tag {
+    color: rgba(255, 255, 255, 0.75);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .row-title,
+    .row-bar,
+    .row-arrow {
+      transition-duration: 0.01ms;
+    }
+  }
+</style>

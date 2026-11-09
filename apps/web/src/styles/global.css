@@ -1,0 +1,188 @@
+/* Las fuentes se cargan desde <head> en Layout.astro (preconnect + link), no con @import:
+   un @import aquí obliga al navegador a descargar este CSS antes de siquiera pedir las fuentes. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 0 0% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 4%;
+    --primary: 340 82% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 4%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 340 20% 95%;
+    --muted-foreground: 0 0% 40%;
+    --accent: 51 100% 50%;
+    --accent-foreground: 0 0% 4%;
+    --border: 340 20% 90%;
+    --input: 340 20% 90%;
+    --ring: 340 82% 52%;
+    --radius: 0.75rem;
+    --felina-rosa: 340 82% 52%;
+    --felina-negro: 0 0% 4%;
+    --felina-dorado: 51 100% 50%;
+    --felina-morado: 300 100% 27%;
+    --felina-rosa-light: 340 80% 95%;
+    --felina-rosa-glow: 320 80% 55%;
+  }
+}
+
+/* Scrollbar de marca. Fuera de @layer para que no la purgue ni la pise Tailwind.
+   Firefox/Chrome 121+ usan las propiedades estándar; WebKit viejo, el pseudo-elemento. */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: #ff006a #07030b;
+}
+html::-webkit-scrollbar { width: 10px; height: 10px; }
+html::-webkit-scrollbar-track { background: #07030b; }
+html::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff006a, #8a0087);
+  border-radius: 10px;
+  border: 2px solid #07030b;
+}
+html::-webkit-scrollbar-thumb:hover { background: #ff006a; }
+
+/* Academia es clara: track blanco rosado en vez del negro de F Productions */
+html:has(.academia-page) {
+  scrollbar-color: #ff006a #fdf2f7;
+}
+html:has(.academia-page)::-webkit-scrollbar-track { background: #fdf2f7; }
+html:has(.academia-page)::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff006a, #9b1fd1);
+  border-color: #fdf2f7;
+}
+
+@layer base {
+  * { @apply border-border; }
+  html {
+    background: #0a0a0a;
+  }
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-family: 'Inter', sans-serif;
+    /* Sin `scroll-behavior: smooth`: GSAP desaconseja combinarlo con ScrollTrigger
+       (pelea con el scroll programático del pin y descuadra las medidas). El scroll
+       suave de los links del nav se hace en JS, en SiteNav.astro. */
+    overscroll-behavior: none;
+  }
+  h1, h2, h3, h4, h5, h6 { font-family: 'Montserrat', sans-serif; }
+
+  /* Foco visible propio: antes solo había el outline por defecto del navegador, que
+     sobre #07030b es casi invisible. Se usa :focus-visible para que el anillo aparezca
+     al navegar con teclado pero no al hacer click con el mouse. */
+  :focus-visible {
+    outline: 2px solid #ff006a;
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+}
+
+@layer base {
+  /* Estado inicial oculto de los elementos que animan de entrada. Lo hacía solo
+     el JS (gsap.set autoAlpha:0); si ese módulo tarda —Safari compila los módulos
+     más lento y el loader ahora se va antes— el usuario veía el contenido en su
+     posición final y saltar a oculto (layout shift real). Con esto nace oculto ya.
+     `.js` lo activa un script inline del <head>; `.anim-fallback` (a los 5 s) es la
+     salida de emergencia si GSAP nunca corre, para no dejar la página en blanco. */
+  html.js:not(.anim-fallback) [data-reveal],
+  html.js:not(.anim-fallback) [data-reveal-x],
+  html.js:not(.anim-fallback) [data-hero-fade] {
+    opacity: 0;
+  }
+}
+
+/* --- Solo Safari/WebKit --------------------------------------------------------
+   `@supports (-webkit-hyphens: none)` sólo matchea en Safari. Chrome y Firefox
+   quedan EXACTAMENTE igual que antes.
+
+   /show tiene 3 secciones pinneadas con scrub (Reels, Equipo, Galería) y encima
+   ~15 blobs con `filter: blur(110–180px)` y varios `mix-blend-mode`. WebKit no
+   cachea esos blur ni acelera los blend: los repinta en cada frame de scroll, y
+   ahí es donde se cae el rendimiento y los efectos "llegan tarde".
+
+   - Blur: se topea el radio. Un glow difuso a 60px se ve casi idéntico a 140px
+     pero cuesta una fracción.
+   - mix-blend: se pasa a `normal`. El blob sigue tiñendo, sin el coste del blend
+     compuesto sobre el stacking context entero. */
+@supports (-webkit-hyphens: none) {
+  [class*="blur-["] {
+    filter: blur(60px);
+  }
+  .mix-blend-screen,
+  .mix-blend-color {
+    mix-blend-mode: normal;
+  }
+}
+
+@layer utilities {
+  .font-display { font-family: 'Montserrat', sans-serif; }
+
+  .text-gradient-pink {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, hsl(var(--felina-rosa)), hsl(var(--felina-morado)));
+  }
+
+  .bg-gradient-felinas {
+    background: linear-gradient(135deg, hsl(var(--felina-rosa)), hsl(var(--felina-morado)));
+  }
+
+  .bg-gradient-dark {
+    background: linear-gradient(135deg, hsl(0 0% 4%), hsl(300 30% 10%));
+  }
+
+  .text-stroke-primary {
+    -webkit-text-stroke: 1px hsl(var(--primary));
+    color: transparent;
+  }
+
+  .text-stroke-secondary {
+    -webkit-text-stroke: 1px hsl(var(--secondary));
+    color: transparent;
+  }
+
+  .text-stroke-2 { -webkit-text-stroke-width: 2px; }
+
+  .hidden-scroll {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hidden-scroll::-webkit-scrollbar { display: none; }
+
+  /* Sistema de títulos: una sola fuente (Montserrat Black, siempre rellena).
+     La jerarquía sale del tamaño; el color de marca solo va en la palabra clave. */
+  .title-eyebrow {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    line-height: 1.2;
+    font-size: clamp(0.95rem, 2.4vw, 1.5rem);
+    margin-bottom: 0.6rem;
+  }
+  .title-main {
+    display: block;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.04em;
+    line-height: 0.9;
+    font-size: clamp(2.5rem, 7vw, 5.5rem);
+  }
+  .title-accent {
+    display: inline-block;
+    padding-right: 0.06em; /* evita que bg-clip recorte el último glifo */
+    background-image: linear-gradient(135deg, #ff006a, #9b1fd1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .mask-image-fade {
+    mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  }
+}

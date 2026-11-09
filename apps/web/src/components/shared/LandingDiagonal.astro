@@ -1,0 +1,652 @@
+---
+interface Band {
+  key: "academia" | "show";
+  href: string;
+  word: string;
+  meta: string;
+  index: string;
+  color: string;
+}
+
+const bands: Band[] = [
+  {
+    key: "academia",
+    href: "/academia",
+    word: "ACADEMIA",
+    meta: "Twerk · Hip Hop · Breaking",
+    index: "01",
+    color: "#E8115B",
+  },
+  {
+    key: "show",
+    href: "/show",
+    word: "F PRODUCTIONS",
+    meta: "Shows en vivo · Contrataciones",
+    index: "02",
+    color: "#7C0475",
+  },
+];
+
+// Cada mitad del track se repite: el marquee es seamless moviendo el track un -50%.
+const REPS = 4;
+---
+
+<div id="dg-root" class="dg-root">
+  <div class="dg-grain" aria-hidden="true"></div>
+
+  {
+    bands.map((band) => (
+      <a
+        href={band.href}
+        class="dg-band"
+        data-band={band.key}
+        style={`--band-color: ${band.color}`}
+        aria-label={band.word}
+      >
+        <span class="dg-band-fill" data-band-fill aria-hidden="true" />
+
+        <span class="dg-marquee" aria-hidden="true">
+          <span class="dg-track" data-track>
+            {Array.from({ length: REPS * 2 }).map((_, i) => (
+              <>
+                <span class:list={["dg-word", i % 2 === 1 && "is-ghost"]}>{band.word}</span>
+                <span class="dg-sep">✦</span>
+              </>
+            ))}
+          </span>
+        </span>
+
+        <span class="dg-tag" data-tag>
+          <span class="dg-tag-index">{band.index}</span>
+          <span class="dg-tag-meta">{band.meta}</span>
+          <span class="dg-tag-cta" data-cta>Entrar →</span>
+        </span>
+      </a>
+    ))
+  }
+
+  <div class="dg-vignette" aria-hidden="true"></div>
+
+  <div class="dg-center">
+    <span class="dg-halo" data-halo aria-hidden="true"></span>
+    <span class="dg-fork dg-fork-up" data-fork aria-hidden="true"></span>
+    <img
+      class="dg-logo"
+      data-logo
+      src="/favicon-180.png"
+      alt="Felinas"
+      width="1158"
+      height="1020"
+      fetchpriority="high"
+    />
+    <span class="dg-fork dg-fork-down" data-fork aria-hidden="true"></span>
+  </div>
+
+  <p class="dg-hint" data-hint>Elige tu lado</p>
+
+  <div class="dg-cursor" data-cursor aria-hidden="true">
+    <span class="dg-cursor-dot"></span>
+    <span class="dg-cursor-label" data-cursor-label>Entrar</span>
+  </div>
+
+  <div class="dg-wipe" data-wipe aria-hidden="true"></div>
+</div>
+
+<style>
+  .dg-root {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    background: #050505;
+    isolation: isolate;
+    user-select: none;
+  }
+
+  /* Grano fino: rompe el negro plano sin cargar un asset. */
+  .dg-grain {
+    position: absolute;
+    inset: -50%;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0.055;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* --- Bandas diagonales --- */
+  .dg-band {
+    position: absolute;
+    left: -20%;
+    width: 140%;
+    display: block;
+    text-decoration: none;
+    z-index: 2;
+    transform: rotate(-8deg);
+    transform-origin: center;
+    will-change: transform;
+  }
+
+  .dg-band[data-band="academia"] {
+    top: 13vh;
+  }
+
+  .dg-band[data-band="show"] {
+    bottom: 13vh;
+  }
+
+  /* Relleno de color que entra por wipe en hover (scaleY desde el centro). */
+  .dg-band-fill {
+    position: absolute;
+    inset: -0.4em 0;
+    background: var(--band-color);
+    transform: scaleY(0);
+    transform-origin: center;
+    z-index: -1;
+  }
+
+  .dg-marquee {
+    display: block;
+    overflow: hidden;
+    padding: 0.06em 0;
+  }
+
+  .dg-track {
+    display: flex;
+    align-items: center;
+    width: max-content;
+    white-space: nowrap;
+    will-change: transform;
+  }
+
+  .dg-word {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 900;
+    font-size: clamp(3rem, 13vw, 11rem);
+    line-height: 0.86;
+    letter-spacing: -0.02em;
+    color: #fff;
+    padding: 0 0.12em;
+  }
+
+  .dg-word.is-ghost {
+    color: transparent;
+    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.5);
+  }
+
+  .dg-sep {
+    font-size: clamp(0.9rem, 3vw, 2rem);
+    color: var(--band-color);
+    padding: 0 0.4em;
+    transform: translateY(-0.35em);
+  }
+
+  /* Etiqueta de apoyo bajo cada banda. */
+  .dg-tag {
+    position: absolute;
+    left: 22%;
+    display: flex;
+    align-items: baseline;
+    gap: clamp(0.6rem, 2vw, 1.5rem);
+    font-family: "Inter", sans-serif;
+    font-size: clamp(0.62rem, 1.5vw, 0.82rem);
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.72);
+    white-space: nowrap;
+  }
+
+  .dg-band[data-band="academia"] .dg-tag {
+    top: calc(100% + 0.7rem);
+  }
+
+  .dg-band[data-band="show"] .dg-tag {
+    bottom: calc(100% + 0.7rem);
+  }
+
+  .dg-tag-index {
+    color: var(--band-color);
+    font-weight: 700;
+  }
+
+  .dg-tag-cta {
+    font-weight: 700;
+    color: #fff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.45);
+    padding-bottom: 2px;
+  }
+
+  /* Profundidad: apaga los bordes sin ensuciar el centro. */
+  .dg-vignette {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, 0.72) 100%);
+  }
+
+  /* --- Centro --- */
+  .dg-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  /* Bifurcación: el camino se parte hacia cada banda. */
+  .dg-fork {
+    display: block;
+    width: 1px;
+    height: clamp(2rem, 7vh, 4.5rem);
+    transform-origin: center;
+  }
+
+  .dg-fork-up {
+    background: linear-gradient(to top, rgba(232, 17, 91, 0.9), transparent);
+    transform-origin: bottom;
+  }
+
+  .dg-fork-down {
+    background: linear-gradient(to bottom, rgba(124, 4, 117, 0.95), transparent);
+    transform-origin: top;
+  }
+
+  /* Mismo halo neón que la pantalla de carga: el logo no cambia de identidad al entrar. */
+  .dg-halo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(60vw, 26rem);
+    aspect-ratio: 1;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    z-index: -1;
+    background: radial-gradient(
+      circle,
+      rgba(232, 17, 91, 0.3) 0%,
+      rgba(124, 4, 117, 0.18) 40%,
+      transparent 68%
+    );
+    filter: blur(6px);
+  }
+
+  .dg-logo {
+    width: clamp(3.5rem, 9vw, 7rem);
+    height: auto;
+    filter: drop-shadow(0 0 22px rgba(232, 17, 91, 0.75)) drop-shadow(0 0 60px rgba(124, 4, 117, 0.5));
+  }
+
+  .dg-hint {
+    position: absolute;
+    bottom: 1.6rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 6;
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-size: 0.6rem;
+    letter-spacing: 0.55em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+    pointer-events: none;
+  }
+
+  /* Etiqueta pegada al cursor (solo punteros finos). */
+  .dg-cursor {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 8;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.75rem 0.4rem 0.55rem;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 999px;
+    background: rgba(5, 5, 5, 0.6);
+    backdrop-filter: blur(6px);
+    pointer-events: none;
+    opacity: 0;
+    white-space: nowrap;
+  }
+
+  .dg-cursor-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #fff;
+  }
+
+  .dg-cursor-label {
+    font-family: "Inter", sans-serif;
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: #fff;
+  }
+
+  @media (hover: none), (pointer: coarse) {
+    .dg-cursor {
+      display: none;
+    }
+  }
+
+  /* Overlay que devora la pantalla al hacer click. */
+  .dg-wipe {
+    position: absolute;
+    inset: -30% -20%;
+    z-index: 9;
+    pointer-events: none;
+    transform: scaleY(0) rotate(-8deg);
+    transform-origin: center;
+    opacity: 0;
+  }
+
+  /* --- Móvil: diagonales más marcadas, tipografía más apretada --- */
+  @media (max-width: 767px) {
+    .dg-band {
+      left: -25%;
+      width: 150%;
+      transform: rotate(-11deg);
+    }
+
+    .dg-band[data-band="academia"] {
+      top: 16vh;
+    }
+
+    .dg-band[data-band="show"] {
+      bottom: 16vh;
+    }
+
+    .dg-word {
+      font-size: clamp(2.6rem, 15vw, 5rem);
+    }
+
+    .dg-tag {
+      left: 26%;
+      letter-spacing: 0.22em;
+    }
+
+    .dg-tag-meta {
+      display: none;
+    }
+
+    .dg-wipe {
+      transform: scaleY(0) rotate(-11deg);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .dg-grain {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  import { gsap } from "../../scripts/gsap";
+  import { LOADER_DONE } from "../../scripts/loader";
+
+  type Key = "academia" | "show";
+
+  const root = document.getElementById("dg-root");
+  if (root) {
+    const ctx = gsap.context(() => {
+      const bands = Array.from(root.querySelectorAll<HTMLAnchorElement>(".dg-band"));
+      const wipe = root.querySelector<HTMLElement>("[data-wipe]")!;
+      const logo = root.querySelector<HTMLElement>("[data-logo]")!;
+      const hint = root.querySelector<HTMLElement>("[data-hint]")!;
+      const grain = root.querySelector<HTMLElement>(".dg-grain")!;
+      const forks = Array.from(root.querySelectorAll<HTMLElement>("[data-fork]"));
+      const halo = root.querySelector<HTMLElement>("[data-halo]")!;
+      const cursor = root.querySelector<HTMLElement>("[data-cursor]")!;
+      const cursorLabel = root.querySelector<HTMLElement>("[data-cursor-label]")!;
+      const ctas = bands.map((b) => b.querySelector<HTMLElement>("[data-cta]")!);
+
+      const CTA_IDLE = "Entrar →";
+      const CTA_ARMED = "Toca de nuevo →";
+
+      const parts = (band: HTMLElement) => ({
+        track: band.querySelector<HTMLElement>("[data-track]")!,
+        fill: band.querySelector<HTMLElement>("[data-band-fill]")!,
+        tag: band.querySelector<HTMLElement>("[data-tag]")!,
+        words: Array.from(band.querySelectorAll<HTMLElement>(".dg-word")),
+        word: (band.getAttribute("aria-label") ?? "").trim(),
+        color: getComputedStyle(band).getPropertyValue("--band-color").trim(),
+        // Direcciones opuestas: las bandas se cruzan visualmente.
+        dir: (band.dataset.band as Key) === "academia" ? -1 : 1,
+      });
+
+      const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      // Un puntero grueso no tiene hover: ahí la elección se hace con dos toques.
+      const canHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+
+      const meta = bands.map(parts);
+      let navigating = false;
+      let bandRotation = -8;
+
+      if (!canHover) hint.textContent = "Toca para elegir";
+
+      // --- Timelines de activación (hover en desktop, primer toque en móvil) ---
+      const D = reduce ? 0.001 : 0.45;
+      const activate = bands.map((band, i) => {
+        const { fill, tag, words } = meta[i];
+        const other = bands[1 - i];
+        return gsap
+          .timeline({ paused: true, defaults: { duration: D, ease: "power3.out" } })
+          .to(fill, { scaleY: 1 }, 0)
+          .to(words, { color: "#050505", webkitTextStrokeColor: "rgba(5,5,5,0.55)" }, 0)
+          .to(band, { scale: 1.06 }, 0)
+          .to(tag, { color: "#fff", letterSpacing: "0.42em" }, 0)
+          .to(other, { autoAlpha: 0.22, scale: 0.96 }, 0)
+          .to(meta[1 - i].tag, { autoAlpha: 0 }, 0);
+      });
+
+      let loops: gsap.core.Tween[] = [];
+      const speedLoops = (active: number | null) => {
+        if (!loops.length) return;
+        loops.forEach((loop, i) =>
+          gsap.to(loop, { timeScale: active === null ? 1 : active === i ? 2.4 : 0.35, duration: 0.5 })
+        );
+      };
+
+      const runWipe = (band: HTMLAnchorElement, color: string) => {
+        if (navigating) return;
+        navigating = true;
+        gsap.set(wipe, { backgroundColor: color, opacity: 1, rotation: bandRotation, scaleY: 0 });
+        gsap.to(wipe, {
+          scaleY: 1.6,
+          duration: reduce ? 0.15 : 0.55,
+          ease: "power3.in",
+          onComplete: () => {
+            window.location.href = band.href;
+          },
+        });
+        gsap.to([logo, hint, cursor], { autoAlpha: 0, duration: 0.25, ease: "power1.out" });
+      };
+
+      // --- Estado "armado" (móvil): primer toque resalta, segundo entra ---
+      let armed: number | null = null;
+      let armTimer = 0;
+      let demoTl: gsap.core.Timeline | null = null;
+
+      const setArmed = (next: number | null) => {
+        window.clearTimeout(armTimer);
+        if (armed === next) return;
+        if (armed !== null) {
+          activate[armed].reverse();
+          ctas[armed].textContent = CTA_IDLE;
+        }
+        armed = next;
+        if (next !== null) {
+          activate[next].play();
+          ctas[next].textContent = CTA_ARMED;
+          // Se desarma solo para no dejar la landing en un estado a medias.
+          armTimer = window.setTimeout(() => setArmed(null), 4000);
+        }
+        speedLoops(next);
+      };
+
+      const stopDemo = () => {
+        demoTl?.kill();
+        demoTl = null;
+      };
+
+      bands.forEach((band, i) => {
+        band.addEventListener("click", (e) => {
+          e.preventDefault();
+          stopDemo();
+          if (!canHover && armed !== i) {
+            setArmed(i);
+            return;
+          }
+          window.clearTimeout(armTimer);
+          runWipe(band, meta[i].color);
+        });
+
+        if (canHover) {
+          const enter = () => {
+            activate[i].play();
+            speedLoops(i);
+            gsap.to(cursor, { autoAlpha: 1, duration: 0.25, ease: "power2.out" });
+            cursorLabel.textContent = `Entrar · ${meta[i].word}`;
+          };
+          const leave = () => {
+            activate[i].reverse();
+            speedLoops(null);
+            gsap.to(cursor, { autoAlpha: 0, duration: 0.2, ease: "power2.out" });
+          };
+          band.addEventListener("mouseenter", enter);
+          band.addEventListener("mouseleave", leave);
+          // El teclado (Tab / ↑ ↓) reusa exactamente la misma animación.
+          band.addEventListener("focus", () => {
+            activate[i].play();
+            speedLoops(i);
+          });
+          band.addEventListener("blur", () => {
+            activate[i].reverse();
+            speedLoops(null);
+          });
+        }
+      });
+
+      root.addEventListener("keydown", (e) => {
+        const key = (e as KeyboardEvent).key;
+        if (key !== "ArrowDown" && key !== "ArrowUp") return;
+        e.preventDefault();
+        bands[key === "ArrowDown" ? 1 : 0].focus();
+      });
+
+      // --- Breakpoint: la rotación pasa a manos de GSAP para que no quede obsoleta ---
+      const mm = gsap.matchMedia();
+
+      mm.add("(max-width: 767px)", () => {
+        bandRotation = -11;
+        gsap.set(bands, { rotation: -11 });
+        return () => gsap.set(bands, { clearProps: "rotation" });
+      });
+
+      mm.add("(min-width: 768px)", () => {
+        bandRotation = -8;
+        gsap.set(bands, { rotation: -8 });
+        return () => gsap.set(bands, { clearProps: "rotation" });
+      });
+
+      // --- Movimiento completo ---
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        loops = bands.map((band, i) => {
+          const { track, dir } = meta[i];
+          const from = dir < 0 ? 0 : -50;
+          gsap.set(track, { xPercent: from });
+          return gsap.to(track, { xPercent: dir < 0 ? -50 : 0, duration: 26, ease: "none", repeat: -1 });
+        });
+
+        // El loader sigue en pantalla al ejecutarse este script: la intro espera su salida
+        // para que el logo del loader y el de la landing se lean como el mismo elemento.
+        const loader = document.getElementById("loading-screen");
+        const intro = gsap.timeline({ paused: !!loader, defaults: { ease: "power3.out" } });
+
+        if (loader) {
+          let started = false;
+          const start = () => {
+            if (started) return;
+            started = true;
+            intro.play();
+          };
+          window.addEventListener(LOADER_DONE, start, { once: true });
+          // Red de seguridad por si el loader nunca se resuelve (un asset que no carga).
+          gsap.delayedCall(4, start);
+        }
+
+        intro
+          .from(bands, { xPercent: (i) => (i === 0 ? -60 : 60), autoAlpha: 0, duration: 1.1, stagger: 0.12 })
+          .from(logo, { scale: 1.6, autoAlpha: 0, duration: 0.8, ease: "power3.out" }, 0.15)
+          .fromTo(halo, { scale: 1.5, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 1 }, 0.15)
+          .from(forks, { scaleY: 0, duration: 0.6, stagger: 0.08 }, "-=0.35")
+          .from(hint, { autoAlpha: 0, y: 12, duration: 0.5 }, "-=0.4")
+          .fromTo(grain, { autoAlpha: 0 }, { autoAlpha: 0.055, duration: 0.6 }, 0);
+
+        // El halo respira una vez terminada la entrada (no dentro de la timeline: es infinito).
+        const haloLoop = gsap.to(halo, {
+          scale: 1.08,
+          autoAlpha: 0.8,
+          duration: 3.2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+          paused: true,
+        });
+
+        intro.eventCallback("onComplete", () => {
+          haloLoop.play();
+          // Sin hover no hay forma de descubrir el estado activo: se muestra una vez.
+          if (canHover) return;
+          demoTl = gsap
+            .timeline({ onComplete: stopDemo })
+            .call(() => activate[0].play())
+            .to({}, { duration: 0.6 })
+            .call(() => activate[0].reverse())
+            .to({}, { duration: 0.4 })
+            .call(() => activate[1].play())
+            .to({}, { duration: 0.6 })
+            .call(() => activate[1].reverse());
+        });
+
+        // Deriva magnética: las diagonales se cruzan un poco más con el mouse.
+        if (canHover) {
+          const drift = bands.map((band) => gsap.quickTo(band, "x", { duration: 0.9, ease: "power3" }));
+          const cursorX = gsap.quickTo(cursor, "x", { duration: 0.35, ease: "power3" });
+          const cursorY = gsap.quickTo(cursor, "y", { duration: 0.35, ease: "power3" });
+
+          const onMove = (e: MouseEvent) => {
+            const nx = e.clientX / window.innerWidth - 0.5;
+            drift[0](nx * 26);
+            drift[1](nx * -26);
+            cursorX(e.clientX + 18);
+            cursorY(e.clientY + 18);
+          };
+          window.addEventListener("mousemove", onMove);
+          return () => window.removeEventListener("mousemove", onMove);
+        }
+      });
+
+      // --- Sin movimiento: estado final, sin loops ni entrada ---
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        bands.forEach((_, i) => gsap.set(meta[i].track, { xPercent: -25 }));
+      });
+
+      return () => {
+        window.clearTimeout(armTimer);
+        stopDemo();
+        mm.revert();
+      };
+    }, root);
+
+    document.addEventListener("astro:before-swap", () => ctx.revert(), { once: true });
+  }
+</script>

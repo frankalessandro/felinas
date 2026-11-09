@@ -1,0 +1,124 @@
+---
+const faqs = [
+  {
+    q: "¿Dónde queda Academia Felinas?",
+    a: "Academia Felinas es una academia de baile y danza urbana ubicada en el barrio La Italia, en Palmira, Valle del Cauca, Colombia. Recibimos estudiantes de Palmira y de zonas cercanas como Cali y Candelaria, que están a pocos minutos de distancia. Escríbenos por WhatsApp para conocer la ubicación de la sede y los horarios disponibles.",
+  },
+  {
+    q: "¿Necesito experiencia previa para tomar clases?",
+    a: "No necesitas experiencia previa. Nuestras clases de Hip Hop, Breaking y Flex, Yoga y Gimnasia son grupales y están abiertas a principiantes, sin experiencia previa. En twerk puedes empezar en Twerk Recreativo (grupal, todos los niveles) o, si quieres aprender desde cero de forma estructurada, en clases personalizadas 1 a 1. Solo Twerk Avanzado requiere experiencia previa.",
+  },
+  {
+    q: "¿Qué clases de baile ofrece Academia Felinas?",
+    a: "Ofrecemos clases grupales de Twerk Recreativo (todos los niveles), Twerk Avanzado (con experiencia previa), Hip Hop, Breaking y Flex, Yoga y Gimnasia (estas tres para principiantes, sin experiencia previa). Además damos clases personalizadas de Twerk desde cero, 1 a 1. Todas las clases grupales son de máximo 6 personas.",
+  },
+  {
+    q: "¿Se puede aprender twerk sin experiencia?",
+    a: "Sí. Puedes empezar en Twerk Recreativo, una clase grupal para todos los niveles pensada para disfrutar sin una formación estructurada. Y si quieres aprender twerk desde cero de forma técnica y a tu ritmo, ofrecemos clases personalizadas 1 a 1.",
+  },
+  {
+    q: "¿Qué días y horarios tiene Academia Felinas?",
+    a: "Tenemos clases la mayoría de los días de la semana, de lunes a viernes. Los horarios varían cada mes según la disponibilidad y el flujo de cada clase, así que escríbenos por WhatsApp para conocer los horarios vigentes del mes y agendar el que mejor te acomode.",
+  },
+  {
+    q: "¿Academia Felinas da clases virtuales?",
+    a: "Sí, parcialmente. La clase de Twerk está disponible en modalidad virtual para quienes prefieren no desplazarse. El resto de las clases (Hip Hop, Breaking, Flex/Yoga/Gimnasia y Twerk Avanzado) se dictan de forma presencial en nuestra sede de Palmira.",
+  },
+  {
+    q: "¿Cuántas personas hay por clase?",
+    a: "Nuestras clases grupales tienen capacidad máxima de 6 felinas, un formato reducido que garantiza atención personalizada y un ambiente íntimo. Por eso los cupos son limitados: te recomendamos escribirnos con anticipación por WhatsApp para reservar el tuyo.",
+  },
+  {
+    q: "¿Qué debo llevar a clase?",
+    a: "Ropa cómoda y deportiva que te permita moverte libremente. Para hip hop y breaking, usa zapatos deportivos (tenis); para twerk, calcetines antideslizantes. Y lo más importante: mucha actitud.",
+  },
+  {
+    q: "¿Cómo me inscribo o reservo mi cupo?",
+    a: "La inscripción es muy sencilla: escríbenos por WhatsApp al +57 320 342 6558, elige tu clase y membresía, y reserva tu cupo. Como los cupos son limitados y los horarios varían cada mes, te confirmamos disponibilidad y coordinamos contigo el mejor horario.",
+  },
+  {
+    q: "¿Qué diferencia a Academia Felinas de otras academias de baile?",
+    a: "Academia Felinas se diferencia por tres cosas: grupos reducidos de máximo 6 personas, una comunidad auténtica que va más allá de lo técnico, y la especialización en danza urbana con clases como twerk (recreativo y avanzado), hip hop y breaking. Es lo que llamamos '100% Actitud Felina'.",
+  },
+];
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((faq) => ({
+    "@type": "Question",
+    name: faq.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: faq.a,
+    },
+  })),
+};
+---
+
+<script type="application/ld+json" is:inline set:html={JSON.stringify(faqSchema)} />
+
+<section id="comunidad" class="py-24 md:py-36 relative">
+  <!-- Fondo y luces compartidos con Membresías: el contenedor común (academia.astro) pinta el tinte y recorta, así no hay costura entre las dos -->
+  <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[110px] -translate-y-1/2 pointer-events-none"></div>
+  <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-felina-morado/10 rounded-full blur-[100px] translate-y-1/3 pointer-events-none"></div>
+  <div class="container px-4 max-w-3xl mx-auto relative z-10">
+    <div data-reveal class="text-center mb-12 md:mb-16">
+      <h2 class="text-foreground">
+        <span class="title-eyebrow">Resolvemos tus dudas</span>
+        <span class="title-main" style="font-size: clamp(1.9rem, 7vw, 4.5rem);">PREGUNTAS <span class="title-accent">FRECUENTES</span></span>
+      </h2>
+    </div>
+
+    <div class="space-y-3" data-faq-accordion>
+      {faqs.map((faq) => (
+        <div data-reveal class="border border-border bg-background/60 rounded-xl px-6 data-[open=true]:bg-background data-[open=true]:shadow-md transition-colors" data-faq-item>
+          <button
+            type="button"
+            aria-expanded="false"
+            class="w-full flex justify-between items-center gap-4 text-left font-display font-semibold text-secondary text-sm md:text-base cursor-pointer py-5"
+          >
+            {faq.q}
+            <span class="ml-4 shrink-0 text-primary font-bold text-xl leading-none select-none inline-block" data-faq-icon>+</span>
+          </button>
+          <div class="overflow-hidden h-0" data-faq-panel>
+            <p class="text-muted-foreground text-sm md:text-base leading-relaxed pb-5">
+              {faq.a}
+            </p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<script>
+  import { gsap } from "../../scripts/gsap";
+
+  const accordion = document.querySelector("[data-faq-accordion]");
+  if (accordion) {
+    const items = Array.from(accordion.querySelectorAll<HTMLElement>("[data-faq-item]"));
+
+    const close = (item: HTMLElement) => {
+      item.dataset.open = "false";
+      item.querySelector("button")?.setAttribute("aria-expanded", "false");
+      gsap.to(item.querySelector("[data-faq-panel]"), { height: 0, duration: 0.35, ease: "power2.inOut", overwrite: "auto" });
+      gsap.to(item.querySelector("[data-faq-icon]"), { rotation: 0, duration: 0.3, ease: "power2.out", overwrite: "auto" });
+    };
+
+    const open = (item: HTMLElement) => {
+      item.dataset.open = "true";
+      item.querySelector("button")?.setAttribute("aria-expanded", "true");
+      gsap.to(item.querySelector("[data-faq-panel]"), { height: "auto", duration: 0.35, ease: "power2.inOut", overwrite: "auto" });
+      gsap.to(item.querySelector("[data-faq-icon]"), { rotation: 45, duration: 0.3, ease: "power2.out", overwrite: "auto" });
+    };
+
+    items.forEach((item) => {
+      item.querySelector("button")?.addEventListener("click", () => {
+        const isOpen = item.dataset.open === "true";
+        items.forEach((other) => other !== item && close(other));
+        isOpen ? close(item) : open(item);
+      });
+    });
+  }
+</script>

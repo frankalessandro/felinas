@@ -1,0 +1,298 @@
+---
+import { Image } from "astro:assets";
+import posterReel6818 from "../../assets/fproductions/posters/reel-6818.webp";
+
+const steps = [
+  { t: "Conversamos tu idea",     d: "Nos cuentas qué evento tienes, la fecha y la vibra que buscas. Sin compromiso." },
+  { t: "Diseñamos el concepto",   d: "Proponemos formato, música, vestuario y duración pensados para tu público." },
+  { t: "Ensayamos y producimos",  d: "Coordinamos cada detalle técnico con tu equipo y dejamos todo listo." },
+  { t: "Brillamos en tu evento",  d: "Llegamos, encendemos la escena y te acompañamos de principio a fin." },
+];
+
+/**
+ * El clip recorre ensayo → montaje → show, que es lo que pasa en los pasos 3 y 4. Cada etapa
+ * se enciende cuando el scroll llega a esos pasos (`steps` = índices base 0 de `steps` de arriba).
+ * Reusa el [data-reel-hero] + lightbox compartido de scripts/reels.ts; el grupo propio evita
+ * que prev/next lo mezcle con las otras secciones.
+ */
+const chapters = [
+  { n: "01", t: "Ensayo",  d: "Coreografía, formaciones y música hasta que sale sola.", steps: "2" },
+  { n: "02", t: "Montaje", d: "Llegamos al lugar, revisamos escenario, luces y sonido.", steps: "2" },
+  { n: "03", t: "Show",    d: "Encendemos la escena frente a tu público.", steps: "3" },
+];
+---
+
+<!-- overflow-x-clip y no overflow-hidden: `hidden` en un ancestro anula el `position: sticky`
+     del video; `clip` en un solo eje deja el eje Y visible y el video sigue pegado. -->
+<section id="proceso" class="relative bg-[#07030b] overflow-x-clip">
+  <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-purple-400/25 to-transparent"></div>
+  <!-- Ambient glows -->
+  <div class="absolute top-1/4 -left-40 w-[700px] h-[700px] rounded-full bg-felina-morado/12 blur-[180px] pointer-events-none"></div>
+  <div class="absolute bottom-1/4 -right-40 w-[600px] h-[600px] rounded-full bg-[#ff006a]/8 blur-[160px] pointer-events-none"></div>
+  <div class="absolute top-2/3 left-1/3 w-[400px] h-[400px] rounded-full bg-purple-900/15 blur-[120px] pointer-events-none"></div>
+
+  <div class="container px-4 md:px-8 relative z-10 max-w-6xl mx-auto">
+
+    <!-- ── Header ── -->
+    <div data-reveal class="pt-28 md:pt-44 pb-16 md:pb-24">
+      <p class="font-display font-semibold text-purple-400 text-xs tracking-[0.35em] uppercase mb-6 flex items-center gap-3">
+        <span class="w-10 h-px bg-purple-400/50"></span> Show de principio a fin
+      </p>
+      <h2 class="max-w-full text-white">
+        <span class="title-main" style="font-size: clamp(2rem, 11.5vw, 7rem);">ASÍ</span>
+        <span class="title-main break-words" style="font-size: clamp(2rem, 11.5vw, 7rem);"><span class="title-accent">TRABAJAMOS</span></span>
+      </h2>
+      <p class="text-white/60 text-base md:text-lg mt-8 max-w-md leading-relaxed">
+        No te dejamos solos. Desde el primer mensaje hasta el último aplauso, estamos contigo.
+      </p>
+    </div>
+
+    <div class="grid lg:grid-cols-12 gap-x-12 xl:gap-x-20 gap-y-14">
+
+      <!-- ── Video ──
+           Móvil: va primero, entre el encabezado y los pasos. Desktop: columna derecha, fija mientras
+           se recorren los pasos. El ancho se limita por la altura de la pantalla para que video + etapas
+           siempre quepan sin cortarse. -->
+      <div class="order-first lg:order-2 lg:col-span-5">
+        <div data-reveal class="lg:sticky lg:top-24">
+          <div
+            class="group relative mx-auto aspect-[9/16] w-full max-w-[300px] lg:max-w-[min(100%,calc((100svh-21rem)*9/16))] rounded-[2rem] overflow-hidden bg-[#11081a] ring-1 ring-white/10 shadow-2xl shadow-black/70"
+          >
+            <Image
+              src={posterReel6818}
+              alt="Ensayo, montaje y show de F Productions en una sola presentación"
+              widths={[320, 520, 720]}
+              sizes="(max-width: 1024px) 300px, 34vw"
+              loading="lazy"
+              class="w-full h-full object-cover transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-black/30 pointer-events-none"></div>
+            <div class="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-felina-morado/25 pointer-events-none"></div>
+
+            <button
+              type="button"
+              data-reel-hero
+              data-reel-group="proceso"
+              data-index="0"
+              data-src="/videos/reel-6818.mp4"
+              data-caption="De ensayo a escenario"
+              aria-label="Reproducir con sonido: De ensayo a escenario"
+              class="absolute inset-0 z-10 grid place-items-center cursor-pointer"
+            >
+              <span class="grid place-items-center w-20 h-20 rounded-full border-2 border-white/50 bg-black/30 backdrop-blur-sm transition-all duration-500 group-hover:scale-110 group-hover:bg-[#ff006a] group-hover:border-[#ff006a]">
+                <svg viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7 text-white translate-x-[2px]" aria-hidden="true">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+              </span>
+            </button>
+
+            <span class="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 pointer-events-none">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5 text-[#ff006a]" aria-hidden="true">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+              </svg>
+              <span class="text-[9px] font-bold uppercase tracking-[0.25em] text-white">Con sonido · 1 min</span>
+            </span>
+
+            <div class="absolute bottom-5 left-5 right-5 z-10 pointer-events-none">
+              <p class="text-[10px] font-bold uppercase tracking-[0.28em] text-[#ff006a]">Una presentación completa</p>
+              <p class="mt-1 font-display font-bold text-white text-xl leading-tight">De ensayo a escenario</p>
+            </div>
+          </div>
+
+          <!-- Etapas del clip: se encienden cuando el scroll llega al paso que les corresponde. -->
+          <ol class="mx-auto mt-6 w-full max-w-[300px] lg:max-w-[min(100%,calc((100svh-21rem)*9/16))] space-y-1">
+            {chapters.map((c) => (
+              <li data-chapter data-steps={c.steps} class="chapter flex items-baseline gap-4 border-t border-white/10 py-2.5">
+                <span class="chapter-n font-display font-black text-xs tracking-[0.2em]">{c.n}</span>
+                <div class="min-w-0">
+                  <p class="chapter-t font-display font-bold text-base leading-tight">{c.t}</p>
+                  <p class="chapter-d mt-0.5 text-xs leading-snug text-white/40">{c.d}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+
+      <!-- ── Steps ── -->
+      <div id="process-steps" class="relative lg:order-1 lg:col-span-7 pb-28 md:pb-44">
+
+        <!-- Track base -->
+        <div class="absolute left-[11px] md:left-[13px] top-0 bottom-0 w-[1px] bg-white/6"></div>
+        <!-- Track fill -->
+        <div id="process-fill"
+          class="absolute left-[11px] md:left-[13px] top-0 w-[1px] bg-gradient-to-b from-felina-morado via-purple-500 to-[#ff006a] pointer-events-none"
+          style="height: 0; will-change: height;">
+        </div>
+
+        {steps.map((s, i) => (
+          <div
+            class="process-step group relative flex items-start gap-8 md:gap-14 py-16 md:py-24 border-b border-white/[0.04] last:border-b-0"
+            data-i={String(i)}
+          >
+            <!-- Node -->
+            <div class="shrink-0 pt-1 relative z-10">
+              <div class="step-node w-[27px] h-[27px] rounded-full border border-white/12 bg-[#07030b] flex items-center justify-center relative transition-all duration-600">
+                <div class="step-dot w-[9px] h-[9px] rounded-full bg-white/15 transition-all duration-600"></div>
+                <div class="step-ring absolute inset-[-4px] rounded-full border border-transparent transition-all duration-600"></div>
+              </div>
+            </div>
+
+            <!-- Content -->
+            <div class="flex-1 min-w-0 relative">
+
+              <!-- Ghost diamond decoration -->
+              <div class="step-ghost absolute -right-2 md:right-0 top-1/2 -translate-y-[55%] font-display font-black leading-none select-none pointer-events-none"
+                style="font-size: clamp(7rem, 18vw, 14rem); color: transparent; -webkit-text-stroke: 1px rgba(124,4,117,0.0); opacity: 0; transform: translateY(-55%) scale(0.92); transition: opacity 1s ease, transform 1s ease, -webkit-text-stroke 1s ease;">
+                ◆
+              </div>
+
+              <!-- Accent top line -->
+              <div class="step-line h-px bg-gradient-to-r from-felina-morado/70 to-transparent mb-7 transition-all duration-700 ease-out" style="width: 0;"></div>
+
+              <!-- Title -->
+              <h3 class="step-title font-display font-black tracking-tight leading-[0.95] mb-5 transition-colors duration-500 group-hover:text-white"
+                style="font-size: clamp(1.8rem, 4.2vw, 3.4rem); color: rgba(255,255,255,0.11); filter: blur(5px); transition: color .5s, filter .7s ease, text-shadow .5s;">
+                {s.t}
+              </h3>
+
+              <!-- Desc -->
+              <p class="step-desc text-base md:text-lg leading-relaxed max-w-md transition-all duration-700"
+                style="color: rgba(255,255,255,0); filter: blur(4px);">
+                {s.d}
+              </p>
+
+              <!-- Hover glow -->
+              <div class="absolute inset-0 -left-6 -right-6 bg-gradient-to-r from-felina-morado/0 via-felina-morado/[0.03] to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none rounded-lg"></div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .step-title {
+    transition: color 0.5s ease, filter 0.7s ease, text-shadow 0.5s ease;
+  }
+  .step-desc {
+    transition: color 0.7s ease 0.15s, filter 0.7s ease 0.15s;
+  }
+  .process-step.is-active .step-line {
+    width: 80px;
+  }
+  .process-step.is-active .step-title {
+    color: rgba(255, 255, 255, 0.92) !important;
+    filter: blur(0px) !important;
+  }
+  .process-step.is-active .step-desc {
+    color: rgba(255, 255, 255, 0.65) !important;
+    filter: blur(0px) !important;
+  }
+  .process-step.is-active .step-dot {
+    background-color: #9333ea;
+    box-shadow: 0 0 16px 4px rgba(124, 4, 117, 0.75);
+    transform: scale(1.2);
+  }
+  .process-step.is-active .step-ring {
+    border-color: rgba(124, 4, 117, 0.5);
+    transform: scale(1.3);
+  }
+  .process-step.is-active .step-ghost {
+    opacity: 1 !important;
+    transform: translateY(-55%) scale(1) !important;
+    -webkit-text-stroke: 1px rgba(124, 4, 117, 0.14) !important;
+  }
+  .process-step:hover .step-title {
+    text-shadow: 0 0 60px rgba(124, 4, 117, 0.5);
+  }
+  .process-step:hover .step-dot {
+    background-color: #ff006a !important;
+    box-shadow: 0 0 20px 6px rgba(255, 0, 106, 0.6) !important;
+  }
+
+  /* Etapas del clip: apagadas en reposo, rosa y legibles cuando su paso es el que está en pantalla. */
+  .chapter-n,
+  .chapter-t {
+    color: rgba(255, 255, 255, 0.3);
+    transition: color 0.4s ease;
+  }
+  .chapter-d {
+    transition: color 0.4s ease;
+  }
+  .chapter.is-on .chapter-n {
+    color: #ff006a;
+  }
+  .chapter.is-on .chapter-t {
+    color: #fff;
+  }
+  .chapter.is-on .chapter-d {
+    color: rgba(255, 255, 255, 0.65);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .chapter-n,
+    .chapter-t,
+    .chapter-d {
+      transition-duration: 0.01ms;
+    }
+  }
+</style>
+
+<script>
+  const section = document.getElementById("process-steps");
+  const steps = section?.querySelectorAll<HTMLElement>(".process-step");
+  const fill = document.getElementById("process-fill") as HTMLElement | null;
+  const chapters = document.querySelectorAll<HTMLElement>("[data-chapter]");
+
+  if (!steps || !section) throw new Error("process section not found");
+
+  // ── IntersectionObserver: activate each step ──
+  const io = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-active");
+        }
+      });
+    },
+    { threshold: 0.25, rootMargin: "0px 0px -80px 0px" }
+  );
+
+  steps.forEach((s) => io.observe(s));
+
+  // ── Scroll: fill vertical track ──
+  function updateFill() {
+    if (!fill || !section) return;
+    const rect = section.getBoundingClientRect();
+    const winH = window.innerHeight;
+    // how far we've scrolled through the section (0 → 1)
+    const progress = Math.max(0, Math.min(1, (winH - rect.top) / (rect.height + winH)));
+    fill.style.height = `${progress * 100}%`;
+  }
+
+  // ── Scroll: encender las etapas del clip que corresponden al paso en pantalla ──
+  // El paso "actual" es el que cruza el centro del viewport; fuera de los pasos que las
+  // usan, las etapas quedan apagadas.
+  function updateChapters() {
+    if (!steps) return;
+    const mid = window.innerHeight / 2;
+    let current = -1;
+    steps.forEach((s, i) => {
+      const r = s.getBoundingClientRect();
+      if (r.top <= mid && r.bottom >= mid) current = i;
+    });
+    chapters.forEach((c) => {
+      c.classList.toggle("is-on", (c.dataset.steps ?? "").split(" ").includes(String(current)));
+    });
+  }
+
+  function onScroll() {
+    updateFill();
+    updateChapters();
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+</script>

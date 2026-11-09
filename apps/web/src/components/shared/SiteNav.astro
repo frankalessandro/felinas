@@ -1,0 +1,627 @@
+---
+/**
+ * Navegación única para academia y F Productions.
+ * Antes eran dos componentes casi idénticos (Navbar + ShowNavbar); acá cambia el tema por `side`.
+ */
+type Side = "academia" | "show";
+
+interface Props {
+  side: Side;
+}
+
+const { side } = Astro.props;
+
+const CONFIG = {
+  academia: {
+    wordmark: "FELINAS",
+    accent: "#E8115B",
+    // Líneas finas (progreso, subrayado): degradado claro→profundo dentro del rosa.
+    accentGradient: "linear-gradient(90deg, #FF4D86 0%, #E8115B 55%, #A50E48 100%)",
+    // El CTA va aparte del acento: es fondo con texto blanco encima, así que se
+    // mantiene en el tramo profundo del rosa para que el label se lea.
+    ctaGradient: "linear-gradient(115deg, #E8115B 0%, #A50E48 100%)",
+    links: [
+      { label: "Inicio", href: "#inicio" },
+      { label: "Clases", href: "#clases" },
+      { label: "Membresías", href: "#membresias" },
+      { label: "FAQs", href: "#comunidad" },
+      { label: "Contacto", href: "#contacto" },
+    ],
+    cta: {
+      label: "Agenda tu clase",
+      href: "https://wa.me/573203426558?text=%C2%A1Hola!%20Quiero%20agendar%20mi%20clase%20en%20Felinas",
+    },
+    cross: { label: "F Productions", href: "/show", note: "Shows en vivo" },
+    // Sobre fondo claro el degradado va de rosa vivo a rosa profundo, para no perder contraste.
+    gradient: "linear-gradient(115deg, #FF4D86 0%, #E8115B 48%, #A50E48 100%)",
+  },
+  show: {
+    wordmark: "F·PRODUCTIONS",
+    // El navbar iba en violeta (#A855F7), un color que no aparecía en ninguna otra
+    // parte de la página y por eso se leía como ajeno. Ahora usa el magenta que sí
+    // es el acento dominante de F Productions (71 usos en la sección).
+    accent: "#FF006A",
+    accentGradient: "linear-gradient(90deg, #FF6FA5 0%, #FF006A 55%, #C2004F 100%)",
+    // Tramo profundo del magenta: el CTA lleva texto blanco encima.
+    ctaGradient: "linear-gradient(115deg, #FF006A 0%, #B00350 100%)",
+    links: [
+      { label: "Nosotras", href: "#nosotras" },
+      { label: "Reels", href: "#reels" },
+      { label: "Equipo", href: "#equipo" },
+      { label: "Producción", href: "#produccion" },
+      { label: "Servicios", href: "#servicios" },
+      { label: "Galería", href: "#galeria" },
+      { label: "Proceso", href: "#proceso" },
+    ],
+    cta: {
+      label: "Cotizar show",
+      href: "https://wa.me/573203426558?text=%C2%A1Hola!%20Quiero%20contratar%20un%20show%20de%20Felinas",
+    },
+    cross: { label: "Academia", href: "/academia", note: "Clases y formación" },
+    // Sobre fondo oscuro arranca casi blanco para que el trazo del logo se lea.
+    // El tramo de color pasó de morado (#C084FC → #7C0475) al rosa de marca: el
+    // logotipo era la mancha de morado más visible del navbar.
+    gradient: "linear-gradient(115deg, #FFEAF2 0%, #FF6FA5 42%, #C2004F 100%)",
+  },
+} as const;
+
+const { wordmark, accent, accentGradient, ctaGradient, links, cta, cross, gradient } = CONFIG[side];
+
+// Academia vive sobre fondo claro; F Productions sobre fondo oscuro.
+const theme = side === "academia" ? "light" : "dark";
+---
+
+<header class:list={["nav", theme === "light" && "is-light"]} data-nav style={`--accent: ${accent}; --accent-gradient: ${accentGradient}; --cta-gradient: ${ctaGradient}; --brand-gradient: ${gradient}`}>
+  <div class="nav-bar" data-nav-bar>
+    <!-- Volver a la landing -->
+    <a class="nav-back" href="/" aria-label="Volver al inicio">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="m12 19-7-7 7-7"></path><path d="M19 12H5"></path>
+      </svg>
+    </a>
+
+    <a class="nav-brand" href="#inicio" data-nav-link>
+      <span class="nav-brand-mark" aria-hidden="true"></span>
+      <span class="nav-brand-word">{wordmark}</span>
+    </a>
+
+    <nav class="nav-links" aria-label="Secciones">
+      {
+        links.map((l) => (
+          <a href={l.href} data-nav-link data-spy={l.href}>
+            {l.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <a class="nav-cta" href={cta.href} target="_blank" rel="noopener noreferrer">{cta.label}</a>
+
+    <button class="nav-burger" data-nav-toggle aria-label="Abrir menú" aria-expanded="false" aria-controls="nav-panel">
+      <span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Progreso de lectura: da estructura a la barra y marca dónde va el usuario. -->
+  <span class="nav-progress" data-nav-progress aria-hidden="true"></span>
+
+  <!-- Menú móvil a pantalla completa -->
+  <div class="nav-panel" id="nav-panel" data-nav-panel hidden>
+    <span class="nav-panel-rule" aria-hidden="true"></span>
+
+    <nav class="nav-panel-links" aria-label="Secciones">
+      {
+        links.map((l, i) => (
+          <a href={l.href} data-nav-link data-panel-item>
+            <span class="nav-panel-index">0{i + 1}</span>
+            {l.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="nav-panel-foot" data-panel-item>
+      <a class="nav-panel-cta" href={cta.href} target="_blank" rel="noopener noreferrer">{cta.label}</a>
+
+      <a class="nav-panel-cross" href={cross.href}>
+        <span class="nav-panel-cross-note">{cross.note}</span>
+        <span class="nav-panel-cross-label">{cross.label} →</span>
+      </a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 60;
+    font-family: "Inter", sans-serif;
+
+    /* Tema oscuro (F Productions) */
+    --ink: #fff;
+    --ink-soft: rgba(255, 255, 255, 0.55);
+    --ink-faint: rgba(255, 255, 255, 0.4);
+    --line: rgba(255, 255, 255, 0.14);
+    --surface: rgba(5, 5, 5, 0.82);
+    --panel: #050505;
+  }
+
+  /* Tema claro (Academia): las secciones son bg-background, blanco puro. */
+  .nav.is-light {
+    --ink: #050505;
+    --ink-soft: rgba(10, 10, 10, 0.72);
+    --ink-faint: rgba(10, 10, 10, 0.5);
+    --line: rgba(10, 10, 10, 0.18);
+    --surface: rgba(255, 255, 255, 0.94);
+    --panel: #f7f4f6;
+  }
+
+  /* Sobre el hero claro (grilla rosa + texto fantasma "DANCE") una barra totalmente
+     transparente se pierde: en tema claro siempre hay superficie, solo cambia su densidad. */
+  .nav.is-light .nav-bar {
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(12px);
+    border-bottom-color: var(--line);
+  }
+
+  .nav.is-light.is-scrolled .nav-bar {
+    box-shadow: 0 10px 30px rgba(10, 10, 10, 0.07);
+  }
+
+  /* El glow solo tiene sentido contra el fondo oscuro. */
+  .nav:not(.is-light) .nav-brand-mark {
+    filter: drop-shadow(0 0 12px color-mix(in srgb, var(--accent) 45%, transparent));
+  }
+
+  /* Barra: transparente arriba, condensada al hacer scroll (la clase la pone el script). */
+  .nav-bar {
+    display: flex;
+    align-items: center;
+    gap: clamp(0.5rem, 2vw, 1.25rem);
+    padding: 0.9rem clamp(1rem, 4vw, 3rem);
+    transition: background-color 0.35s ease, padding 0.35s ease, border-color 0.35s ease;
+    background-color: transparent;
+    border-bottom: 1px solid transparent;
+  }
+
+  .nav.is-scrolled .nav-bar {
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+    background-color: var(--surface);
+    backdrop-filter: blur(14px);
+    border-bottom-color: var(--line);
+  }
+
+  .nav-progress {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    height: 2px;
+    background: var(--accent-gradient);
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+
+  .nav-back {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    flex: none;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink-soft);
+    transition: color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  }
+
+  .nav-back svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .nav-back:hover {
+    color: var(--ink);
+    border-color: var(--accent);
+    transform: translateX(-2px);
+  }
+
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-right: auto;
+    text-decoration: none;
+    color: var(--ink);
+  }
+
+  /* El arte del logo es blanco puro con alfa. Usado como máscara, el color lo pone
+     el fondo del elemento: así el mismo .svg se pinta con el degradado de cada lado. */
+  .nav-brand-mark {
+    display: block;
+    height: 1.6rem;
+    aspect-ratio: 1158 / 1020;
+    flex: none;
+    background-image: var(--brand-gradient);
+    -webkit-mask: url("/assets/PanteraFelinasLogo.svg") center / contain no-repeat;
+    mask: url("/assets/PanteraFelinasLogo.svg") center / contain no-repeat;
+  }
+
+  .nav-brand-word {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 900;
+    font-size: clamp(0.85rem, 2.2vw, 1.05rem);
+    letter-spacing: 0.16em;
+    white-space: nowrap;
+    background-image: var(--brand-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* --- Links de escritorio --- */
+  .nav-links {
+    display: none;
+    align-items: center;
+    gap: clamp(1rem, 2.5vw, 2rem);
+  }
+
+  .nav-links a {
+    position: relative;
+    padding: 0.35rem 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink-soft);
+    transition: color 0.25s ease;
+    white-space: nowrap;
+  }
+
+  /* Subrayado que crece desde la izquierda: sin medir posiciones, no se rompe al redimensionar. */
+  .nav-links a::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 1px;
+    background: var(--accent-gradient);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .nav-links a:hover {
+    color: var(--ink);
+  }
+
+  .nav-links a.is-active {
+    color: var(--accent);
+  }
+
+  .nav-links a:hover::after,
+  .nav-links a.is-active::after {
+    transform: scaleX(1);
+  }
+
+  .nav-links a.is-active::after {
+    height: 2px;
+  }
+
+  .nav-cta {
+    display: none;
+    align-items: center;
+    padding: 0.55rem 1.1rem;
+    border-radius: 999px;
+    background: var(--cta-gradient);
+    color: #fff;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+  }
+
+  .nav-cta {
+    box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+
+  .nav-cta:hover {
+    transform: translateY(-1px);
+    /* El halo sí usa el acento claro: es luz alrededor del botón, no texto sobre él,
+       así que aporta el brillo de marca sin comprometer la legibilidad del label. */
+    box-shadow: 0 0 26px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+
+  /* --- Botón hamburguesa: dos trazos que forman la X --- */
+  .nav-burger {
+    display: grid;
+    place-content: center;
+    gap: 5px;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex: none;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  .nav-burger span {
+    display: block;
+    width: 20px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--ink);
+    transition: transform 0.35s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  .nav.is-open .nav-burger span:first-child {
+    transform: translateY(3.5px) rotate(45deg);
+  }
+
+  .nav.is-open .nav-burger span:last-child {
+    transform: translateY(-3.5px) rotate(-45deg);
+  }
+
+  /* --- Panel móvil --- */
+  .nav-panel {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: clamp(1.5rem, 5vh, 3rem);
+    padding: 5rem clamp(1.5rem, 7vw, 3rem) 2.5rem;
+    background: var(--panel);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .nav-panel[hidden] {
+    display: none;
+  }
+
+  /* Guiño a las bandas diagonales de la landing. */
+  .nav-panel-rule {
+    position: absolute;
+    top: 50%;
+    left: -10%;
+    width: 120%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent), transparent);
+    transform: rotate(-8deg);
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .nav-panel-links {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  .nav-panel-links a {
+    display: flex;
+    align-items: baseline;
+    gap: 0.9rem;
+    padding: 0.2rem 0;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.5rem, 7vw, 2.25rem);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+  }
+
+  .nav-panel-index {
+    font-family: "Inter", sans-serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    color: var(--accent);
+  }
+
+  .nav-panel-foot {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .nav-panel-cta {
+    align-self: flex-start;
+    padding: 0.9rem 1.8rem;
+    border-radius: 999px;
+    background: var(--cta-gradient);
+    color: #fff;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .nav-panel-cross {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    text-decoration: none;
+  }
+
+  .nav-panel-cross-note {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .nav-panel-cross-label {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 0.05em;
+    color: var(--ink);
+  }
+
+  /* --- Escritorio --- */
+  @media (min-width: 1024px) {
+    .nav-links,
+    .nav-cta {
+      display: flex;
+    }
+
+    .nav-burger {
+      display: none;
+    }
+
+    .nav-panel {
+      display: none !important;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nav-bar,
+    .nav-back,
+    .nav-cta,
+    .nav-burger span,
+    .nav-links a::after {
+      transition-duration: 0.01ms;
+    }
+  }
+</style>
+
+<script>
+  import { gsap, ScrollTrigger } from "../../scripts/animations";
+
+  const nav = document.querySelector<HTMLElement>("[data-nav]");
+  if (nav) {
+    const panel = nav.querySelector<HTMLElement>("[data-nav-panel]")!;
+    const toggle = nav.querySelector<HTMLButtonElement>("[data-nav-toggle]")!;
+    const items = Array.from(panel.querySelectorAll<HTMLElement>("[data-panel-item]"));
+    const rule = panel.querySelector<HTMLElement>(".nav-panel-rule")!;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    // --- Progreso de lectura ---
+    const progress = nav.querySelector<HTMLElement>("[data-nav-progress]");
+    if (progress) {
+      gsap.to(progress, {
+        scaleX: 1,
+        ease: "none",
+        scrollTrigger: { start: 0, end: "max", scrub: 0.3 },
+      });
+    }
+
+    // --- Condensado al hacer scroll ---
+    ScrollTrigger.create({
+      start: "top -60",
+      end: 99999,
+      onToggle: (self) => nav.classList.toggle("is-scrolled", self.isActive),
+    });
+
+    // --- Sección activa: resalta el link cuyo bloque ocupa el centro del viewport ---
+    // Se mide con getBoundingClientRect en vivo (no con un rango start/end precalculado):
+    // una sección pineada (ej. Reels) mantiene su altura de caja original
+    // aunque su scroll dure varias pantallas, así que un ScrollTrigger con "bottom 55%"
+    // la daba por terminada mucho antes de que el pin realmente soltara, activando el
+    // siguiente link de golpe. Leyendo la posición real en cada frame, el link se queda
+    // activo mientras la sección siga en pantalla, esté pineada o no.
+    const spySections = Array.from(nav.querySelectorAll<HTMLAnchorElement>("[data-spy]"))
+      .map((link) => ({ link, target: document.querySelector<HTMLElement>(link.dataset.spy!) }))
+      .filter((s): s is { link: HTMLAnchorElement; target: HTMLElement } => !!s.target);
+
+    if (spySections.length) {
+      const markActiveSection = () => {
+        const centerY = window.innerHeight * 0.55;
+        let closest: HTMLElement | null = null;
+        let minDist = Infinity;
+
+        for (const { target } of spySections) {
+          const rect = target.getBoundingClientRect();
+          if (rect.bottom <= 0 || rect.top >= window.innerHeight) continue; // fuera de pantalla
+          const dist = Math.abs(rect.top + rect.height / 2 - centerY);
+          if (dist < minDist) {
+            minDist = dist;
+            closest = target;
+          }
+        }
+
+        spySections.forEach(({ link, target }) => link.classList.toggle("is-active", target === closest));
+      };
+
+      ScrollTrigger.create({ start: 0, end: "max", onUpdate: markActiveSection, onRefresh: markActiveSection });
+    }
+
+    // --- Panel móvil ---
+    // El panel se saca del árbol accesible recién cuando la salida terminó.
+    const intro = gsap.timeline({
+      paused: true,
+      onReverseComplete: () => {
+        if (!open) panel.hidden = true;
+      },
+    });
+    if (!reduce) {
+      intro
+        .from(panel, { autoAlpha: 0, duration: 0.25, ease: "power1.out" })
+        .from(rule, { scaleX: 0, duration: 0.6, ease: "power3.out" }, 0.05)
+        .from(items, { autoAlpha: 0, y: 26, duration: 0.5, stagger: 0.06, ease: "power3.out" }, 0.1);
+    }
+
+    let open = false;
+
+    const setOpen = (next: boolean) => {
+      if (next === open) return;
+      open = next;
+
+      nav.classList.toggle("is-open", open);
+      toggle.setAttribute("aria-expanded", String(open));
+      toggle.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+      // El fondo no debe scrollear detrás del panel abierto.
+      document.documentElement.style.overflow = open ? "hidden" : "";
+
+      if (open) {
+        panel.hidden = false;
+        intro.play(0);
+      } else if (reduce) {
+        panel.hidden = true;
+      } else {
+        intro.reverse();
+      }
+    };
+
+    toggle.addEventListener("click", () => setOpen(!open));
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && open) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    // --- Scroll suave + cierre del panel al elegir sección ---
+    nav.querySelectorAll<HTMLAnchorElement>("[data-nav-link]").forEach((link) => {
+      link.addEventListener("click", (e) => {
+        const href = link.getAttribute("href");
+        if (!href?.startsWith("#")) return;
+        const target = document.querySelector(href);
+        if (!target) return;
+
+        e.preventDefault();
+        setOpen(false);
+        target.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+      });
+    });
+  }
+</script>

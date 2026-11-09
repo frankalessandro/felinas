@@ -1,0 +1,47 @@
+---
+import { singleClassWhatsappURL } from "../../scripts/whatsapp";
+
+interface Props {
+  /** Disciplinas con clase suelta en el tab actual: Twerk+Urbano muestra ambas, el resto solo Twerk. */
+  disciplines: ("twerk" | "urbano")[];
+}
+
+const { disciplines } = Astro.props;
+
+const catalog = {
+  twerk: { name: "Twerk", price: "$30.000", dot: "bg-primary" },
+  urbano: { name: "Urbano", price: "$35.000", dot: "bg-felina-morado" },
+};
+---
+
+<!-- Franja editorial entre dos líneas finas: el precio es el protagonista y cada uno es un enlace a WhatsApp. -->
+<div data-reveal class="mx-auto mt-16 max-w-5xl border-y border-foreground/15 py-8 md:py-10 grid items-center gap-8 md:grid-cols-[minmax(0,15rem)_1fr] md:gap-12">
+  <div>
+    <p class="font-display text-[11px] font-bold uppercase tracking-[0.3em] text-primary">Sin membresía</p>
+    <p class="mt-2 font-display text-3xl font-black uppercase leading-[0.95] tracking-tight text-foreground md:text-4xl">Clase<br />individual</p>
+  </div>
+
+  <div class:list={["grid divide-y divide-foreground/15 sm:divide-y-0 sm:divide-x", disciplines.length > 1 && "sm:grid-cols-2"]}>
+    {disciplines.map((key) => {
+      const d = catalog[key];
+      return (
+        <a
+          href={singleClassWhatsappURL(d.name, d.price)}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="group block py-5 first:pt-0 last:pb-0 sm:px-8 sm:py-0 sm:first:pl-0 sm:last:pr-0"
+        >
+          <span class="flex items-center gap-2.5">
+            <span class={"h-2 w-2 shrink-0 rounded-full " + d.dot}></span>
+            <span class="font-display text-xs font-bold uppercase tracking-[0.25em] text-foreground/55">{d.name}</span>
+          </span>
+          <span class="mt-2 block font-display font-black leading-none tracking-tighter text-foreground transition-colors duration-300 group-hover:text-primary" style="font-size: clamp(2.6rem, 6vw, 4rem);">{d.price}</span>
+          <span class="mt-3 inline-flex items-center gap-2 border-b border-primary/40 pb-0.5 text-[11px] font-bold uppercase tracking-[0.22em] text-primary transition-all group-hover:gap-3 group-hover:border-primary">
+            Reservar
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+          </span>
+        </a>
+      );
+    })}
+  </div>
+</div>

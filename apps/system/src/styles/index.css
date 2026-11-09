@@ -1,0 +1,137 @@
+@import 'tailwindcss';
+@import 'sileo/styles.css';
+
+/* Identidad Felinas en clave de producto: base oscura con leve tinte violeta, rosa fucsia
+   como color de marca y de acción, violeta y ámbar como secundarios de datos, y estados
+   claros. La expresividad de la web queda en detalles puntuales, no en toda la interfaz. */
+@theme {
+  --font-display: 'Montserrat', ui-sans-serif, sans-serif;
+  --font-sans: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: #07030b;
+  --color-surface: #120a17;
+  --color-surface-2: #1b1121;
+  --color-surface-3: #261830;
+  --color-line: #2e1f38;
+  --color-line-strong: #45304f;
+
+  --color-fg: #f7f1f4;
+  --color-fg-muted: #b3a3b8;
+  --color-fg-subtle: #8a7a90;
+
+  --color-rosa: #ea1a62;
+  --color-rosa-hover: #ff2e76;
+  --color-rosa-soft: #ea1a6226;
+  --color-rosa-glow: #e0359e;
+  --color-dorado: #ffd900;
+  --color-dorado-soft: #ffd9001f;
+  --color-morado: #8a008a;
+  --color-stage: #1a0722;
+  --color-violeta: #9b6bff;
+  --color-violeta-soft: #9b6bff1f;
+  --color-ambar: #f5b53d;
+  --color-ambar-soft: #f5b53d1f;
+  --color-cian: #3cc8e8;
+  --color-cian-soft: #3cc8e81f;
+  --color-surface-raised: #1f1626;
+
+  --color-ok: #3ddc97;
+  --color-ok-soft: #3ddc971f;
+  --color-warn: #ffb020;
+  --color-warn-soft: #ffb0201f;
+  --color-danger: #ff5a5f;
+  --color-danger-soft: #ff5a5f1f;
+
+  --radius-xl: 1rem;
+  --radius-2xl: 1.25rem;
+
+  --shadow-glow: 0 0 0 1px #ea1a6240, 0 10px 40px -10px #ea1a6280;
+  --shadow-card: 0 1px 0 0 #ffffff08 inset, 0 20px 40px -24px #000000cc;
+
+  --shadow-ticket: 0 1px 0 0 #ffffff0d inset, 0 30px 60px -30px #000000f2, 0 0 0 1px #2e1f38;
+
+  --ease-stage: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  --animate-fade-up: fade-up 0.45s var(--ease-stage) both;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-glow-pulse: glow-pulse 2.8s ease-in-out infinite;
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes shimmer {
+    from { background-position: -200% 0; }
+    to { background-position: 200% 0; }
+  }
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 #ea1a6266; }
+    50% { box-shadow: 0 0 0 8px #ea1a6200; }
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    background: var(--color-bg);
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-bg text-fg font-sans antialiased;
+    min-height: 100dvh;
+    font-feature-settings: 'tnum' 1;
+  }
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-rosa-hover);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--color-rosa);
+    color: white;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-line-strong) transparent;
+  }
+}
+
+@utility text-gradient-felinas {
+  background-image: linear-gradient(135deg, var(--color-rosa), var(--color-rosa-glow) 50%, var(--color-morado));
+  background-clip: text;
+  color: transparent;
+}
+
+@utility bg-gradient-felinas {
+  background-image: linear-gradient(135deg, var(--color-rosa), var(--color-morado));
+}
+
+/* Motivo de rasguño: tres trazos diagonales, usado como textura de fondo sutil. */
+@utility bg-claws {
+  background-image:
+    radial-gradient(60rem 30rem at 110% -10%, #ea1a621c, transparent 60%),
+    radial-gradient(40rem 30rem at -10% 110%, #8a008a1f, transparent 60%);
+}
+
+/* Ticket de show: muescas laterales a la altura de --notch-y (el troquel). */
+@utility ticket-notch {
+  --notch: 11px;
+  mask:
+    radial-gradient(circle var(--notch) at 0 var(--notch-y, 50%), #0000 98%, #000) left / 51% 100% no-repeat,
+    radial-gradient(circle var(--notch) at 100% var(--notch-y, 50%), #0000 98%, #000) right / 51% 100% no-repeat;
+}
+
+@utility hide-scrollbar {
+  scrollbar-width: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

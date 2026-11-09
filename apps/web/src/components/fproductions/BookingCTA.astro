@@ -1,0 +1,70 @@
+---
+const WHATSAPP_URL =
+  "https://wa.me/573203426558?text=%C2%A1Hola!%20Quiero%20contratar%20un%20show%20de%20Felinas%20F%20Productions";
+---
+
+<section id="booking" class="relative py-32 md:py-44 overflow-hidden bg-[#07030b]">
+  <!-- Línea vertical central -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[2px] h-full bg-gradient-to-b from-transparent via-[#ff006a]/50 to-transparent"></div>
+
+  <!-- Glow morado + glow magenta — doble aura de escenario -->
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[850px] h-[300px] bg-felina-morado/12 rounded-[100%] blur-[110px]"></div>
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[200px] bg-[#ff006a]/18 rounded-[100%] blur-[80px]" data-ambient="glow"></div>
+
+  <!-- Líneas diagonales decorativas -->
+  <div class="absolute inset-0 pointer-events-none overflow-hidden">
+    <div class="absolute top-[30%] -left-10 w-[110%] h-px bg-gradient-to-r from-transparent via-[#ff006a]/12 to-transparent" style="transform: rotate(-3deg)"></div>
+    <div class="absolute bottom-[30%] -left-10 w-[110%] h-px bg-gradient-to-r from-transparent via-[#ff006a]/12 to-transparent" style="transform: rotate(3deg)"></div>
+  </div>
+
+  <div class="container px-4 relative z-10 text-center">
+    <p class="text-[#ff006a] uppercase tracking-[0.4em] text-xs md:text-sm font-bold mb-7">Hazlo realidad</p>
+    <h2 data-reveal class="mb-7 text-white">
+      <span class="title-main" style="font-size: clamp(3rem, 10vw, 7rem);"><span class="title-accent">RESERVA</span></span>
+      <span class="title-eyebrow !mb-0 mt-3">Tu show</span>
+    </h2>
+    <p class="text-white/70 text-base md:text-lg max-w-xl mx-auto mb-12 leading-relaxed">
+      Cuéntanos sobre tu evento y armamos una propuesta a tu medida. Respondemos rápido por WhatsApp.
+    </p>
+
+    <a
+      href={WHATSAPP_URL}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="cta-flame group relative inline-flex items-center justify-center gap-3 px-10 py-5 font-display font-bold text-sm tracking-widest uppercase text-white rounded-full hover:scale-105 transition-all overflow-hidden"
+    >
+      <span class="relative z-10 flex items-center gap-3">
+        <svg viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.978-1.607z" /></svg>
+        Contratar show
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform">
+          <path d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </span>
+    </a>
+  </div>
+</section>
+
+<style>
+  .cta-flame {
+    background: linear-gradient(115deg, #ff006a 0%, #7c0475 55%, #c084fc 100%);
+    background-size: 220% 220%;
+    background-position: 0% 50%;
+    box-shadow: 0 0 35px rgba(255, 0, 106, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transition: background-position 0.6s ease, box-shadow 0.4s ease, transform 0.3s ease;
+  }
+  .cta-flame:hover {
+    background-position: 100% 50%;
+    box-shadow: 0 0 55px rgba(255, 0, 106, 0.7), 0 0 30px rgba(124, 4, 117, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+  .cta-flame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.7s ease;
+  }
+  .cta-flame:hover::before {
+    transform: translateX(120%);
+  }
+</style>

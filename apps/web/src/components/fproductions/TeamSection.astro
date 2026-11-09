@@ -1,0 +1,235 @@
+---
+import { Image } from "astro:assets";
+import maeImg from "../../assets/fproductions/mae.webp";
+import andreaImg from "../../assets/fproductions/andrea.webp";
+import isaImg from "../../assets/fproductions/isa.webp";
+import saloImg from "../../assets/fproductions/salo.webp";
+import sharyImg from "../../assets/fproductions/shary.webp";
+import angieImg from "../../assets/fproductions/angie.webp";
+
+const team = [
+  { name: "Mae", role: "Directora", trait: "La alegre del equipo", img: maeImg },
+  { name: "Andrea", role: "Integrante", trait: "La multifacética del equipo", img: andreaImg },
+  { name: "Angie", role: "Integrante", trait: "La apasionada del equipo", img: angieImg },
+  { name: "Isa", role: "Integrante", trait: "La auténtica del equipo", img: isaImg },
+  { name: "Salo", role: "Integrante", trait: "La enérgica del equipo", img: saloImg, focusCenter: true },
+  { name: "Shary", role: "Integrante", trait: "La soñadora del equipo", img: sharyImg, focusCenter: true },
+];
+const total = String(team.length).padStart(2, "0");
+---
+
+<section id="equipo" class="relative bg-[#07030b]">
+  <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#ff006a]/25 to-transparent"></div>
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[70vw] h-56 bg-felina-morado/12 blur-[110px] pointer-events-none"></div>
+
+  <div class="container px-4 md:px-8 relative z-10 pt-24 md:pt-36 pb-10 md:pb-14">
+    <div data-reveal class="flex flex-col md:flex-row md:items-end justify-between gap-6">
+      <div>
+        <p class="font-display font-semibold text-[#ff006a] text-xs tracking-[0.35em] uppercase mb-5 flex items-center gap-3">
+          <span class="w-10 h-px bg-[#ff006a]"></span> Quiénes hacen posible cada experiencia
+        </p>
+        <h2 class="text-white">
+          <span class="title-main">NUESTRO <span class="title-accent">EQUIPO</span></span>
+        </h2>
+      </div>
+      <div class="max-w-sm">
+        <p class="text-white/60 text-sm md:text-base leading-relaxed">
+          Detrás de cada proyecto hay personas apasionadas por lo que hacen. Cada integrante aporta su
+          talento, personalidad y compromiso para crear experiencias auténticas y memorables.
+        </p>
+        <p class="mt-4 text-[10px] font-semibold uppercase tracking-[0.3em] text-white/40">
+          <span class="hidden md:inline">Pasa el cursor</span><span class="md:hidden">Toca</span> para conocerlas
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container px-4 md:px-8 relative z-10 pb-24 md:pb-36">
+    <!-- Tiras de camerino (ver src/scripts/team.ts). Sin JS se ve como fila/columna de
+         franjas iguales; con JS pasan a absolutas y se abren de a una. -->
+    <div data-strips data-reveal role="group" aria-label="Integrantes del equipo" class="strips">
+      {team.map((member, i) => {
+        const index = String(i + 1).padStart(2, "0");
+        return (
+          <button type="button" data-strip aria-expanded={i === 0 ? "true" : "false"} aria-label={`${member.name}, ${member.role}: ${member.trait}`} class="strip">
+            <div data-strip-inner class="strip-inner">
+              <Image
+                src={member.img}
+                alt=""
+                class={`h-full w-full object-cover object-top ${member.focusCenter ? "md:object-center" : ""}`}
+                widths={[500, 800, 1100]}
+                sizes="(max-width: 767px) 100vw, 60vw"
+                loading="lazy"
+              />
+            </div>
+            <div data-strip-dim class="absolute inset-0 bg-[#07030b]/60 pointer-events-none"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#07030b]/90 via-[#07030b]/10 to-transparent pointer-events-none"></div>
+
+            <!-- Tira cerrada: nombre + número -->
+            <span data-strip-label class="strip-label" aria-hidden="true">
+              <span class="text-[#ff006a] text-[10px] font-semibold tracking-[0.2em]">{index}</span>
+              <span class="strip-label-name font-display font-black uppercase text-white text-lg tracking-tight">{member.name}</span>
+            </span>
+
+            <!-- Tira abierta: ficha -->
+            <span data-strip-info class="strip-info" aria-hidden="true">
+              <span class="flex items-center gap-3 text-[11px] font-semibold tracking-[0.3em]">
+                <span class="text-[#ff006a]">{index}</span>
+                <span class="w-8 h-px bg-white/30"></span>
+                <span class="text-white/40">{total}</span>
+              </span>
+              <span class="block font-display font-black uppercase text-white tracking-tighter leading-[0.85] mt-3" style="font-size: clamp(2.75rem, 7vw, 6rem);">
+                {member.name}
+              </span>
+              <span class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-3 text-xs md:text-sm">
+                <span class={`uppercase tracking-[0.3em] font-semibold ${member.role === "Directora" ? "bg-[#ff006a] text-white px-2 py-0.5" : "text-[#ff006a]"}`}>
+                  {member.role}
+                </span>
+                <span class="text-white/60 italic">{member.trait}</span>
+              </span>
+            </span>
+          </button>
+        );
+      })}
+    </div>
+
+    <!-- Controles tipo carrusel: mismas acciones que hover/tap, pero explícitas -->
+    <div class="mt-6 md:mt-8 flex items-center justify-between gap-6">
+      <div class="flex items-center gap-4 flex-1 max-w-xs">
+        <span class="font-display font-black text-white text-sm tabular-nums" aria-live="polite">
+          <span data-strips-current>01</span><span class="text-white/35"> / {total}</span>
+        </span>
+        <span class="relative h-px flex-1 bg-white/15 overflow-hidden">
+          <span data-strips-progress class="absolute inset-0 bg-[#ff006a] origin-left" style={`transform: scaleX(${1 / team.length})`}></span>
+        </span>
+      </div>
+      <div class="flex items-center gap-3">
+        <button type="button" data-strips-prev aria-label="Integrante anterior" class="strips-arrow">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M15 5l-7 7 7 7" /></svg>
+        </button>
+        <button type="button" data-strips-next aria-label="Integrante siguiente" class="strips-arrow">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Fallback previo al JS: franjas iguales en flex */
+  .strips {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .strip {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    flex: 0 0 76px;
+    text-align: left;
+    cursor: pointer;
+    background: #11081a;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .strip-inner {
+    position: absolute;
+    inset: 0;
+  }
+  .strip:focus-visible {
+    outline: none;
+  }
+  .strip:focus-visible .strip-inner {
+    box-shadow: inset 0 0 0 3px #ff006a;
+  }
+
+  .strip-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--strip-closed, 60px);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 1.25rem;
+    pointer-events: none;
+  }
+  .strip-info {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0 1.25rem 1.75rem;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+  }
+
+  /* JS listo: posiciones absolutas manejadas con transform + clip-path */
+  .strips[data-ready] {
+    display: block;
+    /* Cada panel mide lo que mide abierto (clip-path solo recorta lo pintado, no el
+       overflow): los últimos se salen del contenedor y generaban scroll lateral. `clip`
+       y no `hidden` para no crear contexto de scroll. */
+    overflow: clip;
+  }
+  .strips[data-ready] .strip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    will-change: transform, clip-path;
+  }
+
+  .strips-arrow {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    color: #fff;
+    border: 1px solid rgb(255 255 255 / 0.2);
+    clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    background: rgb(255 255 255 / 0.04);
+    transition: background-color 0.25s, border-color 0.25s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .strips-arrow:hover,
+  .strips-arrow:focus-visible {
+    background: #ff006a;
+    border-color: #ff006a;
+    outline: none;
+  }
+
+  @media (min-width: 768px) {
+    .strips-arrow {
+      width: 3.5rem;
+      height: 3.5rem;
+    }
+    .strips {
+      flex-direction: row;
+      gap: 6px;
+      height: min(78vh, 760px);
+    }
+    .strip {
+      flex: 1 1 0;
+    }
+    .strip-label {
+      right: auto;
+      bottom: 0;
+      height: auto;
+      width: var(--strip-closed, 110px);
+      flex-direction: column-reverse;
+      justify-content: flex-start;
+      padding: 1.75rem 0;
+    }
+    .strip-label-name {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+    }
+    .strip-info {
+      /* Libra la inclinación del borde derecho del clip-path */
+      padding: 0 4rem 2.5rem 2.5rem;
+    }
+  }
+</style>

@@ -1,0 +1,66 @@
+---
+import Layout from "../layouts/Layout.astro";
+import SiteNav from "../components/shared/SiteNav.astro";
+import CommunityMosaic from "../components/academia/CommunityMosaic.astro";
+import ClassesSection from "../components/academia/ClassesSection.astro";
+import InstructorsSection from "../components/academia/InstructorsSection.astro";
+import MembershipSection from "../components/academia/MembershipSection.astro";
+import FAQSection from "../components/academia/FAQSection.astro";
+import CTASection from "../components/academia/CTASection.astro";
+import SiteFooter from "../components/shared/SiteFooter.astro";
+import WhatsAppButton from "../components/shared/WhatsAppButton.astro";
+import HeroSpotlight from "../components/academia/HeroSpotlight.astro";
+import LoadingScreen from "../components/shared/LoadingScreen.astro";
+import maeHeroImg from "../assets/academia/mae-hero.webp";
+import maePantherImg from "../assets/academia/mae-panther-hero.webp";
+---
+
+<Layout title="Felinas Academia — Clases de danza urbana, twerk y hip hop">
+  <LoadingScreen />
+  <div class="academia-page min-h-screen bg-black">
+    <SiteNav side="academia" />
+    <main>
+      <HeroSpotlight bg1={maeHeroImg.src} bg2={maePantherImg.src} />
+      <CommunityMosaic />
+      <ClassesSection />
+      <InstructorsSection />
+      <!-- Membresías y FAQ comparten un solo fondo (y sus luces cruzan la unión): sin costura entre secciones -->
+      <div class="relative bg-muted overflow-clip">
+        <MembershipSection />
+        <FAQSection />
+      </div>
+      <CTASection />
+    </main>
+    <SiteFooter side="academia" />
+    <WhatsAppButton />
+  </div>
+</Layout>
+
+<script>
+  // Orquestador único de la página: todas las timelines se registran acá.
+  import { initReveals, initSlideReveals, initCounters, initAmbient, initScrollActive, initParallaxY, initMosaic } from "../scripts/animations";
+  import { revealPage } from "../scripts/loader";
+
+  // initReveals()/initSlideReveals() ocultan sus elementos YA (gsap.set, sin medir
+  // layout): tiene que pasar antes del primer paint o el usuario ve el contenido
+  // saltar de visible a oculto, que cuenta como layout shift real. Lo caro de esas
+  // funciones (el ScrollTrigger por elemento) se devuelve y se ejecuta diferido.
+  const wireReveals = initReveals();
+  const wireSlideReveals = initSlideReveals();
+  const wireMosaic = initMosaic();
+
+  // revealPage() también va temprano: solo arma promesas, no depende de lo de abajo.
+  revealPage();
+
+  // El resto crea ScrollTrigger con forced reflow para toda la página; diferirlo un
+  // frame deja pintar primero sin que se note (nadie scrollea más rápido que eso).
+  requestAnimationFrame(() => {
+    wireReveals();
+    wireSlideReveals();
+    wireMosaic();
+    initCounters();
+    initAmbient();
+    initScrollActive();
+    initParallaxY();
+  });
+</script>

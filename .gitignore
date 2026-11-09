@@ -1,0 +1,15 @@
+node_modules/
+dist/
+dist-ssr/
+.astro/
+.tanstack/
+.turbo/
+.vercel
+*.log
+
+# secretos: solo se versiona .env.example
+.env*
+!.env.example
+.wrangler/
+.dev.vars*
+.claude/settings.local.json

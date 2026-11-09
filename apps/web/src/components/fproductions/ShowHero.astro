@@ -1,0 +1,211 @@
+---
+import { Image } from "astro:assets";
+import fotoGrupal from "../../assets/fproductions/foto-grupal.webp";
+
+const WHATSAPP_URL =
+  "https://wa.me/573203426558?text=%C2%A1Hola!%20Quiero%20contratar%20un%20show%20de%20Felinas";
+---
+
+<section
+  id="inicio"
+  class="relative min-h-screen flex items-center overflow-hidden pt-16 md:pt-24"
+>
+  <!-- Base -->
+  <div class="absolute inset-0 bg-[#07030b]"></div>
+
+  <!-- Glows: morado izquierda + magenta derecha — más directivos, más crudos -->
+  <div class="absolute top-[5%] left-[8%] w-[480px] h-[480px] rounded-full bg-felina-morado/30 blur-[110px] mix-blend-screen" data-ambient="float" data-ambient-duration="11"></div>
+  <div class="absolute bottom-[10%] right-[4%] w-[500px] h-[500px] rounded-full bg-[#ff006a]/18 blur-[100px] mix-blend-screen" data-ambient="float" data-ambient-duration="9" data-ambient-reverse></div>
+  <div class="absolute top-[30%] right-[20%] w-[250px] h-[250px] rounded-full bg-[#ff006a]/10 blur-[70px] mix-blend-screen" data-ambient="float" data-ambient-duration="7"></div>
+
+  <!-- Líneas diagonales decorativas -->
+  <div class="absolute inset-0 pointer-events-none overflow-hidden">
+    <div class="absolute top-[18%] -left-10 w-[110%] h-px bg-gradient-to-r from-transparent via-[#ff006a]/15 to-transparent" style="transform: rotate(-6deg)"></div>
+    <div class="absolute top-[22%] -left-10 w-[110%] h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" style="transform: rotate(-6deg)"></div>
+  </div>
+
+  <!-- Ghost word — más impactante, stroke magenta -->
+  <div data-parallax-x="220" class="absolute top-1/2 -translate-y-1/2 -left-4 md:left-2 opacity-[0.07] pointer-events-none select-none z-[1] overflow-hidden">
+    <h2 class="font-display font-black leading-[0.8]" style="font-size: clamp(10rem, 24vw, 28rem); color: transparent; -webkit-text-stroke: 2px #ff006a;">
+      LIVE
+    </h2>
+  </div>
+  <!-- Ghost word sombra chromática — offset morado -->
+  <div data-parallax-x="160" class="absolute top-1/2 -translate-y-1/2 -left-4 md:left-2 opacity-[0.035] pointer-events-none select-none z-[1] overflow-hidden" style="transform: translateY(-50%) translateX(6px) translateY(-4px);">
+    <h2 class="font-display font-black leading-[0.8]" style="font-size: clamp(10rem, 24vw, 28rem); color: transparent; -webkit-text-stroke: 2px #c084fc;">
+      LIVE
+    </h2>
+  </div>
+
+  <div class="container relative z-10 px-4 md:px-8 w-full">
+    <div class="grid lg:grid-cols-12 items-center gap-8 lg:gap-4">
+      <!-- Text column -->
+      <div class="lg:col-span-7 text-center lg:text-left">
+        <!-- Badge — indicador magenta -->
+        <div data-hero-fade class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#ff006a]/30 bg-[#ff006a]/8 text-white/80 text-[10px] md:text-xs font-semibold tracking-[0.2em] uppercase mb-7 backdrop-blur-md">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#ff006a]" data-ambient="pulse"></span>
+          Show Group · Felinas
+        </div>
+
+        <h1
+          data-hero-fade
+          class="mb-7 text-white"
+        >
+          <span class="title-main" style="font-size: clamp(3.2rem, 8vw, 8rem);">LLEVAMOS <span class="title-accent">TU IDEA</span></span>
+          <span class="title-eyebrow !mb-0 mt-4" style="font-size: clamp(1.4rem, 3.6vw, 3rem);">Al escenario</span>
+        </h1>
+
+        <p
+          data-hero-fade
+          class="text-base md:text-xl text-white/70 leading-relaxed mb-9 font-light max-w-xl mx-auto lg:mx-0"
+        >
+          <span class="text-white font-medium">F Productions</span> es el equipo comercial de Felinas.
+          Creamos experiencias que se adaptan al formato de cada proyecto: shows en vivo, acompañamiento
+          para artistas, videoclips, campañas digitales, activaciones de marca, modelaje y creación de
+          contenido. Transformamos cada presentación en un momento que conecta con el público.
+        </p>
+
+        <div data-hero-fade class="flex justify-center lg:justify-start">
+          <a
+            href={WHATSAPP_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="cta-flame group relative inline-flex items-center justify-center gap-3 px-8 py-4 rounded-full text-white font-display font-bold text-sm tracking-wider uppercase transition-all hover:scale-105 overflow-hidden"
+          >
+            <span class="relative z-10 flex items-center gap-3">
+              Contratar show
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Image column -->
+      <div data-hero-fade class="hero-media lg:col-span-5 relative" style="perspective: 1200px;">
+        <div class="absolute inset-0 flex items-center justify-center">
+          <div class="absolute w-[80%] aspect-square rounded-full bg-felina-morado/30 blur-[90px]"></div>
+          <div class="absolute w-[60%] aspect-square rounded-full bg-[#ff006a]/15 blur-[70px]" style="transform: translate(20%, 10%)"></div>
+        </div>
+
+        <!--
+          Marco de desregistro: dos placas de color asomando por esquinas opuestas
+          detrás de la foto. Es el mismo recurso que las palabras fantasma "LIVE"
+          de esta sección (duplicadas y desplazadas en magenta y morado), aplicado
+          al retrato — el borde no es un adorno suelto, es el idioma del hero.
+          El tilt va en el grupo entero para que las tres capas se muevan juntas.
+        -->
+        <div data-tilt="10" class="relative z-10 h-full flex items-center justify-center">
+          <div class="hero-frame relative">
+            <div class="hero-cut absolute inset-0 bg-[#ff006a] -translate-x-2.5 -translate-y-2.5 md:-translate-x-4 md:-translate-y-4"></div>
+            <div class="hero-cut absolute inset-0 bg-felina-morado translate-x-2.5 translate-y-2.5 md:translate-x-4 md:translate-y-4"></div>
+            <div class="hero-cut absolute inset-0 overflow-hidden bg-white">
+              <Image
+                src={fotoGrupal}
+                alt="El equipo de F Productions"
+                widths={[440, 700, 1000, 1280]}
+                sizes="(max-width: 1024px) 70vw, 40vw"
+                loading="eager"
+                fetchpriority="high"
+                class="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!--
+    Indicador de scroll: el hero ocupa toda la pantalla y no había ninguna señal de
+    que hubiera contenido debajo. Se oculta en pantallas bajas (donde la siguiente
+    sección ya asoma sola y el indicador solo robaría espacio).
+  -->
+  <div
+    data-hero-fade
+    class="absolute bottom-7 left-1/2 -translate-x-1/2 z-10 hidden sm:flex flex-col items-center gap-2 pointer-events-none"
+    aria-hidden="true"
+  >
+    <span class="text-white/55 text-[10px] font-semibold uppercase tracking-[0.3em]">Scroll</span>
+    <div class="w-6 h-9 rounded-full border border-white/25 flex justify-center pt-1.5" data-ambient="bounce">
+      <span class="w-1 h-1.5 rounded-full bg-[#ff006a]"></span>
+    </div>
+  </div>
+
+</section>
+
+<style>
+  /*
+   * Esquinas cortadas en diagonal (arriba-derecha y abajo-izquierda). En porcentaje
+   * y no en px para que el corte mantenga la proporción del recorte en cualquier
+   * tamaño: en móvil un notch fijo de 30px se comería la foto.
+   * Las tres capas comparten la forma — es lo que hace legible el desregistro.
+   */
+  .hero-cut {
+    clip-path: polygon(0 0, 91% 0, 100% 7%, 100% 100%, 9% 100%, 0 93%);
+  }
+
+  /*
+   * La columna publica su propia altura como variable para que el marco pueda
+   * calcular su ancho a partir de ella.
+   */
+  .hero-media {
+    --col-h: 42vh;
+    height: var(--col-h);
+  }
+
+  @media (min-width: 640px) {
+    .hero-media { --col-h: 50vh; }
+  }
+
+  @media (min-width: 1024px) {
+    .hero-media { --col-h: 78vh; }
+  }
+
+  /*
+   * El marco se pisaba con el texto porque era `height: 100%` + `aspect-ratio`: el
+   * ancho salía de la altura, así que en pantallas altas y angostas (tablet vertical)
+   * crecía más que su columna y se desbordaba sobre la columna de texto.
+   * Ahora el ancho es el MENOR entre el ancho disponible y el que pide la altura,
+   * y la altura se deriva del ancho — nunca puede exceder la columna.
+   * El 0.76 (en vez de 0.8 = 4/5) deja aire para las placas desplazadas, que asoman
+   * fuera de la caja del marco.
+   */
+  .hero-frame {
+    width: min(100%, calc(var(--col-h) * 0.76));
+    aspect-ratio: 4 / 5;
+    filter: drop-shadow(0 25px 50px rgba(0, 0, 0, 0.55))
+      drop-shadow(0 0 60px rgba(124, 4, 117, 0.3));
+  }
+
+  .cta-flame {
+    background: linear-gradient(115deg, #ff006a 0%, #7c0475 55%, #c084fc 100%);
+    background-size: 220% 220%;
+    background-position: 0% 50%;
+    box-shadow: 0 0 35px rgba(255, 0, 106, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+    transition: background-position 0.6s ease, box-shadow 0.4s ease, transform 0.3s ease;
+  }
+  .cta-flame:hover {
+    background-position: 100% 50%;
+    box-shadow: 0 0 55px rgba(255, 0, 106, 0.7), 0 0 30px rgba(124, 4, 117, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+  .cta-flame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(100deg, transparent 30%, rgba(255, 255, 255, 0.35) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 0.7s ease;
+  }
+  .cta-flame:hover::before {
+    transform: translateX(120%);
+  }
+</style>
+
+<script>
+  // Entrada escalonada del hero con GSAP (antes: animate-fade-up + animation-delay en CSS)
+  import { initHeroIntro, initTilt } from "../../scripts/animations";
+  initHeroIntro(document.getElementById("inicio"));
+  initTilt();
+</script>

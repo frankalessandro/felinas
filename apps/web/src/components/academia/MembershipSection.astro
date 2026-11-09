@@ -1,0 +1,271 @@
+---
+import { planWhatsappURL } from "../../scripts/whatsapp";
+import SingleClassCard from "./SingleClassCard.astro";
+import PersonalizedPlans from "./PersonalizedPlans.astro";
+
+type TabId = "combo" | "twerk" | "personalizado";
+
+interface Plan {
+  name: string;
+  price: string;
+  features: string[];
+  breakdown?: { twerk: number; urbano: number };
+  popular?: boolean;
+}
+
+const tabs: { id: TabId; label: string }[] = [
+  { id: "combo", label: "Twerk + Urbano" },
+  { id: "twerk", label: "Twerk grupal" },
+  { id: "personalizado", label: "Personalizado" },
+];
+
+/** "4 clases al mes" sale de la lista y se muestra como dato grande: es lo que más se compara entre planes. */
+const classCount = (p: Plan) => {
+  const m = p.features[0]?.match(/^(\d+) clases al mes$/);
+  return m ? { n: m[1], rest: p.features.slice(1) } : { n: null, rest: p.features };
+};
+
+/** `tag` desambigua el nombre del plan en el mensaje de WhatsApp (hay "Plan Shake" en varias categorías). */
+interface Section {
+  title?: string;
+  subtitle?: string;
+  tag?: string;
+  cols: string;
+  cards: Plan[];
+}
+
+/** Tabs de planes genéricos. Personalizado tiene su propio componente (switch Felina/Dúo). */
+const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" | "urbano")[] }> = {
+  combo: {
+    singles: ["twerk", "urbano"],
+    sections: [
+      {
+        cols: "grid sm:grid-cols-2 lg:grid-cols-4 gap-6",
+        cards: [
+          { name: "Despierta", price: "$120.000", features: ["4 clases al mes"], breakdown: { twerk: 3, urbano: 1 } },
+          { name: "Instinto", price: "$165.000", features: ["6 clases al mes"], breakdown: { twerk: 3, urbano: 3 } },
+          { name: "Alfa", price: "$210.000", features: ["8 clases al mes"], breakdown: { twerk: 5, urbano: 3 }, popular: true },
+          { name: "Ruge y Fluye", price: "$260.000", features: ["12 clases al mes"], breakdown: { twerk: 9, urbano: 3 } },
+        ],
+      },
+    ],
+  },
+  twerk: {
+    singles: ["twerk"],
+    sections: [
+      {
+        title: "Clan Felinas",
+        subtitle: "Grupal · 3 a 6 felinas",
+        tag: "Twerk grupal",
+        cols: "grid sm:grid-cols-2 lg:grid-cols-3 gap-6",
+        cards: [
+          { name: "Plan Shake", price: "$100.000", features: ["4 clases al mes", "Una vez a la semana"] },
+          { name: "Plan Tic Toc", price: "$135.000", features: ["6 clases al mes", "Una o dos veces a la semana"], popular: true },
+          { name: "Plan Jiggle", price: "$170.000", features: ["8 clases al mes", "Dos veces a la semana"] },
+        ],
+      },
+    ],
+  },
+};
+---
+
+<section id="membresias" class="py-24 md:py-36 relative">
+  <div class="absolute top-0 left-1/4 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[110px] -translate-y-1/2 pointer-events-none"></div>
+  <div class="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-felina-morado/10 rounded-full blur-[100px] translate-y-1/3 pointer-events-none"></div>
+
+  <div class="container px-4 relative z-10">
+    <div data-reveal class="text-center mb-12 md:mb-16">
+      <h2 class="text-foreground">
+        <span class="title-eyebrow">Elige tu plan y</span>
+        <span class="title-main" style="font-size: clamp(2rem, 8vw, 5.5rem);"><span class="title-accent">EMPIEZA A RUGIR</span></span>
+      </h2>
+      <p class="mt-6 text-muted-foreground max-w-xl mx-auto text-base md:text-lg font-light">
+        Clases grupales de máximo 6 felinas. Todos los planes incluyen invitaciones a eventos y espacios de comunidad.
+      </p>
+    </div>
+
+    <div class="max-w-6xl mx-auto" id="membership-tabs">
+      <div role="tablist" aria-label="Tipo de plan" class="flex max-w-2xl mx-auto mb-14 md:mb-16 bg-background border border-border rounded-full p-1.5 shadow-sm">
+        {tabs.map((tab, i) => (
+          <button
+            type="button"
+            role="tab"
+            aria-selected={i === 0 ? "true" : "false"}
+            data-tab={tab.id}
+            class:list={[
+              "flex-1 rounded-full font-display font-bold uppercase tracking-[0.15em] text-[11px] sm:text-xs py-3 transition-colors",
+              i === 0 ? "bg-primary text-white shadow-md shadow-primary/30" : "text-foreground/60 hover:text-primary",
+            ]}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {Object.entries(plans).map(([id, group], gi) => (
+        <div data-tab-panel={id} role="tabpanel" class:list={[gi !== 0 && "hidden"]}>
+          {group.sections.map((section) => (
+          <div>
+            {section.title && (
+              <div class="text-center mb-10">
+                <h3 class="font-display font-black uppercase tracking-tight text-foreground text-2xl md:text-3xl">{section.title}</h3>
+                {section.subtitle && (
+                  <p class="mt-1.5 text-xs font-semibold uppercase tracking-[0.22em] text-foreground/50">{section.subtitle}</p>
+                )}
+              </div>
+            )}
+            <div class={section.cols + " items-stretch"}>
+            {section.cards.map((p) => {
+              const { n, rest } = classCount(p);
+              const cur = p.price.charAt(0);
+              const amount = p.price.slice(1);
+              return (
+                <div
+                  data-reveal
+                  class:list={[
+                    "relative flex flex-col rounded-3xl p-6 xl:p-8 transition-shadow duration-300",
+                    p.popular
+                      ? "plan-featured border-2 border-primary shadow-2xl shadow-primary/20 lg:-my-4 lg:py-10"
+                      : "bg-card border border-border hover:shadow-xl hover:shadow-primary/10",
+                  ]}
+                >
+                  {p.popular && (
+                    <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 whitespace-nowrap bg-primary text-white font-display font-bold tracking-[0.2em] uppercase px-4 py-1.5 rounded-full text-[10px] shadow-lg shadow-primary/40">
+                      Más popular
+                    </span>
+                  )}
+
+                  <h3 class:list={["font-display font-bold uppercase tracking-[0.22em] text-xs", p.popular ? "text-primary" : "text-foreground/60"]}>{p.name}</h3>
+
+                  <div class="mt-4" style="container-type: inline-size;">
+                    <p class="flex items-start gap-1 text-foreground">
+                      <span class="font-display font-bold text-base mt-1.5 text-foreground/50">{cur}</span>
+                      <span class="font-display font-black tracking-tighter leading-none" style="font-size: clamp(1.6rem, 15cqw, 3rem);">{amount}</span>
+                    </p>
+                    <p class="mt-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/50">al mes</p>
+                  </div>
+
+                  {n && (
+                    <div class:list={["mt-6 rounded-2xl px-5 py-4 flex items-center gap-4", p.popular ? "bg-white/60" : "plan-count"]}>
+                      <span class="font-display font-black leading-none tracking-tighter text-foreground" style="font-size: 2.6rem;">{n}</span>
+                      <span class="text-xs font-bold uppercase tracking-[0.18em] leading-snug text-foreground/60">clases<br />al mes</span>
+                    </div>
+                  )}
+
+                  {p.breakdown && (
+                    <div class="flex flex-wrap gap-2 mt-4">
+                      <span class:list={["inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full", "bg-primary/10 text-foreground"]}>
+                        <span class="w-1.5 h-1.5 rounded-full bg-primary shrink-0"></span>
+                        {p.breakdown.twerk} Twerk
+                      </span>
+                      <span class:list={["inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full", "bg-felina-morado/10 text-foreground"]}>
+                        <span class="w-1.5 h-1.5 rounded-full bg-felina-morado shrink-0"></span>
+                        {p.breakdown.urbano} Urbano
+                      </span>
+                    </div>
+                  )}
+
+                  {rest.length > 0 ? (
+                    <ul class:list={["space-y-3 mt-6 mb-8 pt-6 border-t flex-1", p.popular ? "border-foreground/10" : "border-border"]}>
+                      {rest.map((f) => (
+                        <li class="flex items-start gap-3 text-sm">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mt-0.5 shrink-0 text-primary" aria-hidden="true">
+                            <path d="M20 6 9 17l-5-5" />
+                          </svg>
+                          <span class="text-foreground/80">{f}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <div class="flex-1 min-h-8"></div>
+                  )}
+
+                  <a
+                    href={planWhatsappURL(section.tag ? p.name + " (" + section.tag + ")" : p.name, p.price)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class:list={[
+                      "group flex items-center justify-center gap-2 w-full rounded-full font-display font-bold uppercase tracking-widest py-3.5 text-xs transition-colors",
+                      p.popular ? "bg-primary text-white shadow-lg shadow-primary/30 hover:bg-felina-rosa-glow" : "border border-primary/40 text-primary hover:bg-primary hover:text-white hover:border-primary",
+                    ]}
+                  >
+                    Elegir este plan
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                  </a>
+                </div>
+              );
+            })}
+            </div>
+          </div>
+          ))}
+          <SingleClassCard disciplines={group.singles} />
+        </div>
+      ))}
+
+      <div data-tab-panel="personalizado" role="tabpanel" class="hidden">
+        <PersonalizedPlans />
+        <SingleClassCard disciplines={["twerk"]} />
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Plan destacado: champagne metálico (misma familia que las cifras) + borde y sello rosa.
+     Destaca por calidez y color de marca, no por ser el único bloque oscuro. */
+  .plan-featured {
+    background: linear-gradient(160deg, #fbf5ea 0%, #ecdfc8 45%, #f8efde 100%);
+    color: #231b12;
+  }
+  .plan-count {
+    background: #f6f1e8;
+  }
+</style>
+
+<script>
+  import { gsap } from "../../scripts/gsap";
+
+  const root = document.getElementById("membership-tabs");
+  if (root) {
+    const buttons = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-tab]"));
+    const panels = Array.from(root.querySelectorAll<HTMLElement>("[data-tab-panel]"));
+    let active = "combo";
+
+    // Enlaces de otras secciones ("Quiero mi clase personalizada"): abren el tab pedido y el ancla `#membresias` hace el scroll.
+    document.querySelectorAll<HTMLElement>("[data-open-plan-tab]").forEach((link) => {
+      link.addEventListener("click", () => buttons.find((b) => b.dataset.tab === link.dataset.openPlanTab)?.click());
+    });
+
+    // Al cambiar el ancho (breakpoints, rotar el celular) los altos medidos dejan de valer: se recalculan desde cero.
+    window.addEventListener("resize", () => { root.style.minHeight = ""; });
+
+    buttons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const id = btn.dataset.tab!;
+        if (id === active) return;
+        active = id;
+
+        // El alto solo puede crecer: sin esto, un tab más bajo encoge la sección, el scroll se reajusta
+        // y la botonera de tabs salta hacia arriba en pantalla.
+        root.style.minHeight = root.offsetHeight + "px";
+
+        buttons.forEach((b) => {
+          const on = b.dataset.tab === id;
+          b.setAttribute("aria-selected", String(on));
+          for (const c of ["bg-primary", "text-white", "shadow-md", "shadow-primary/30"]) b.classList.toggle(c, on);
+          for (const c of ["text-foreground/60", "hover:text-primary"]) b.classList.toggle(c, !on);
+        });
+
+        panels.forEach((panel) => {
+          const on = panel.dataset.tabPanel === id;
+          if (on) {
+            panel.classList.remove("hidden");
+            gsap.fromTo(panel, { autoAlpha: 0, y: 14 }, { autoAlpha: 1, y: 0, duration: 0.35, ease: "power2.out" });
+          } else {
+            panel.classList.add("hidden");
+          }
+        });
+      });
+    });
+  }
+</script>

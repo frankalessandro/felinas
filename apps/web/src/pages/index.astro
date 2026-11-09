@@ -1,0 +1,23 @@
+---
+import Layout from "../layouts/Layout.astro";
+import LandingDiagonal from "../components/shared/LandingDiagonal.astro";
+import LoadingScreen from "../components/shared/LoadingScreen.astro";
+---
+
+<Layout title="Felinas — Elige tu lado: academia de danza o shows en vivo">
+  <LoadingScreen />
+  <LandingDiagonal />
+</Layout>
+
+<style is:global>
+  html, body {
+    overflow: hidden !important;
+    height: 100%;
+    background: #050505;
+  }
+</style>
+
+<script>
+  import { revealPage } from "../scripts/loader";
+  revealPage({ duration: 0.5 });
+</script>

@@ -1,0 +1,33 @@
+---
+const WHATSAPP_URL = "https://wa.me/573203426558?text=%C2%A1Hola!%20Quiero%20agendar%20mi%20clase%20en%20Felinas";
+---
+
+<section class="relative py-24 md:py-36 overflow-hidden">
+  <div class="absolute inset-0 bg-gradient-dark"></div>
+  <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(340_82%_52%/0.3),transparent_60%)]"></div>
+
+  <div class="container relative z-10 px-4 text-center">
+    <h2 data-reveal class="mb-8 text-white">
+      <span class="title-eyebrow">¿Lista para descubrir</span>
+      <span class="title-main" style="font-size: clamp(2.8rem, 9vw, 6.5rem);">TU <span class="title-accent">FELINA</span> INTERIOR?</span>
+    </h2>
+    <p data-reveal class="text-white/70 text-lg md:text-xl mb-10 max-w-md mx-auto font-light">
+      Únete a la comunidad y agenda tu primera clase.
+    </p>
+    <div data-reveal>
+      <a
+        href={WHATSAPP_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-flex items-center gap-3 bg-primary hover:bg-felina-rosa-glow text-white font-display font-bold uppercase tracking-widest rounded-full pl-8 pr-3 py-3 text-sm transition-colors group"
+        data-ambient="glow"
+      >
+        Agenda tu clase
+        <span class="w-9 h-9 rounded-full bg-white/20 flex items-center justify-center group-hover:translate-x-1 transition-transform">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+        </span>
+      </a>
+      <p class="mt-5 text-white/40 text-xs tracking-[0.25em] uppercase">Te respondemos por WhatsApp</p>
+    </div>
+  </div>
+</section>

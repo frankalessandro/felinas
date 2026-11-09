@@ -1,0 +1,100 @@
+---
+import Layout from "../layouts/Layout.astro";
+import WhatsAppButton from "../components/shared/WhatsAppButton.astro";
+import SiteNav from "../components/shared/SiteNav.astro";
+import ShowHero from "../components/fproductions/ShowHero.astro";
+import ManifestoSection from "../components/fproductions/ManifestoSection.astro";
+import ReelsSection from "../components/fproductions/ReelsSection.astro";
+import TeamSection from "../components/fproductions/TeamSection.astro";
+import ServicesSection from "../components/fproductions/ServicesSection.astro";
+import GallerySection from "../components/fproductions/GallerySection.astro";
+import WhyUsSection from "../components/fproductions/WhyUsSection.astro";
+import CinematicSection from "../components/fproductions/CinematicSection.astro";
+import ProcessSection from "../components/fproductions/ProcessSection.astro";
+import BookingCTA from "../components/fproductions/BookingCTA.astro";
+import SiteFooter from "../components/shared/SiteFooter.astro";
+import LoadingScreen from "../components/shared/LoadingScreen.astro";
+---
+
+<Layout
+  title="Felinas F Productions — Shows en vivo y eventos"
+  description="F Productions es el grupo de shows en vivo de Felinas. Contrata shows de baile, videos musicales, animación de eventos y modelaje para marcas en discotecas, eventos privados y activaciones."
+>
+  <LoadingScreen />
+  <div class="min-h-screen bg-[#07030b] text-[#f8f5fa] font-sans antialiased selection:bg-felina-morado/40">
+    <SiteNav side="show" />
+    <main>
+      <ShowHero />
+      <ManifestoSection />
+      <ReelsSection />
+      <TeamSection />
+      <CinematicSection />
+      <ServicesSection />
+      <GallerySection />
+      <WhyUsSection />
+      <ProcessSection />
+      <BookingCTA />
+    </main>
+    <SiteFooter side="show" />
+    <WhatsAppButton />
+  </div>
+</Layout>
+
+<script>
+  // Orquestador único de animaciones de la página (evita timelines/listeners duplicados)
+  import {
+    initReveals,
+    initParallaxX,
+    initStackCards,
+    initAmbient,
+    initScrollActive,
+    initScrollSpotlight,
+    ScrollTrigger,
+  } from "../scripts/animations";
+  import { initReels } from "../scripts/reels";
+  import { initTeamStrips } from "../scripts/team";
+  import { revealPage } from "../scripts/loader";
+
+  // initReveals() oculta los [data-reveal] YA (gsap.set, sin medir layout): tiene
+  // que pasar antes del primer paint o el usuario ve el contenido visible un frame
+  // y saltar a oculto al siguiente, que cuenta como layout shift real. Lo caro de
+  // esa función —crear un ScrollTrigger por elemento, que sí mide layout— se
+  // devuelve como función y se ejecuta más abajo, ya diferido.
+  const wireReveals = initReveals();
+
+  // revealPage() también va temprano: solo arma promesas (fonts.ready + decode de
+  // las imágenes eager), así que es barata y no depende de lo de abajo.
+  revealPage();
+
+  // Todo esto crea ScrollTriggers para CADA sección de la página — gallería,
+  // equipo, reels, servicios— y cada uno mide el layout real de sus elementos
+  // (forced reflow). Si corriera antes del primer paint, bloquearía el hilo
+  // principal entero con trabajo de secciones que el usuario tarda varios
+  // segundos en alcanzar. Un rAF alcanza para dejar pintar primero: nadie
+  // scrollea más rápido que un frame, así que diferir esto es imperceptible.
+  // Primer frame: revelar lo que ya se ve y los efectos baratos (todos gated por
+  // viewport, sin forced reflow de página entera). Deja pintar el hero antes de
+  // meter el trabajo de layout pesado de abajo — clave en Safari, más lento midiendo.
+  requestAnimationFrame(() => {
+    wireReveals();
+    initParallaxX();
+    initAmbient();
+    initScrollActive();
+    initScrollSpotlight("#services-list");
+    // Equipo: sin ScrollTrigger ni pin, solo fija su layout (no mide la página)
+    initTeamStrips();
+
+    // Segundo frame: lo caro de medir. Los pines (Reels) van en el mismo
+    // orden en que aparecen en el documento: cada uno mide "dónde empieza" con
+    // getBoundingClientRect, y esa medida incluye el pin-spacer de todo lo que esté
+    // ANTES en el DOM, así que crearlos fuera de orden los desplaza. Galería va
+    // después porque sus triggers se apoyan en la altura que esos pines agregan.
+    // El refresh final vuelve a medir por si fuentes/imágenes movieron el layout.
+    // Se difiere un frame más para no bloquear el primer paint.
+    requestAnimationFrame(() => {
+      initReels();
+      initStackCards();
+      ScrollTrigger.refresh();
+    });
+  });
+</script>

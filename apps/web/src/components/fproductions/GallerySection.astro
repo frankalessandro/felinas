@@ -1,0 +1,138 @@
+---
+import { Image } from "astro:assets";
+import posterClip3144 from "../../assets/fproductions/posters/clip-3144.webp";
+import posterClip3803 from "../../assets/fproductions/posters/clip-3803.webp";
+import posterClip3199 from "../../assets/fproductions/posters/clip-3199.webp";
+import posterClip9941 from "../../assets/fproductions/posters/clip-9941.webp";
+import posterClip3414 from "../../assets/fproductions/posters/clip-3414.webp";
+import posterReel2543 from "../../assets/fproductions/posters/reel-2543.webp";
+
+type Tile = {
+  file: string;
+  poster: ImageMetadata;
+  alt: string;
+  title: string;
+};
+
+/**
+ * Todos los tiles son clips 9:16 con audio: se abren en el mismo lightbox que
+ * ReelsSection (ver [data-reel-hero] en scripts/reels.ts), no hay autoplay ni
+ * versión muda acá. Los dos clips horizontales (videoclip producido) viven aparte
+ * en CinematicSection, que usa el mismo mecanismo pero en formato 16:9.
+ */
+const CARDS: Tile[] = [
+  { file: "clip-3144", poster: posterClip3144, alt: "Coreografía de F Productions", title: "Así se ve en vivo" },
+  { file: "clip-3803", poster: posterClip3803, alt: "F Productions antes de salir a escena", title: "Antes de salir a escena" },
+  { file: "clip-3199", poster: posterClip3199, alt: "Presentación de F Productions", title: "Puesta en escena" },
+  { file: "clip-9941", poster: posterClip9941, alt: "F Productions en vivo", title: "Así suena en vivo" },
+  { file: "clip-3414", poster: posterClip3414, alt: "Show de F Productions", title: "Cada detalle cuenta" },
+  { file: "reel-2543", poster: posterReel2543, alt: "F Productions en evento", title: "Energía en vivo" },
+];
+
+const total = String(CARDS.length).padStart(2, "0");
+
+/** Cada fila de dos clips es una carta del mazo: se apilan filas, no clips sueltos. */
+const ROWS: Tile[][] = [];
+for (let i = 0; i < CARDS.length; i += 2) ROWS.push(CARDS.slice(i, i + 2));
+---
+
+<!-- overflow-x-clip y no overflow-hidden: `hidden` en un ancestro anula el `position: sticky`
+     de las cartas; `clip` en un solo eje deja el eje Y visible y el mazo sigue funcionando. -->
+<section id="galeria" class="relative py-24 md:py-28 bg-[#07030b] overflow-x-clip">
+  <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-[#ff006a]/25 to-transparent"></div>
+  <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[60vw] h-56 bg-[#ff006a]/10 blur-[120px] pointer-events-none"></div>
+
+  <div class="container px-4 md:px-8 relative z-10">
+    <div data-reveal class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-16 md:mb-20">
+      <h2 class="text-white">
+        <span class="title-eyebrow">Momentos que hablan</span>
+        <span class="title-main"><span class="title-accent">POR SÍ SOLOS</span></span>
+      </h2>
+      <p class="text-white/60 max-w-sm text-sm md:text-base leading-relaxed">
+        Clips reales, con sonido, de cómo vivimos cada escenario, cada producción y cada experiencia
+        que creamos junto a nuestros clientes.
+      </p>
+    </div>
+  </div>
+
+  <!--
+    Mazo de cartas apiladas, de dos clips por carta: cada fila queda sticky bajo el borde
+    superior y la siguiente se monta encima. El scroll es vertical normal (no hay pin ni
+    scroll secuestrado), así que en móvil se comporta como cualquier otra sección.
+
+    El apilado es CSS puro (`position: sticky`, offset creciente por fila y orden natural
+    de pintado). GSAP solo agrega el retroceso de la fila que queda atrás —escala, giro
+    leve y oscurecido— para que se lea profundidad y no un corte seco (initStackCards).
+
+    El click abre el lightbox compartido con ReelsSection (mismo overlay, mismo
+    [data-reel-hero] en scripts/reels.ts): no hay reproducción inline acá.
+  -->
+  <div data-stack class="relative container px-4 md:px-8 pb-[16vh]">
+    {ROWS.map((row, r) => (
+      <article data-stack-card class="sticky flex justify-center" style={`top: calc(7vh + ${r * 10}px)`}>
+        <!-- Ancho máximo = dos tarjetas de 42vh + hueco: así la fila nunca es más alta que la pantalla. -->
+        <div
+          data-stack-inner
+          class="relative grid w-full grid-cols-2 gap-3 sm:gap-6 max-w-[min(100%,calc(84vh+1.5rem))] will-change-transform"
+        >
+          {row.map((item, j) => {
+            const i = r * 2 + j;
+            return (
+              <div class="group relative aspect-[9/16] w-full overflow-hidden rounded-2xl sm:rounded-[2rem] bg-[#11081a] ring-1 ring-white/10 shadow-2xl shadow-black/70">
+                <Image
+                  src={item.poster}
+                  alt={item.alt}
+                  widths={[360, 560, 800]}
+                  sizes="(max-width: 768px) 46vw, 42vh"
+                  loading={i < 2 ? "eager" : "lazy"}
+                  class="h-full w-full object-cover scale-[1.02] transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+                />
+
+                <!-- Legibilidad del rótulo y del contador, sin lavar la imagen entera. -->
+                <div class="pointer-events-none absolute inset-x-0 bottom-0 z-20 h-1/2 bg-gradient-to-t from-black/85 to-transparent"></div>
+                <div class="pointer-events-none absolute inset-0 z-20 rounded-2xl sm:rounded-[2rem] ring-1 ring-inset ring-[#ff006a]/25"></div>
+
+                <p class="pointer-events-none absolute right-3 top-3 z-30 font-display text-[10px] tracking-[0.3em] text-white/45 sm:right-6 sm:top-5 sm:text-xs">
+                  {String(i + 1).padStart(2, "0")} <span class="text-white/20">/ {total}</span>
+                </p>
+
+                <button
+                  type="button"
+                  data-reel-hero
+                  data-reel-group="galeria"
+                  data-index={i}
+                  data-src={`/videos/${item.file}.mp4`}
+                  data-caption={item.title}
+                  data-orientation="portrait"
+                  aria-label={`Reproducir con sonido: ${item.title}`}
+                  class="absolute inset-0 z-30 grid cursor-pointer place-items-center"
+                >
+                  <span class="grid h-12 w-12 place-items-center rounded-full border border-white/25 bg-black/50 text-white shadow-lg shadow-black/40 backdrop-blur-sm transition-all duration-300 group-hover:scale-110 group-hover:border-[#ff006a] group-hover:bg-[#ff006a] sm:h-16 sm:w-16">
+                    <svg viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5 translate-x-0.5 sm:h-6 sm:w-6" aria-hidden="true">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </span>
+                </button>
+
+                <span class="pointer-events-none absolute left-3 top-3 z-30 flex items-center gap-2 rounded-full border border-white/20 bg-black/50 px-2 py-1.5 backdrop-blur-sm sm:left-6 sm:top-5 sm:px-3">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 text-[#ff006a]" aria-hidden="true">
+                    <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                    <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+                  </svg>
+                  <span class="hidden text-[9px] font-bold uppercase tracking-[0.25em] text-white sm:inline">Con sonido</span>
+                </span>
+
+                <div class="pointer-events-none absolute bottom-3 left-3 right-3 z-30 sm:bottom-6 sm:left-6 sm:right-6">
+                  <p class="font-display text-sm font-bold leading-tight text-white sm:text-xl lg:text-2xl">{item.title}</p>
+                </div>
+              </div>
+            );
+          })}
+
+          <!-- Oscurecido de la fila que queda debajo del mazo (lo anima initStackCards). -->
+          <div data-stack-dim class="pointer-events-none absolute inset-0 z-40 bg-[#07030b] opacity-0"></div>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

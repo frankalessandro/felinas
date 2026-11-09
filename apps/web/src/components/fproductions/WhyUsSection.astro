@@ -1,0 +1,62 @@
+---
+const reasons = [
+  {
+    n: "01",
+    t: "Energía Felina",
+    d: "Una presencia auténtica que conecta con el público y transforma la atmósfera de cada evento.",
+  },
+  {
+    n: "02",
+    t: "Versatilidad",
+    d: "Nos adaptamos a escenarios, marcas, artistas y formatos para que cada presentación tenga identidad propia.",
+  },
+  {
+    n: "03",
+    t: "Profesionalismo",
+    d: "Cada detalle está cuidadosamente preparado para ofrecer una experiencia confiable y de alto nivel.",
+  },
+  {
+    n: "04",
+    t: "Impacto que permanece",
+    d: "Creamos experiencias que no terminan cuando baja el telón; continúan en la memoria del público y en el contenido que sigue circulando.",
+  },
+];
+---
+
+<section id="por-que" class="relative py-24 md:py-36 bg-gradient-to-b from-[#07030b] via-[#0c0512] to-[#07030b] overflow-hidden">
+  <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-felina-morado/30 to-transparent"></div>
+  <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-felina-morado/12 blur-[140px] pointer-events-none"></div>
+  <div class="absolute top-0 right-0 w-[350px] h-[350px] rounded-full bg-[#ff006a]/10 blur-[100px] pointer-events-none"></div>
+
+  <div class="container px-4 md:px-8 relative z-10">
+    <div data-reveal class="mb-16 md:mb-20">
+      <p class="font-display font-semibold text-[#ff006a] text-xs tracking-[0.35em] uppercase mb-5 flex items-center gap-3">
+        <span class="w-10 h-px bg-[#ff006a]"></span> Por qué elegirnos
+      </p>
+      <h2 class="text-white">
+        <span class="title-eyebrow">La diferencia está</span>
+        <span class="title-main"><span class="title-accent">EN LOS DETALLES</span></span>
+      </h2>
+    </div>
+
+    <div data-reveal class="grid md:grid-cols-2 gap-x-16 md:gap-x-24 gap-y-0">
+      {reasons.map((r) => (
+        <div
+          data-scroll-active
+          class="group relative flex items-start gap-6 py-10 border-t border-white/8 hover:border-[#ff006a]/50 data-[active=true]:border-[#ff006a]/50 transition-colors duration-300"
+        >
+          <span
+            class="font-display font-black text-6xl md:text-8xl leading-none select-none shrink-0 tabular-nums transition-all duration-500 group-hover:scale-110 group-data-[active=true]:scale-110 group-hover:[color:transparent] group-data-[active=true]:[color:transparent] group-hover:[-webkit-text-stroke:2px_#ff006a] group-data-[active=true]:[-webkit-text-stroke:2px_#ff006a]"
+            style="-webkit-text-stroke: 2px rgba(255,255,255,0.30); color: transparent;"
+          >
+            {r.n}
+          </span>
+          <div class="pt-2">
+            <h3 class="font-display font-bold text-xl md:text-2xl text-white mb-3 group-hover:text-[#ff006a] group-data-[active=true]:text-[#ff006a] transition-colors duration-300">{r.t}</h3>
+            <p class="text-sm md:text-base text-white/60 leading-relaxed group-hover:text-white/80 group-data-[active=true]:text-white/80 transition-colors duration-300">{r.d}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

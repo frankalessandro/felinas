@@ -1,0 +1,362 @@
+---
+/**
+ * Footer único para academia y F Productions.
+ * En vez de cuatro columnas de links, la pieza principal es el puente al otro lado
+ * de la marca: es la misma decisión que plantea la landing, repetida al final del scroll.
+ */
+type Side = "academia" | "show";
+
+interface Props {
+  side: Side;
+}
+
+const { side } = Astro.props;
+
+const CONFIG = {
+  academia: {
+    wordmark: "FELINAS",
+    accent: "#E8115B",
+    claim: "Empoderamiento femenino a través de la danza. Twerk, hip hop, breaking y más.",
+    links: [
+      { label: "Clases", href: "#clases" },
+      { label: "Membresías", href: "#membresias" },
+      { label: "Comunidad", href: "#comunidad" },
+    ],
+    whatsapp: "https://wa.me/573203426558?text=%C2%A1Hola!%20Quiero%20información%20sobre%20Felinas",
+    phone: "+57 302 342 6558",
+    gradient: "linear-gradient(115deg, #FF4D86 0%, #E8115B 48%, #A50E48 100%)",
+    cross: {
+      kicker: "El otro lado",
+      title: "F PRODUCTIONS",
+      note: "Shows en vivo, videos musicales y activaciones de marca.",
+      href: "/show",
+    },
+  },
+  show: {
+    wordmark: "F·PRODUCTIONS",
+    // Mismo criterio que SiteNav: el violeta no pertenecía a la paleta de la
+    // página. El acento de F Productions es el magenta de marca.
+    accent: "#FF006A",
+    claim: "El grupo de shows en vivo de Felinas. Energía, baile y producción para tu evento.",
+    links: [
+      { label: "Servicios", href: "#servicios" },
+      { label: "Galería", href: "#galeria" },
+      { label: "Proceso", href: "#proceso" },
+    ],
+    whatsapp:
+      "https://wa.me/573203426558?text=%C2%A1Hola!%20Quiero%20información%20sobre%20Felinas%20F%20Productions",
+    phone: "+57 302 342 6558",
+    gradient: "linear-gradient(115deg, #FFEAF2 0%, #FF6FA5 42%, #C2004F 100%)",
+    cross: {
+      kicker: "El otro lado",
+      title: "ACADEMIA",
+      note: "Clases de twerk, hip hop, breaking y flex en comunidad.",
+      href: "/academia",
+    },
+  },
+} as const;
+
+const { wordmark, accent, claim, links, whatsapp, phone, cross, gradient } = CONFIG[side];
+
+const SOCIAL = [
+  { label: "Instagram", handle: "@felinas.oficial", href: "https://instagram.com/felinas.oficial" },
+  { label: "TikTok", handle: "@felinas.oficial", href: "https://tiktok.com/@felinas.oficial" },
+];
+
+const year = new Date().getFullYear();
+---
+
+<footer id="contacto" class="ft" style={`--accent: ${accent}; --brand-gradient: ${gradient}`}>
+  <span class="ft-rule" aria-hidden="true"></span>
+
+  <div class="ft-inner">
+    <!-- Puente al otro lado de la marca -->
+    <a class="ft-cross" href={cross.href}>
+      <span class="ft-cross-kicker">{cross.kicker}</span>
+      <span class="ft-cross-title">{cross.title}</span>
+      <span class="ft-cross-note">{cross.note}</span>
+      <span class="ft-cross-go" aria-hidden="true">Entrar →</span>
+    </a>
+
+    <div class="ft-cols">
+      <div class="ft-brand">
+        <div class="ft-brand-top">
+          <span class="ft-brand-mark" aria-hidden="true"></span>
+          <span class="ft-brand-word">{wordmark}</span>
+        </div>
+        <p>{claim}</p>
+      </div>
+
+      <nav class="ft-col" aria-label="Secciones">
+        <h2>Explora</h2>
+        <ul>
+          {links.map((l) => <li><a href={l.href}>{l.label}</a></li>)}
+        </ul>
+      </nav>
+
+      <div class="ft-col">
+        <h2>Síguenos</h2>
+        <ul>
+          {
+            SOCIAL.map((s) => (
+              <li>
+                <a href={s.href} target="_blank" rel="noopener noreferrer">
+                  {s.label} <span>{s.handle}</span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+
+      <div class="ft-col">
+        <h2>Escríbenos</h2>
+        <a class="ft-phone" href={whatsapp} target="_blank" rel="noopener noreferrer">{phone}</a>
+        <p class="ft-col-note">Respondemos por WhatsApp</p>
+      </div>
+    </div>
+
+    <div class="ft-bottom">
+      <span>© {year} Felinas — Todos los derechos reservados</span>
+      <a href="https://alessandro-web.vercel.app/" target="_blank" rel="noopener noreferrer">@frankalessandro</a>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .ft {
+    position: relative;
+    overflow: hidden;
+    padding: clamp(3.5rem, 9vw, 6rem) clamp(1.25rem, 5vw, 4rem) 2rem;
+    font-family: "Inter", sans-serif;
+    font-size: 0.9rem;
+
+    /* El footer cierra ambos lados en oscuro; solo cambia el acento. */
+    --ink: #fff;
+    --ink-mid: rgba(255, 255, 255, 0.78);
+    --ink-soft: rgba(255, 255, 255, 0.62);
+    --ink-faint: rgba(255, 255, 255, 0.4);
+    --line: rgba(255, 255, 255, 0.12);
+    --panel: #050505;
+
+    background: var(--panel);
+    color: var(--ink-soft);
+  }
+
+  /* Diagonal de la landing, rimando con el inicio del recorrido. */
+  .ft-rule {
+    position: absolute;
+    top: 0;
+    left: -10%;
+    width: 120%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--accent), transparent);
+    transform: rotate(-2deg);
+    transform-origin: left;
+  }
+
+  .ft-inner {
+    max-width: 76rem;
+    margin: 0 auto;
+  }
+
+  /* --- Puente al otro lado --- */
+  .ft-cross {
+    position: relative;
+    display: grid;
+    gap: 0.35rem;
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    margin-bottom: clamp(2.5rem, 6vw, 4rem);
+    border: 1px solid var(--line);
+    border-radius: 1.25rem;
+    text-decoration: none;
+    overflow: hidden;
+    transition: border-color 0.4s ease, transform 0.4s ease;
+  }
+
+  /* Relleno que sube al pasar el cursor, igual que las bandas de la landing. */
+  .ft-cross::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, color-mix(in srgb, var(--accent) 22%, transparent), transparent 65%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+  }
+
+  .ft-cross:hover {
+    border-color: color-mix(in srgb, var(--accent) 65%, transparent);
+    transform: translateY(-2px);
+  }
+
+  .ft-cross:hover::before {
+    opacity: 1;
+  }
+
+  .ft-cross > * {
+    position: relative;
+  }
+
+  .ft-cross-kicker {
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.38em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .ft-cross-title {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 900;
+    font-size: clamp(2rem, 8vw, 4rem);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+  }
+
+  .ft-cross-note {
+    max-width: 34ch;
+    color: var(--ink-soft);
+  }
+
+  .ft-cross-go {
+    margin-top: 0.6rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+
+  /* --- Columnas --- */
+  .ft-cols {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(2rem, 5vw, 3rem);
+    padding-bottom: 2.5rem;
+  }
+
+  .ft-brand-top {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .ft-brand-mark {
+    display: block;
+    height: 2.1rem;
+    aspect-ratio: 1158 / 1020;
+    flex: none;
+    background-image: var(--brand-gradient);
+    -webkit-mask: url("/assets/PanteraFelinasLogo.svg") center / contain no-repeat;
+    mask: url("/assets/PanteraFelinasLogo.svg") center / contain no-repeat;
+    filter: drop-shadow(0 0 14px color-mix(in srgb, var(--accent) 45%, transparent));
+  }
+
+  .ft-brand-word {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 900;
+    font-size: 1.15rem;
+    letter-spacing: 0.12em;
+    background-image: var(--brand-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .ft-brand p {
+    max-width: 32ch;
+    margin: 0;
+    line-height: 1.65;
+  }
+
+  .ft-col h2 {
+    margin: 0 0 1rem;
+    font-family: "Inter", sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .ft-col ul {
+    display: grid;
+    gap: 0.65rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ft-col a {
+    color: var(--ink-mid);
+    text-decoration: none;
+    transition: color 0.25s ease;
+  }
+
+  .ft-col a span {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+  }
+
+  .ft-col a:hover {
+    color: var(--accent);
+  }
+
+  .ft-phone {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.25s ease;
+  }
+
+  .ft-phone:hover {
+    color: var(--accent);
+  }
+
+  .ft-col-note {
+    margin: 0.4rem 0 0;
+    font-size: 0.75rem;
+    color: var(--ink-faint);
+  }
+
+  /* --- Pie --- */
+  .ft-bottom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+  }
+
+  .ft-bottom a {
+    color: var(--ink-soft);
+    text-decoration: none;
+    transition: color 0.25s ease;
+  }
+
+  .ft-bottom a:hover {
+    color: var(--accent);
+  }
+
+  @media (min-width: 640px) {
+    .ft-cols {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .ft-cols {
+      grid-template-columns: 1.6fr 1fr 1fr 1fr;
+    }
+  }
+</style>

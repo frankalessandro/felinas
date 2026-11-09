@@ -1,0 +1,497 @@
+---
+import { Image } from "astro:assets";
+import twerkRecreativoPortada from "../../assets/academia/clase-twerk-recreativo.webp";
+import hipHopPortada from "../../assets/academia/clase-hip-hop.webp";
+import breakingPortada from "../../assets/academia/clase-breaking.webp";
+import flexPortada from "../../assets/academia/clase-flex.webp";
+import twerkAvanzadoPortada from "../../assets/academia/clase-twerk-avanzado.webp";
+
+const WHATSAPP_NUMBER = "573203426558";
+const classBookingUrl = (title: string) =>
+  `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`¡Hola! Quiero agendar la clase de ${title} en Felinas`)}`;
+
+type ClassInfo = {
+  title: string;
+  styles?: string;
+  description: string;
+  modalDescription: string;
+  level: string;
+  gradient: string;
+  trailerUrl?: string;
+  // Clip corto en loop (sin audio) que se reproduce al pasar el cursor / al centrarse en móvil.
+  // Ruta bajo /public, p. ej. "/videos/academia/twerk-recreativo.mp4". Opcional.
+  previewVideo?: string;
+  portada: ImageMetadata;
+  teacher: { name: string; role: string; social: string; image: string };
+};
+
+const classes: ClassInfo[] = [
+  {
+    title: "Twerk Recreativo",
+    description: "Una clase grupal para todos los niveles, pensada para venir a disfrutar, soltar el cuerpo y divertirte sin una formación estructurada.",
+    modalDescription: "Clase grupal abierta a todos los niveles, para quienes quieren disfrutar del twerk sin comprometerse con una formación técnica. Trabajamos ritmo, control de cadera y coreografías en un ambiente relajado, donde lo importante es pasarla bien y ganar confianza con tu cuerpo. Si buscas aprender twerk desde cero de forma estructurada, tenemos clases personalizadas 1 a 1.",
+    level: "Grupal · Todos los niveles",
+    gradient: "from-pink-500 to-rose-600",
+    trailerUrl: "https://www.youtube.com/embed/p-4LGl15AIk",
+    portada: twerkRecreativoPortada,
+    teacher: { name: "Mae", role: "Instructora de Twerk Recreativo", social: "https://www.instagram.com/mae.aleja", image: twerkRecreativoPortada.src },
+  },
+  {
+    title: "Urbano",
+    styles: "Popping · House · Hip Hop",
+    description: "En estas clases descubre tu identidad, desarrolla tu estilo y prueba nuevas formas de expresarte a través de una de las danzas urbanas más influyentes del mundo.",
+    modalDescription: "Un espacio para conectar con la esencia del hip hop: groove, musicalidad y actitud. Aprenderás pasos base, footwork y combinaciones que te ayudarán a construir tu propio estilo dentro de esta cultura urbana.",
+    level: "Grupal · Sin experiencia",
+    gradient: "from-amber-500 to-yellow-500",
+    trailerUrl: "https://www.youtube.com/embed/HiPuniltcn4",
+    portada: hipHopPortada,
+    teacher: { name: "Angélica", role: "Instructora de Urbano", social: "https://www.instagram.com/angee.ortizg", image: hipHopPortada.src },
+  },
+  {
+    title: "Breaking",
+    description: "En estas clases desafía tus límites, fortalece tu cuerpo y explora el movimiento desde la creatividad, la disciplina y la cultura urbana.",
+    modalDescription: "Clases enfocadas en los fundamentos del breaking: toprock, footwork, freezes y power moves. Un trabajo físico y mental que combina fuerza, equilibrio y creatividad, respetando siempre la base cultural del breaking.",
+    level: "Grupal · Sin experiencia",
+    gradient: "from-gray-800 to-amber-600",
+    trailerUrl: "https://www.youtube.com/embed/HpC0wH0wZog",
+    portada: breakingPortada,
+    teacher: { name: "Jahn Evels", role: "Instructor de Breaking", social: "https://www.instagram.com/bboyevelss", image: breakingPortada.src },
+  },
+  {
+    title: "Flex, Yoga y Gimnasia",
+    description: "En estas clases desarrolla fuerza, flexibilidad, movilidad y conciencia corporal a través de prácticas que complementan tu formación en danza, mejorando el control del movimiento, el equilibrio y el bienestar físico.",
+    modalDescription: "Una clase complementaria para fortalecer el cuerpo desde otra perspectiva. Combina estiramientos, posturas de yoga y ejercicios de gimnasia para mejorar tu flexibilidad, movilidad articular y conciencia corporal, base esencial para cualquier bailarín.",
+    level: "Grupal · Sin experiencia",
+    gradient: "from-purple-700 to-fuchsia-600",
+    trailerUrl: "https://www.youtube.com/embed/8PsQwdEasdM",
+    portada: flexPortada,
+    teacher: { name: "Andrea Altamirano", role: "Instructora de Flex, Yoga y Gimnasia", social: "https://www.instagram.com/andrealtamirano_", image: flexPortada.src },
+  },
+  {
+    title: "Twerk Avanzado",
+    description: "En estas clases encontrarás enfoque en técnica, exploración, musicalidad, acrobacias, control corporal y freestyle. Ideal para llevar tu experiencia a otro nivel.",
+    modalDescription: "Para quienes ya tienen bases en twerk y buscan llevar su nivel más allá. Se trabaja técnica avanzada, musicalidad, control corporal, acrobacias y freestyle, con retos que pulen tu ejecución y expresividad sobre la pista.",
+    level: "Grupal · Con experiencia",
+    gradient: "from-rose-600 to-fuchsia-700",
+    trailerUrl: "https://www.youtube.com/embed/PWJwZYkTZmw",
+    portada: twerkAvanzadoPortada,
+    teacher: { name: "Mae", role: "Instructora de Twerk Avanzado", social: "https://www.instagram.com/mae.aleja", image: twerkAvanzadoPortada.src },
+  },
+];
+
+const modalData = classes.map((c) => ({
+  title: c.title,
+  modalDescription: c.modalDescription,
+  level: c.level,
+  gradient: c.gradient,
+  trailerUrl: c.trailerUrl ?? null,
+  bookingUrl: classBookingUrl(c.title),
+  teacher: c.teacher,
+}));
+---
+
+<section id="clases" class="py-24 md:py-32 bg-background relative overflow-hidden">
+  <div class="absolute top-0 right-0 w-[550px] h-[550px] rounded-full bg-primary/8 blur-[130px] -translate-y-1/3 translate-x-1/4 pointer-events-none"></div>
+  <div class="absolute bottom-0 left-0 w-[450px] h-[450px] rounded-full bg-felina-morado/8 blur-[110px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
+  <div class="absolute top-40 -left-20 opacity-5 pointer-events-none select-none rotate-90 origin-left">
+    <h2 class="font-display font-black text-[12rem] whitespace-nowrap text-transparent text-stroke-primary text-stroke-2">OUR CLASSES</h2>
+  </div>
+
+  <div class="container px-4 relative z-10">
+    <div class="mb-20 md:mb-32">
+      <p class="font-display font-semibold text-primary text-sm tracking-[0.4em] uppercase mb-4 border-l-2 border-primary pl-4">Nuestros estilos</p>
+      <h2 class="text-foreground">
+        <span class="title-main">NUESTRAS <span class="title-accent">CLASES</span></span>
+      </h2>
+      <a href="#twerk-personalizado" class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-foreground/70 hover:text-primary transition-colors">
+        <span class="w-2 h-2 rounded-full bg-primary" aria-hidden="true"></span>
+        También tenemos clases personalizadas de Twerk desde cero
+        <span aria-hidden="true">↓</span>
+      </a>
+    </div>
+
+    <div class="flex flex-col gap-24 md:gap-32">
+      {classes.map((c, i) => {
+        const isEven = i % 2 !== 0;
+        return (
+          <div class:list={["flex flex-col md:flex-row items-center gap-8 md:gap-16 lg:gap-24 relative", isEven && "md:flex-row-reverse"]}>
+            <div data-reveal class:list={["w-full md:w-1/2 flex flex-col z-10 relative", isEven ? "md:items-end md:text-right" : "md:items-start md:text-left"]}>
+              <div class="inline-block border border-primary/30 text-primary text-xs font-bold tracking-widest px-4 py-1 rounded-full mb-6 bg-background/50 backdrop-blur-sm">
+                {c.level}
+              </div>
+              <h3 class:list={["font-display font-black text-4xl md:text-5xl lg:text-6xl text-foreground uppercase relative z-10 drop-shadow-md", c.styles ? "mb-2" : "mb-6"]}>{c.title}</h3>
+              {c.styles && <p class="font-display font-bold text-primary text-xs md:text-sm tracking-[0.25em] uppercase mb-6 relative z-10">{c.styles}</p>}
+              <p class="text-muted-foreground text-lg leading-relaxed max-w-md relative z-10 bg-background/50 backdrop-blur-sm rounded-lg py-2">{c.description}</p>
+              <div class:list={["mt-8 flex flex-wrap items-center gap-3 relative z-10", isEven ? "md:justify-end" : "md:justify-start"]}>
+                <button
+                  type="button"
+                  data-class-open={i}
+                  class="font-display font-bold text-sm uppercase tracking-widest text-white flex items-center gap-3 group bg-primary hover:bg-felina-rosa-glow pl-6 pr-2 py-2 rounded-full shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all duration-300"
+                >
+                  {c.trailerUrl ? "Ver trailer" : "Saber más"}
+                  <span class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    {c.trailerUrl ? (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10" /><polygon points="10 8 16 12 10 16 10 8" /></svg>
+                    ) : (
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
+                    )}
+                  </span>
+                </button>
+                <a
+                  href={classBookingUrl(c.title)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="font-display font-bold text-sm uppercase tracking-widest text-primary flex items-center gap-2 group border border-primary/40 hover:bg-primary hover:text-white pl-5 pr-5 py-2.5 rounded-full transition-all duration-300 hover:-translate-y-0.5"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:scale-110 transition-transform"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></svg>
+                  Reserva tu cupo
+                </a>
+              </div>
+            </div>
+
+            <div data-reveal-x={isEven ? "right" : "left"} class="w-full md:w-1/2 relative h-[400px] md:h-[500px] z-20">
+              <button
+                type="button"
+                data-class-open={i}
+                data-scroll-active
+                data-class-card
+                aria-label={`Ver clase de ${c.title}`}
+                class:list={["class-card absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] aspect-[4/5] bg-secondary rounded-3xl border border-border shadow-2xl overflow-hidden hover:rotate-0 data-[active=true]:rotate-0 hover:scale-[1.03] data-[active=true]:scale-[1.03] transition-all duration-500 cursor-pointer text-left", isEven ? "rotate-6" : "-rotate-6"]}
+              >
+                <Image
+                  src={c.portada}
+                  alt={c.title}
+                  widths={[360, 600, 900]}
+                  sizes="(max-width: 768px) 80vw, 40vw"
+                  loading="lazy"
+                  class="absolute inset-0 w-full h-full object-cover"
+                />
+                {c.previewVideo && (
+                  <video
+                    data-class-video
+                    src={c.previewVideo}
+                    muted
+                    loop
+                    playsinline
+                    preload="none"
+                    aria-hidden="true"
+                    class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-500"
+                  ></video>
+                )}
+                <div class:list={["absolute inset-0 bg-gradient-to-br opacity-20 mix-blend-overlay", c.gradient]}></div>
+                <div class="class-glow absolute inset-0 pointer-events-none"></div>
+                <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/5 to-transparent"></div>
+              </button>
+              <div class:list={["absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] aspect-[4/5] border border-primary/20 rounded-3xl pointer-events-none scale-[1.05]", isEven ? "-rotate-3" : "rotate-3"]}></div>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+
+    <!-- Twerk personalizado: bloque propio (no es una clase grupal más, pero tiene que verse) -->
+    <div id="twerk-personalizado" data-reveal class="mt-24 md:mt-44 scroll-mt-24">
+      <div class="relative overflow-hidden rounded-[2rem] md:rounded-[3rem] border border-primary/20 bg-gradient-to-br from-primary/[0.08] via-background to-background p-6 sm:p-10 md:p-14">
+        <div class="absolute -top-24 -left-20 w-[380px] h-[380px] rounded-full bg-primary/10 blur-[100px] pointer-events-none"></div>
+
+        <div class="relative z-10 grid lg:grid-cols-12 gap-10 lg:gap-16 items-center">
+          <!-- Mensaje: etiqueta → título → texto → acción -->
+          <div class="lg:col-span-7 min-w-0" style="container-type: inline-size;">
+            <p class="inline-block border border-primary/30 text-primary text-xs font-bold tracking-widest uppercase px-4 py-1 rounded-full mb-6 bg-background/60">Clases 1 a 1 · Desde cero</p>
+            <h3 class="text-foreground">
+              <span class="title-eyebrow">Twerk</span>
+              <span class="title-main" style="font-size: clamp(1.4rem, 9cqw, 6rem);"><span class="title-accent">PERSONALIZADO</span></span>
+            </h3>
+            <p class="mt-6 text-muted-foreground text-lg md:text-xl leading-relaxed font-light max-w-xl">
+              ¿Prefieres aprender a tu ritmo? Una clase hecha a tu medida: sin grupo, sin presión y con un plan que se adapta a tu cuerpo, tus objetivos y tu horario.
+            </p>
+            <a
+              href="#membresias"
+              data-open-plan-tab="personalizado"
+              class="mt-8 inline-flex font-display font-bold text-sm uppercase tracking-widest text-white items-center gap-3 group bg-primary hover:bg-felina-rosa-glow pl-6 pr-2 py-2 rounded-full shadow-lg shadow-primary/30 hover:shadow-primary/50 hover:-translate-y-0.5 transition-all duration-300"
+            >
+              Quiero mi clase personalizada
+              <span class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+              </span>
+            </a>
+          </div>
+
+          <!-- Ancla visual + beneficios -->
+          <div class="lg:col-span-5">
+            <div class="rounded-3xl bg-background border border-border shadow-xl shadow-primary/10 p-6 md:p-8">
+              <div class="flex items-end gap-4 pb-6 mb-6 border-b border-border">
+                <span class="title-accent font-display font-black leading-[0.8] tracking-tighter" style="font-size: clamp(4rem, 9vw, 6.5rem);">1:1</span>
+                <span class="pb-1 text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground leading-snug">Tú y tu<br />instructora</span>
+              </div>
+              <ul class="flex flex-col gap-4">
+                {["Empiezas desde cero, sin experiencia", "Atención 100% enfocada en ti", "Horario y ritmo a tu medida"].map((item) => (
+                  <li class="flex items-center gap-4 text-foreground font-medium">
+                    <span class="w-7 h-7 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-primary" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modal de clase (uno solo, se rellena por JS) -->
+<div id="class-modal" class="fixed inset-0 z-[100] hidden items-stretch md:items-center justify-center p-0 md:p-8">
+  <div data-modal-backdrop class="absolute inset-0 bg-secondary/90 backdrop-blur-md"></div>
+
+  <div data-modal-panel class="relative z-10 w-full h-full max-w-none md:h-[85vh] md:max-h-[640px] md:max-w-4xl flex flex-col md:flex-row bg-card border-0 md:border border-border rounded-none md:rounded-3xl shadow-2xl overflow-hidden">
+    <button
+      type="button"
+      data-modal-close
+      aria-label="Cerrar"
+      class="absolute top-3 right-3 md:top-4 md:right-4 z-30 p-2 bg-black/50 hover:bg-primary text-white rounded-full backdrop-blur-md transition-colors"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18" /><path d="m6 6 12 12" /></svg>
+    </button>
+
+    <!-- Trailer panel — vertical 9:16 -->
+    <div class="relative shrink-0 bg-black flex items-center justify-center overflow-hidden group w-full h-[58dvh] md:w-[38%] md:h-full border-b md:border-b-0 md:border-r border-border">
+      <iframe
+        data-modal-iframe
+        class="h-full aspect-[9/16] max-w-full hidden"
+        src=""
+        title="Trailer"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture"
+        allowfullscreen
+      ></iframe>
+      <div data-modal-fallback class="absolute inset-0 hidden">
+        <div data-modal-fallback-gradient class="absolute inset-0 bg-gradient-to-br opacity-30"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/40 pointer-events-none"></div>
+        <div class="relative z-10 h-full flex flex-col items-center justify-center text-center gap-5 px-6">
+          <span class="w-16 h-16 md:w-20 md:h-20 rounded-full bg-primary/20 text-white flex items-center justify-center backdrop-blur-md border border-white/20">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-1"><circle cx="12" cy="12" r="10" /><polygon points="10 8 16 12 10 16 10 8" /></svg>
+          </span>
+          <div>
+            <span class="font-display font-black tracking-[0.2em] text-white uppercase text-lg md:text-xl drop-shadow-md block mb-2">Ver Trailer</span>
+            <p class="text-white/60 text-[11px] font-medium bg-black/40 px-3 py-1 rounded-full backdrop-blur-md inline-block">Formato Vertical (9:16)</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Info panel -->
+    <div class="flex-1 min-h-0 flex flex-col bg-background">
+      <div class="flex-1 min-h-0 overflow-y-auto overscroll-contain hidden-scroll p-6 md:p-8">
+        <div class="flex items-center gap-2.5 mb-5 md:mb-6">
+          <span data-modal-dot class="inline-block w-2.5 h-2.5 rounded-full bg-gradient-to-r shadow"></span>
+          <span data-modal-level class="text-primary font-bold tracking-widest text-[11px] uppercase px-3 py-1 rounded-full border border-primary/20 bg-primary/5"></span>
+        </div>
+
+        <h2 data-modal-title class="font-display font-black text-3xl sm:text-4xl lg:text-5xl text-foreground uppercase leading-[0.95] mb-6 md:mb-8"></h2>
+
+        <div class="space-y-3 md:space-y-4">
+          <p class="text-[11px] font-semibold text-foreground/60 uppercase tracking-[0.2em] flex items-center gap-3">
+            Acerca de la clase
+            <span class="h-px flex-1 bg-border"></span>
+          </p>
+          <p data-modal-description class="text-sm md:text-base text-muted-foreground leading-relaxed"></p>
+        </div>
+
+        <a
+          data-modal-booking
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="mt-6 md:mt-8 inline-flex items-center gap-3 font-display font-bold text-sm uppercase tracking-widest text-white bg-primary hover:bg-felina-rosa-glow pl-6 pr-2 py-2 rounded-full shadow-lg shadow-primary/30 hover:shadow-primary/50 transition-all duration-300 group"
+        >
+          Agendar esta clase
+          <span class="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- Instructor — fijo abajo -->
+      <a
+        data-modal-teacher-link
+        href="#"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="shrink-0 border-t border-border px-6 md:px-8 py-4 flex items-center gap-4 hover:bg-muted/40 transition-colors group"
+      >
+        <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl overflow-hidden shrink-0 bg-muted ring-2 ring-transparent group-hover:ring-primary/40 transition">
+          <img data-modal-teacher-image src="" alt="" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        </div>
+        <div class="min-w-0 flex-1">
+          <p class="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold mb-1">Tu Profesor</p>
+          <p data-modal-teacher-name class="font-display font-black text-base md:text-lg leading-none truncate"></p>
+          <p data-modal-teacher-role class="text-primary text-[11px] font-bold tracking-widest uppercase mt-1 truncate"></p>
+        </div>
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-muted-foreground group-hover:text-primary transition-colors"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Brillo que sigue al cursor: solo cambia el fondo de una capa, no dispara layout */
+  .class-glow {
+    opacity: 0;
+    background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgb(255 255 255 / 0.28), transparent 60%);
+    mix-blend-mode: soft-light;
+    transition: opacity 0.4s;
+  }
+  .class-card:hover .class-glow {
+    opacity: 1;
+  }
+</style>
+
+<script>
+  // Tarjetas "vivas": brillo con el cursor + preview en video si la clase tiene uno.
+  const cards = document.querySelectorAll<HTMLElement>("[data-class-card]");
+  const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+  cards.forEach((card) => {
+    const video = card.querySelector<HTMLVideoElement>("[data-class-video]");
+
+    const setPlaying = (on: boolean) => {
+      if (!video) return;
+      if (on) {
+        video.play().then(() => (video.style.opacity = "1")).catch(() => {});
+      } else {
+        video.style.opacity = "0";
+        video.pause();
+      }
+    };
+
+    card.addEventListener("pointermove", (e) => {
+      if (!fine.matches) return;
+      const r = card.getBoundingClientRect();
+      card.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
+      card.style.setProperty("--my", `${((e.clientY - r.top) / r.height) * 100}%`);
+    });
+    card.addEventListener("pointerenter", () => fine.matches && setPlaying(true));
+    card.addEventListener("pointerleave", () => fine.matches && setPlaying(false));
+
+    // Móvil: initScrollActive marca data-active cuando la tarjeta entra en la banda central
+    new MutationObserver(() => !fine.matches && setPlaying(card.dataset.active === "true")).observe(card, {
+      attributes: true,
+      attributeFilter: ["data-active"],
+    });
+  });
+</script>
+
+<script type="application/json" id="class-modal-data" set:html={JSON.stringify(modalData)}></script>
+
+<script>
+  import { gsap } from "../../scripts/gsap";
+
+  type ModalClass = {
+    title: string;
+    modalDescription: string;
+    level: string;
+    gradient: string;
+    trailerUrl: string | null;
+    bookingUrl: string;
+    teacher: { name: string; role: string; social: string; image: string };
+  };
+
+  const data: ModalClass[] = JSON.parse(document.getElementById("class-modal-data")!.textContent!);
+  const modal = document.getElementById("class-modal")!;
+  const backdrop = modal.querySelector<HTMLElement>("[data-modal-backdrop]")!;
+  const panel = modal.querySelector<HTMLElement>("[data-modal-panel]")!;
+  const iframe = modal.querySelector<HTMLIFrameElement>("[data-modal-iframe]")!;
+  const fallback = modal.querySelector<HTMLElement>("[data-modal-fallback]")!;
+  const fallbackGradient = modal.querySelector<HTMLElement>("[data-modal-fallback-gradient]")!;
+  const dot = modal.querySelector<HTMLElement>("[data-modal-dot]")!;
+
+  const setText = (sel: string, text: string) => {
+    modal.querySelector<HTMLElement>(sel)!.textContent = text;
+  };
+
+  let gradientClasses: string[] = [];
+  let isOpen = false;
+
+  // Debajo de md el modal ocupa toda la pantalla (mismo corte que las clases del markup).
+  const fullscreenQuery = window.matchMedia("(max-width: 767px)");
+  const isFull = () => fullscreenQuery.matches;
+
+  const open = (c: ModalClass) => {
+    setText("[data-modal-level]", c.level);
+    setText("[data-modal-title]", c.title);
+    setText("[data-modal-description]", c.modalDescription);
+    setText("[data-modal-teacher-name]", c.teacher.name);
+    setText("[data-modal-teacher-role]", c.teacher.role);
+    modal.querySelector<HTMLAnchorElement>("[data-modal-booking]")!.href = c.bookingUrl;
+    modal.querySelector<HTMLAnchorElement>("[data-modal-teacher-link]")!.href = c.teacher.social;
+    const teacherImg = modal.querySelector<HTMLImageElement>("[data-modal-teacher-image]")!;
+    teacherImg.src = c.teacher.image;
+    teacherImg.alt = c.teacher.name;
+
+    dot.classList.remove(...gradientClasses);
+    fallbackGradient.classList.remove(...gradientClasses);
+    gradientClasses = c.gradient.split(" ");
+    dot.classList.add(...gradientClasses);
+    fallbackGradient.classList.add(...gradientClasses);
+
+    if (c.trailerUrl) {
+      iframe.src = `${c.trailerUrl}?autoplay=0&rel=0`;
+      iframe.title = `Trailer ${c.title}`;
+      iframe.classList.remove("hidden");
+      fallback.classList.add("hidden");
+    } else {
+      iframe.classList.add("hidden");
+      fallback.classList.remove("hidden");
+    }
+
+    document.body.style.overflow = "hidden";
+    modal.classList.remove("hidden");
+    modal.classList.add("flex");
+    isOpen = true;
+
+    gsap.fromTo(backdrop, { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.3, ease: "power1.out" });
+    // A pantalla completa el panel no puede escalar: se verían los bordes del fondo.
+    // En móvil entra deslizándose desde abajo; en desktop sigue siendo una tarjeta que crece.
+    gsap.fromTo(
+      panel,
+      isFull() ? { autoAlpha: 0, yPercent: 8 } : { autoAlpha: 0, y: 48, scale: 0.97 },
+      isFull()
+        ? { autoAlpha: 1, yPercent: 0, duration: 0.4, ease: "power3.out" }
+        : { autoAlpha: 1, y: 0, scale: 1, duration: 0.45, ease: "power3.out" }
+    );
+  };
+
+  const close = () => {
+    if (!isOpen) return;
+    isOpen = false;
+    gsap.to(backdrop, { autoAlpha: 0, duration: 0.25, ease: "power1.in" });
+    gsap.to(panel, {
+      autoAlpha: 0,
+      ...(isFull() ? { yPercent: 8 } : { y: 36, scale: 0.97 }),
+      duration: 0.3,
+      ease: "power2.in",
+      onComplete: () => {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        // Vaciar el src detiene la reproducción; si no, el audio sigue sonando cerrado.
+        iframe.src = "";
+        gsap.set(panel, { clearProps: "transform" });
+        document.body.style.overflow = "auto";
+      },
+    });
+  };
+
+  document.querySelectorAll<HTMLElement>("[data-class-open]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const c = data[Number(btn.dataset.classOpen)];
+      if (c) open(c);
+    });
+  });
+  backdrop.addEventListener("click", close);
+  modal.querySelector("[data-modal-close]")!.addEventListener("click", close);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") close();
+  });
+</script>

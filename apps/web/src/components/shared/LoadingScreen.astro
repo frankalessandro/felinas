@@ -1,0 +1,178 @@
+---
+interface Props {
+  id?: string;
+}
+const { id = "loading-screen" } = Astro.props;
+---
+
+<div id={id} class="ls-root">
+  <div class="ls-grain" aria-hidden="true"></div>
+  <div class="ls-halo" aria-hidden="true"></div>
+
+  <div class="ls-stack">
+    <img class="ls-logo" src="/assets/PanteraFelinasLogo.svg" alt="Felinas" width="1158" height="1020" fetchpriority="high" />
+    <span class="ls-word">FELINAS</span>
+
+    <div class="ls-bar" role="progressbar" aria-label="Cargando">
+      <span class="ls-bar-fill"></span>
+    </div>
+
+    <p class="ls-note">Cargando</p>
+  </div>
+
+  <div class="ls-vignette" aria-hidden="true"></div>
+</div>
+
+<style>
+  .ls-root {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #050505;
+    overflow: hidden;
+  }
+
+  /* Mismo grano y vignette que la landing: el corte entre loader y home es invisible. */
+  .ls-grain {
+    position: absolute;
+    inset: -50%;
+    opacity: 0.055;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  .ls-vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 42%, rgba(0, 0, 0, 0.72) 100%);
+  }
+
+  /* Halo neón detrás del logo. */
+  .ls-halo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: min(70vw, 34rem);
+    aspect-ratio: 1;
+    transform: translate(-50%, -58%);
+    pointer-events: none;
+    background: radial-gradient(
+      circle,
+      rgba(232, 17, 91, 0.42) 0%,
+      rgba(124, 4, 117, 0.26) 38%,
+      transparent 68%
+    );
+    filter: blur(6px);
+    animation: ls-breathe 3.2s ease-in-out infinite;
+  }
+
+  .ls-stack {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  .ls-logo {
+    width: clamp(4.5rem, 12vw, 7rem);
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 0 22px rgba(232, 17, 91, 0.75)) drop-shadow(0 0 60px rgba(124, 4, 117, 0.5));
+    animation: ls-breathe 3.2s ease-in-out infinite;
+  }
+
+  .ls-word {
+    font-family: "Montserrat", sans-serif;
+    font-weight: 900;
+    font-size: clamp(1.6rem, 6vw, 2.6rem);
+    letter-spacing: 0.3em;
+    text-indent: 0.3em;
+    color: #fff;
+    text-shadow: 0 0 30px rgba(232, 17, 91, 0.55);
+  }
+
+  /* Barra indeterminada en CSS puro: arranca antes de que cargue GSAP. */
+  .ls-bar {
+    position: relative;
+    width: min(58vw, 15rem);
+    height: 2px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .ls-bar-fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, #e8115b 35%, #7c0475 75%, transparent);
+    transform: translateX(-100%);
+    animation: ls-sweep 1.35s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  }
+
+  .ls-note {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.55em;
+    text-indent: 0.55em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  @keyframes ls-breathe {
+    0%,
+    100% {
+      opacity: 0.82;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+  }
+
+  /* El halo ya está centrado con translate, su respiración va aparte. */
+  .ls-halo {
+    animation-name: ls-halo-breathe;
+  }
+
+  @keyframes ls-halo-breathe {
+    0%,
+    100% {
+      opacity: 0.75;
+      transform: translate(-50%, -58%) scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: translate(-50%, -58%) scale(1.12);
+    }
+  }
+
+  @keyframes ls-sweep {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .ls-grain,
+    .ls-halo,
+    .ls-logo,
+    .ls-bar-fill {
+      animation: none;
+    }
+    .ls-bar-fill {
+      transform: none;
+      background: linear-gradient(90deg, #e8115b, #7c0475);
+    }
+  }
+</style>

@@ -1,0 +1,96 @@
+---
+import { Image } from "astro:assets";
+import posterClip5830 from "../../assets/fproductions/posters/clip-5830.webp";
+import posterClip5844 from "../../assets/fproductions/posters/clip-5844.webp";
+
+type Piece = {
+  file: string;
+  poster: ImageMetadata;
+  alt: string;
+  eyebrow: string;
+  title: string;
+};
+
+/**
+ * Los dos clips grabados en horizontal no son un reel de acompañamiento: son
+ * videoclip completo (dirección, cámara, edición), así que se sacan del mazo de
+ * GallerySection —pensado para 9:16— y se muestran acá a tamaño real, en 16:9.
+ * Mismo mecanismo de reproducción que el resto ([data-reel-hero] + lightbox
+ * compartido en scripts/reels.ts), solo que con la carta en su formato nativo.
+ */
+const PIECES: Piece[] = [
+  { file: "clip-5830", poster: posterClip5830, alt: "Grabación del videoclip de F Productions", eyebrow: "Producción 01", title: "Detrás de cámaras" },
+  { file: "clip-5844", poster: posterClip5844, alt: "Producción audiovisual completa de F Productions", eyebrow: "Producción 02", title: "El detrás de todo" },
+];
+---
+
+<section id="produccion" class="relative py-24 md:py-32 bg-[#07030b] overflow-hidden">
+  <div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-felina-morado/25 to-transparent"></div>
+  <div
+    class="pointer-events-none absolute right-[10%] top-1/3 -translate-y-1/2 h-[60vh] w-[50vw] rounded-full bg-[#ff006a]/15 blur-[130px]"
+    aria-hidden="true"
+  >
+  </div>
+
+  <div class="container px-4 md:px-8 relative z-10">
+    <div data-reveal class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-14 md:mb-20">
+      <h2 class="text-white">
+        <span class="title-eyebrow">Cuando el show</span>
+        <span class="title-main"><span class="title-accent">SE VUELVE CINE</span></span>
+      </h2>
+      <p class="text-white/60 max-w-sm text-sm md:text-base leading-relaxed">
+        Dos producciones audiovisuales completas —dirección, cámara y edición al nivel de un
+        videoclip real. <span class="text-white font-medium">Con sonido</span>, a pantalla completa.
+      </p>
+    </div>
+
+    <div data-reveal class="grid md:grid-cols-2 gap-6 md:gap-8">
+      {PIECES.map((piece, i) => (
+        <div class="group relative aspect-video rounded-[2rem] overflow-hidden bg-[#11081a] ring-1 ring-white/10 shadow-2xl shadow-black/70">
+          <Image
+            src={piece.poster}
+            alt={piece.alt}
+            widths={[640, 1100, 1600]}
+            sizes="(max-width: 768px) 92vw, 46vw"
+            loading={i === 0 ? "eager" : "lazy"}
+            class="w-full h-full object-cover scale-[1.02] transition-transform duration-[1200ms] ease-out group-hover:scale-105"
+          />
+
+          <div class="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/85 to-transparent z-20 pointer-events-none"></div>
+          <div class="absolute inset-0 rounded-[2rem] ring-1 ring-inset ring-felina-morado/25 z-20 pointer-events-none"></div>
+
+          <button
+            type="button"
+            data-reel-hero
+            data-reel-group="produccion"
+            data-index={i}
+            data-src={`/videos/${piece.file}.mp4`}
+            data-caption={piece.title}
+            data-orientation="landscape"
+            aria-label={`Reproducir con sonido: ${piece.title}`}
+            class="absolute inset-0 z-30 grid place-items-center cursor-pointer"
+          >
+            <span class="grid place-items-center w-20 h-20 rounded-full border-2 border-white/50 bg-black/30 backdrop-blur-sm transition-all duration-500 group-hover:scale-110 group-hover:bg-[#ff006a] group-hover:border-[#ff006a]">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="w-7 h-7 text-white translate-x-[2px]" aria-hidden="true">
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </span>
+          </button>
+
+          <span class="absolute top-5 left-6 z-30 flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-sm border border-white/20 pointer-events-none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-3.5 h-3.5 text-[#ff006a]">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+            </svg>
+            <span class="text-[9px] font-bold uppercase tracking-[0.25em] text-white">Con sonido</span>
+          </span>
+
+          <div class="absolute bottom-6 left-6 md:bottom-8 md:left-8 z-30 pointer-events-none">
+            <p class="text-[10px] uppercase tracking-[0.25em] text-purple-300 font-bold mb-1">{piece.eyebrow}</p>
+            <p class="text-2xl md:text-3xl font-display font-bold text-white">{piece.title}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
