@@ -15,7 +15,7 @@ interface Plan {
 }
 
 const tabs: { id: TabId; label: string }[] = [
-  { id: "combo", label: "Twerk + Urbano", short: "Combo" },
+  { id: "combo", label: "Twerk + Urbano", short: "Mixto" },
   { id: "twerk", label: "Solo Twerk", short: "Twerk" },
   { id: "personalizado", label: "Personalizado", short: "Personalizado" },
 ];
@@ -42,7 +42,7 @@ const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" 
     sections: [
       {
         title: "Clan Felinas",
-        subtitle: "Grupal · Twerk y Urbano",
+        subtitle: "Grupal · Twerk y Urbano · Cupos limitados",
         cols: "grid sm:grid-cols-2 lg:grid-cols-4 gap-6",
         cards: [
           { name: "Despierta", price: "$120.000", features: ["4 clases al mes"], breakdown: { twerk: 3, urbano: 1 } },
@@ -58,7 +58,7 @@ const plans: Record<"combo" | "twerk", { sections: Section[]; singles: ("twerk" 
     sections: [
       {
         title: "Clan Felinas",
-        subtitle: "Grupal · Solo Twerk · 3 a 6 felinas",
+        subtitle: "Grupal · Solo Twerk · Cupos limitados",
         tag: "Twerk grupal",
         cols: "grid sm:grid-cols-2 lg:grid-cols-3 gap-6",
         cards: [
