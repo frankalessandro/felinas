@@ -85,3 +85,5 @@ src/assets/fproductions/*.PNG
 # === Varios ===
 *.tmp
 *.temp
+.vercel
+.env*
