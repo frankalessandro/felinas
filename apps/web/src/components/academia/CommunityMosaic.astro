@@ -35,8 +35,10 @@ type Tile =
  *   c1-6 : texto (r1-5) · círculo (r6-8, c1-4) + estilos (r6-8, c5-6) · sonrisa (r9-10)
  *   c7-9 : tarima frente (r1-5) · tarima espalda (r6-10)
  *   c10-12: cypher B/N + 9+ (r1-3) · 80% (r4-5) · cypher suelo (r6-10)
- *   r11-15: dos videos 9:16 altos (c1-3, c4-6) + fotos grupales: una ancha (c7-12, r11-13) y dos
- *           debajo (c7-9, c10-12, r14-15). Los videos se descargan solo al abrirlos (lightbox compartido).
+ *   c10-12 r6-10: video del cypher (lugar de la foto "dándolo todo", que baja a c1-3 r11-15)
+ *   r11-15: foto cypher (c1-3) + video memorias (c4-6), alto 5 filas, + fotos grupales: una ancha
+ *           (c7-12, r11-13) y dos debajo (c7-9, c10-12, r14-15). Fotos y videos van intercalados;
+ *           los videos se descargan solo al abrirlos (lightbox compartido).
  */
 const tiles: Tile[] = [
   { kind: "photo", img: escenarioFrente, caption: "Pisando tarima", alt: "Bailarina de Felinas sobre la tarima con el público alrededor", cell: "row-span-2 lg:col-start-7 lg:col-span-3 lg:row-start-1 lg:row-span-5" },
@@ -46,17 +48,13 @@ const tiles: Tile[] = [
   { kind: "photo", img: escenarioEspalda, caption: "Sin miedo al escenario", alt: "Bailarina de Felinas de espaldas en el escenario", cell: "row-span-2 lg:col-start-7 lg:col-span-3 lg:row-start-6 lg:row-span-5" },
   { kind: "stat", stat: { value: 5, suffix: "", label: "Estilos de danza" }, tone: "light", cell: "lg:col-start-5 lg:col-span-2 lg:row-start-6 lg:row-span-3" },
   { kind: "photo", img: sonrisaParque, alt: "Alumna de Felinas sonriendo en pleno cypher", pos: "object-[50%_25%]", cell: "lg:col-start-1 lg:col-span-6 lg:row-start-9 lg:row-span-2", stat: { value: 5, suffix: "", label: "Clases semanales" } },
-  { kind: "photo", img: cypherSuelo, caption: "Dándolo todo en una salida", alt: "Bailarina en el suelo durante un cypher con el público alrededor", pos: "object-[50%_70%]", cell: "col-span-2 aspect-[4/5] sm:aspect-[16/11] lg:aspect-auto lg:col-start-10 lg:col-span-3 lg:row-start-6 lg:row-span-5" },
+  { kind: "video", poster: posterCypher, file: "comunidad-cypher", title: "Cypher en la cancha", alt: "Ver el video del cypher de la comunidad Felinas", pos: "object-[50%_35%]", cell: "col-span-2 aspect-[4/5] sm:aspect-[16/11] lg:aspect-auto lg:col-start-10 lg:col-span-3 lg:row-start-6 lg:row-span-5" },
   { kind: "photo", img: grupoEstudio, caption: "Siempre en equipo", alt: "Alumnas de Felinas posando juntas en el estudio", cell: "col-span-2 lg:col-start-7 lg:col-span-3 lg:row-start-14 lg:row-span-2" },
   { kind: "photo", img: grupoTwerkExpedition, caption: "Twerk Expedition", alt: "Grupo de Felinas en el Twerk Expedition", cell: "col-span-2 lg:col-start-10 lg:col-span-3 lg:row-start-14 lg:row-span-2" },
   { kind: "photo", img: grupoNoche, caption: "Twerk al parque", alt: "Comunidad Felinas reunida de noche en la cancha", cell: "col-span-2 lg:col-start-7 lg:col-span-6 lg:row-start-11 lg:row-span-3" },
-  { kind: "video", poster: posterMemorias, file: "comunidad-memorias", title: "Memorias Felinas", alt: "Ver el video de memorias de la comunidad Felinas", cell: "lg:col-start-1 lg:col-span-3 lg:row-start-11 lg:row-span-5" },
-  { kind: "video", poster: posterCypher, file: "comunidad-cypher", title: "Cypher en la cancha", alt: "Ver el video del cypher de la comunidad Felinas", pos: "object-[50%_35%]", cell: "lg:col-start-4 lg:col-span-3 lg:row-start-11 lg:row-span-5" },
+  { kind: "photo", img: cypherSuelo, caption: "Dándolo todo en una salida", alt: "Bailarina en el suelo durante un cypher con el público alrededor", pos: "object-[50%_70%]", cell: "col-span-2 aspect-[4/5] sm:aspect-[16/11] lg:aspect-auto lg:col-start-1 lg:col-span-3 lg:row-start-11 lg:row-span-5" },
+  { kind: "video", poster: posterMemorias, file: "comunidad-memorias", title: "Memorias Felinas", alt: "Ver el video de memorias de la comunidad Felinas", cell: "col-span-2 aspect-[4/5] sm:aspect-[16/11] lg:aspect-auto lg:col-start-4 lg:col-span-3 lg:row-start-11 lg:row-span-5" },
 ];
-
-// Numeración solo de las fotos con leyenda (las que llevan cifra no tienen), en el orden del arreglo.
-let photoCount = 0;
-const photoNumber = tiles.map((t) => (t.kind === "photo" && t.caption ? ++photoCount : 0));
 ---
 
 <section id="comunidad-section" class="relative py-20 md:py-28 overflow-hidden bg-gradient-to-b from-white via-[#fdf2f7] to-white">
@@ -124,8 +122,6 @@ const photoNumber = tiles.map((t) => (t.kind === "photo" && t.caption ? ++photoC
               <svg viewBox="0 0 24 24" fill="currentColor" class="h-7 w-7 translate-x-0.5"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14z" /></svg>
             </span>
             <span class="mosaic-tab absolute bottom-0 left-0 z-10 flex items-center gap-2 rounded-tr-2xl bg-white px-3.5 pt-2 pb-2 sm:px-4 text-[10px] sm:text-xs font-bold uppercase tracking-[0.18em] text-foreground">
-              <span class="text-primary">Video</span>
-              <span class="h-px w-3 bg-primary/40"></span>
               {t.title}
             </span>
           </button>
@@ -146,8 +142,6 @@ const photoNumber = tiles.map((t) => (t.kind === "photo" && t.caption ? ++photoC
             <!-- Leyenda como pestaña: pegada a la esquina inferior, del mismo blanco que las tarjetas, así
                  se lee como parte del marco y no como un objeto flotando sobre la foto. Las fotos con cifra no llevan.-->
             {t.caption && <figcaption class:list={["mosaic-tab absolute bottom-0 z-10 flex items-center gap-2 bg-white px-3.5 pt-2 pb-2 sm:px-4 text-[10px] sm:text-xs font-bold uppercase tracking-[0.18em] text-foreground", "left-0 rounded-tr-2xl"]}>
-              <span class="text-primary">{String(photoNumber[i]).padStart(2, "0")}</span>
-              <span class="h-px w-3 bg-primary/40"></span>
               {t.caption}
             </figcaption>}
             {t.stat && (
