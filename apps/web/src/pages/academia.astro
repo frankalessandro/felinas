@@ -11,6 +11,7 @@ import SiteFooter from "../components/shared/SiteFooter.astro";
 import WhatsAppButton from "../components/shared/WhatsAppButton.astro";
 import HeroSpotlight from "../components/academia/HeroSpotlight.astro";
 import LoadingScreen from "../components/shared/LoadingScreen.astro";
+import ReelLightbox from "../components/shared/ReelLightbox.astro";
 import maeHeroImg from "../assets/academia/mae-hero.webp";
 import maePantherImg from "../assets/academia/mae-panther-hero.webp";
 ---
@@ -34,12 +35,14 @@ import maePantherImg from "../assets/academia/mae-panther-hero.webp";
     <SiteFooter side="academia" />
     <WhatsAppButton />
   </div>
+  <ReelLightbox />
 </Layout>
 
 <script>
   // Orquestador único de la página: todas las timelines se registran acá.
   import { initReveals, initSlideReveals, initCounters, initAmbient, initScrollActive, initParallaxY, initMosaic, initClassStage, initCurtain, initMarquee } from "../scripts/animations";
   import { revealPage } from "../scripts/loader";
+  import { initReels } from "../scripts/reels";
   import { ScrollTrigger } from "gsap/ScrollTrigger";
 
   // initReveals()/initSlideReveals() ocultan sus elementos YA (gsap.set, sin medir
@@ -69,6 +72,7 @@ import maePantherImg from "../assets/academia/mae-panther-hero.webp";
     initAmbient();
     initScrollActive();
     initParallaxY();
+    initReels();
 
     // Las imágenes lazy y las fuentes cambian la altura de la página después de medir: se remide
     // cuando todo terminó de cargar, para que ningún trigger quede desfasado.

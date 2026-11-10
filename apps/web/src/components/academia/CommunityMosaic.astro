@@ -9,6 +9,8 @@ import cypherSuelo from "../../assets/academia/comunidad-cypher-suelo.webp";
 import grupoEstudio from "../../assets/academia/comunidad-1.webp";
 import grupoTwerkExpedition from "../../assets/academia/comunidad-2.webp";
 import grupoNoche from "../../assets/academia/comunidad-3.webp";
+import posterMemorias from "../../assets/academia/video-memorias.webp";
+import posterCypher from "../../assets/academia/video-cypher.webp";
 
 /** Iconos de los valores: trazos SVG 24x24 (estilo lucide), un solo <svg> para los cuatro. */
 const values = [
@@ -22,6 +24,7 @@ type Stat = { value: number; suffix: string; label: string };
 
 type Tile =
   | { kind: "photo"; img: ImageMetadata; alt: string; caption?: string; cell: string; pos?: string; stat?: Stat }
+  | { kind: "video"; poster: ImageMetadata; file: string; title: string; alt: string; cell: string; pos?: string }
   | { kind: "stat"; stat: Stat; tone: "pink" | "light"; cell: string; bar?: boolean };
 
 /**
@@ -32,7 +35,8 @@ type Tile =
  *   c1-6 : texto (r1-5) · círculo (r6-8, c1-4) + estilos (r6-8, c5-6) · sonrisa (r9-10)
  *   c7-9 : tarima frente (r1-5) · tarima espalda (r6-10)
  *   c10-12: cypher B/N + 9+ (r1-3) · 80% (r4-5) · cypher suelo (r6-10)
- *   r11-13: tres fotos grupales en tira (4 columnas cada una)
+ *   r11-15: dos videos 9:16 altos (c1-3, c4-6) + fotos grupales: una ancha (c7-12, r11-13) y dos
+ *           debajo (c7-9, c10-12, r14-15). Los videos se descargan solo al abrirlos (lightbox compartido).
  */
 const tiles: Tile[] = [
   { kind: "photo", img: escenarioFrente, caption: "Pisando tarima", alt: "Bailarina de Felinas sobre la tarima con el público alrededor", cell: "row-span-2 lg:col-start-7 lg:col-span-3 lg:row-start-1 lg:row-span-5" },
@@ -43,9 +47,11 @@ const tiles: Tile[] = [
   { kind: "stat", stat: { value: 5, suffix: "", label: "Estilos de danza" }, tone: "light", cell: "lg:col-start-5 lg:col-span-2 lg:row-start-6 lg:row-span-3" },
   { kind: "photo", img: sonrisaParque, alt: "Alumna de Felinas sonriendo en pleno cypher", pos: "object-[50%_25%]", cell: "lg:col-start-1 lg:col-span-6 lg:row-start-9 lg:row-span-2", stat: { value: 5, suffix: "", label: "Clases semanales" } },
   { kind: "photo", img: cypherSuelo, caption: "Dándolo todo en una salida", alt: "Bailarina en el suelo durante un cypher con el público alrededor", pos: "object-[50%_70%]", cell: "col-span-2 aspect-[4/5] sm:aspect-[16/11] lg:aspect-auto lg:col-start-10 lg:col-span-3 lg:row-start-6 lg:row-span-5" },
-  { kind: "photo", img: grupoEstudio, caption: "Siempre en equipo", alt: "Alumnas de Felinas posando juntas en el estudio", cell: "col-span-2 lg:col-start-1 lg:col-span-4 lg:row-start-11 lg:row-span-3" },
-  { kind: "photo", img: grupoTwerkExpedition, caption: "Twerk Expedition", alt: "Grupo de Felinas en el Twerk Expedition", cell: "col-span-2 lg:col-start-5 lg:col-span-4 lg:row-start-11 lg:row-span-3" },
-  { kind: "photo", img: grupoNoche, caption: "Twerk al parque", alt: "Comunidad Felinas reunida de noche en la cancha", cell: "col-span-2 lg:col-start-9 lg:col-span-4 lg:row-start-11 lg:row-span-3" },
+  { kind: "photo", img: grupoEstudio, caption: "Siempre en equipo", alt: "Alumnas de Felinas posando juntas en el estudio", cell: "col-span-2 lg:col-start-7 lg:col-span-3 lg:row-start-14 lg:row-span-2" },
+  { kind: "photo", img: grupoTwerkExpedition, caption: "Twerk Expedition", alt: "Grupo de Felinas en el Twerk Expedition", cell: "col-span-2 lg:col-start-10 lg:col-span-3 lg:row-start-14 lg:row-span-2" },
+  { kind: "photo", img: grupoNoche, caption: "Twerk al parque", alt: "Comunidad Felinas reunida de noche en la cancha", cell: "col-span-2 lg:col-start-7 lg:col-span-6 lg:row-start-11 lg:row-span-3" },
+  { kind: "video", poster: posterMemorias, file: "comunidad-memorias", title: "Memorias Felinas", alt: "Ver el video de memorias de la comunidad Felinas", cell: "lg:col-start-1 lg:col-span-3 lg:row-start-11 lg:row-span-5" },
+  { kind: "video", poster: posterCypher, file: "comunidad-cypher", title: "Cypher en la cancha", alt: "Ver el video del cypher de la comunidad Felinas", pos: "object-[50%_35%]", cell: "lg:col-start-4 lg:col-span-3 lg:row-start-11 lg:row-span-5" },
 ];
 
 // Numeración solo de las fotos con leyenda (las que llevan cifra no tienen), en el orden del arreglo.
@@ -93,7 +99,37 @@ const photoNumber = tiles.map((t) => (t.kind === "photo" && t.caption ? ++photoC
       </div>
 
       {tiles.map((t, i) =>
-        t.kind === "photo" ? (
+        t.kind === "video" ? (
+          <button
+            type="button"
+            data-mosaic-tile
+            data-reel-hero
+            data-reel-group="comunidad"
+            data-src={`/videos/${t.file}.mp4`}
+            data-caption={t.title}
+            aria-label={t.alt}
+            class={`group relative overflow-hidden rounded-3xl bg-muted shadow-lg shadow-primary/10 aspect-[9/16] lg:aspect-auto ${t.cell}`}
+          >
+            <Image
+              data-mosaic-img
+              src={t.poster}
+              alt=""
+              class:list={["absolute inset-0 h-full w-full max-w-none object-cover scale-[1.15] transition-transform duration-[1200ms] ease-out group-hover:scale-[1.22]", t.pos]}
+              widths={[360, 540, 720]}
+              sizes="(max-width: 1024px) 50vw, 24vw"
+              loading="lazy"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-black/10 pointer-events-none"></div>
+            <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 grid h-16 w-16 sm:h-[4.5rem] sm:w-[4.5rem] place-items-center rounded-full bg-white/90 text-primary shadow-xl shadow-black/30 transition-transform duration-300 group-hover:scale-110" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="currentColor" class="h-7 w-7 translate-x-0.5"><path d="M8 5.14v13.72a1 1 0 0 0 1.5.86l11-6.86a1 1 0 0 0 0-1.72l-11-6.86A1 1 0 0 0 8 5.14z" /></svg>
+            </span>
+            <span class="mosaic-tab absolute bottom-0 left-0 z-10 flex items-center gap-2 rounded-tr-2xl bg-white px-3.5 pt-2 pb-2 sm:px-4 text-[10px] sm:text-xs font-bold uppercase tracking-[0.18em] text-foreground">
+              <span class="text-primary">Video</span>
+              <span class="h-px w-3 bg-primary/40"></span>
+              {t.title}
+            </span>
+          </button>
+        ) : t.kind === "photo" ? (
           <figure data-mosaic-tile class={`group relative overflow-hidden rounded-3xl bg-muted shadow-lg shadow-primary/10 ${t.cell}`}>
             <Image
               data-mosaic-img
@@ -101,6 +137,7 @@ const photoNumber = tiles.map((t) => (t.kind === "photo" && t.caption ? ++photoC
               alt={t.alt}
               class:list={["absolute inset-0 h-full w-full max-w-none object-cover scale-[1.15] transition-transform duration-[1200ms] ease-out group-hover:scale-[1.22]", t.pos]}
               widths={[420, 720, 1000]}
+              quality={74}
               sizes="(max-width: 1024px) 50vw, 30vw"
               loading="lazy"
             />

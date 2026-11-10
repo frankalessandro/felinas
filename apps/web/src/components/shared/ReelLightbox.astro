@@ -1,0 +1,65 @@
+---
+---
+
+<!--
+  Lightbox único para todos los reels. Vive fuera de la sección para que el overlay
+  no herede transforms ni overflow.
+-->
+<div
+  data-reel-lightbox
+  hidden
+  aria-hidden="true"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Reproductor de video"
+  class="fixed inset-0 z-[100] grid place-items-center bg-black/92 backdrop-blur-md p-4"
+>
+  <button
+    data-reel-close
+    type="button"
+    aria-label="Cerrar video"
+    class="absolute top-5 right-5 z-20 grid place-items-center w-12 h-12 rounded-full bg-white/10 border border-white/20 text-white transition-colors hover:bg-[#ff006a]"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" class="w-6 h-6">
+      <path d="M18 6 6 18M6 6l12 12" />
+    </svg>
+  </button>
+
+  <button
+    data-reel-prev
+    type="button"
+    aria-label="Reel anterior"
+    class="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 z-20 grid place-items-center w-11 h-11 md:w-14 md:h-14 rounded-full bg-white/10 border border-white/20 text-white transition-colors hover:bg-[#ff006a]"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-6 md:h-6">
+      <path d="m15 18-6-6 6-6" />
+    </svg>
+  </button>
+  <button
+    data-reel-next
+    type="button"
+    aria-label="Reel siguiente"
+    class="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 z-20 grid place-items-center w-11 h-11 md:w-14 md:h-14 rounded-full bg-white/10 border border-white/20 text-white transition-colors hover:bg-[#ff006a]"
+  >
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-6 md:h-6">
+      <path d="m9 18 6-6-6-6" />
+    </svg>
+  </button>
+
+  <div data-reel-lightbox-panel class="relative w-full max-w-[min(420px,88vw)] transition-[max-width] duration-200">
+    <video
+      controls
+      playsinline
+      preload="none"
+      class="w-full aspect-[9/16] rounded-2xl bg-black object-cover shadow-[0_0_80px_rgba(168,85,247,0.25)]"
+    ></video>
+    <p data-reel-lightbox-caption class="mt-4 text-center font-display font-bold text-white text-lg"></p>
+    <p data-reel-lightbox-counter class="mt-1 text-center text-white/40 text-[11px] uppercase tracking-[0.3em]"></p>
+  </div>
+</div>
+
+<style is:global>
+  [data-reel-lightbox][hidden] {
+    display: none;
+  }
+</style>
