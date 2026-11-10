@@ -2,6 +2,11 @@
 #
 # Genera los videos web de F Productions a partir de los originales de camara.
 #
+# OJO: los nombres de salida de este script son los de la primera version (loop-*).
+# Los que hoy sirve public/videos/ son clip-* (mismos IMG_xxxx, mas clip-3803/5830/5844/9941
+# y reel-6818) y no salieron de aqui con estos parametros. Los videos de comunidad tienen su
+# propio script: encode-comunidad.sh. Todos se abren bajo demanda en el lightbox, nada se autocarga.
+#
 #   Entrada : src/assets/fproductions/*.mp4   (ignorados por git, ~420 MB)
 #   Salida  : public/videos/*.mp4             (versionados, ~35 MB)
 #             src/assets/fproductions/posters/*.webp

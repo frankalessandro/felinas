@@ -150,6 +150,7 @@ const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
                         src={c.portada}
                         alt={c.title}
                         widths={[480, 720, 1000]}
+                          quality={74}
                         sizes="(max-width: 768px) 82vw, 400px"
                         loading="lazy"
                         style={`object-position:${c.pos ?? "50% 50%"}`}
@@ -162,6 +163,7 @@ const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
                           src={c.portada}
                           alt={c.title}
                           widths={[480, 720, 1000]}
+                          quality={74}
                           sizes="(max-width: 768px) 82vw, 400px"
                           loading="lazy"
                           class="class-contain absolute inset-x-0 inset-y-0 my-auto h-auto w-full transition-transform duration-[1200ms] ease-out group-hover:scale-[1.05]"
