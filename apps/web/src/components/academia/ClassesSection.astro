@@ -15,13 +15,23 @@ const WHATSAPP_NUMBER = "573203426558";
 const classBookingUrl = (title: string) =>
   `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(`¡Hola! Quiero agendar la clase de ${title} en Felinas`)}`;
 
+/** Video de la clase: archivo en public/videos/<file>.mp4 (ver scripts/encode-clases.sh). */
+type Clip = {
+  file: string;
+  /** Etiqueta sobre el video; sin ella se muestra "Video 1", "Video 2". */
+  label?: string;
+  /** Grabado en horizontal: se muestra entero (contain) sobre el degradado de la clase en vez de recortarse. */
+  landscape?: boolean;
+};
+
 type ClassInfo = {
   title: string;
   styles?: string[];
   description: string;
   /** Etiqueta de nivel: indica para quién es la clase, no su intensidad. */
   level: string;
-  trailerUrl?: string;
+  /** Dos videos por clase, en el reproductor del reverso de la tarjeta. */
+  videos: Clip[];
   portada: ImageMetadata;
   /**
    * "cover" llena la tarjeta 9:16. "contain" muestra la foto entera sobre una copia desenfocada
@@ -40,7 +50,7 @@ const classes: ClassInfo[] = [
     title: "Twerk Recreativo",
     description: "Una clase grupal para todos los niveles, pensada para venir a disfrutar, soltar el cuerpo y divertirte sin una formación estructurada.",
     level: "Todos los niveles",
-    trailerUrl: "https://www.youtube.com/embed/p-4LGl15AIk",
+    videos: [{ file: "clase-twerk-recreativo-1" }, { file: "clase-twerk-recreativo-2", landscape: true }],
     portada: cardTwerkRecreativo,
     // Foto horizontal: a "cover" en una tarjeta 9:16 se ampliaba ~2.7x y se pixelaba; entera se ve nítida.
     fit: "contain",
@@ -52,7 +62,7 @@ const classes: ClassInfo[] = [
     styles: ["Popping", "House", "Hip Hop"],
     description: "En estas clases descubre tu identidad, desarrolla tu estilo y prueba nuevas formas de expresarte a través de una de las danzas urbanas más influyentes del mundo.",
     level: "Sin experiencia",
-    trailerUrl: "https://www.youtube.com/embed/HiPuniltcn4",
+    videos: [{ file: "clase-urbano-hiphop", label: "Hip Hop" }, { file: "clase-urbano-house", label: "House" }],
     portada: cardUrbano,
     fit: "contain",
     tone: { from: "#e0127f", to: "#7b2cbf" },
@@ -62,7 +72,7 @@ const classes: ClassInfo[] = [
     title: "Breaking",
     description: "En estas clases desafía tus límites, fortalece tu cuerpo y explora el movimiento desde la creatividad, la disciplina y la cultura urbana.",
     level: "Sin experiencia",
-    trailerUrl: "https://www.youtube.com/embed/HpC0wH0wZog",
+    videos: [{ file: "clase-breaking-1" }, { file: "clase-breaking-2" }],
     portada: cardBreaking,
     fit: "cover",
     pos: "55% 50%",
@@ -73,7 +83,7 @@ const classes: ClassInfo[] = [
     title: "Flex, Yoga y Gimnasia",
     description: "En estas clases desarrolla fuerza, flexibilidad, movilidad y conciencia corporal a través de prácticas que complementan tu formación en danza, mejorando el control del movimiento, el equilibrio y el bienestar físico.",
     level: "Sin experiencia",
-    trailerUrl: "https://www.youtube.com/embed/8PsQwdEasdM",
+    videos: [{ file: "clase-flex-1" }, { file: "clase-flex-2" }],
     portada: cardFlex,
     fit: "contain",
     tone: { from: "#d946ef", to: "#7c3aed" },
@@ -83,7 +93,7 @@ const classes: ClassInfo[] = [
     title: "Twerk Avanzado",
     description: "En estas clases encontrarás enfoque en técnica, exploración, musicalidad, acrobacias, control corporal y freestyle. Ideal para llevar tu experiencia a otro nivel.",
     level: "Con experiencia",
-    trailerUrl: "https://www.youtube.com/embed/PWJwZYkTZmw",
+    videos: [{ file: "clase-twerk-avanzado-1" }, { file: "clase-twerk-avanzado-2" }],
     portada: cardTwerkAvanzado,
     fit: "cover",
     pos: "50% 35%",
@@ -92,17 +102,20 @@ const classes: ClassInfo[] = [
   },
 ];
 
+/** Leyenda del lightbox: "Urbano · Hip Hop" o "Breaking · Video 2". */
+const clipCaption = (c: ClassInfo, k: number) => `${c.title} · ${c.videos[k].label ?? `Video ${k + 1}`}`;
+
 const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
 ---
 
 <!--
   Escenario anclado: la sección se fija y las clases pasan UNA A LA VEZ (entra una, sale la otra) al
   scrollear (initClassStage). En móvil o con reduced-motion no se ancla: quedan en fila, una tras otra.
-  Cada clase es un zig-zag con una tarjeta vertical 9:16 que VOLTEA:
-  el frente es la foto y el reverso es el trailer. Un toque voltea (igual en desktop y celular, sin
-  depender del hover); "Volver", Esc o abrir otra tarjeta la regresan. El iframe solo se carga al
-  voltear y se vacía al volver, para no cargar 5 reproductores de YouTube de entrada ni dejar audio
-  sonando. La tarjeta es 9:16 porque los trailers lo son: al voltear, el video llena el reverso.
+  Cada clase es un zig-zag con una tarjeta vertical 9:16. Tocarla abre el lightbox compartido
+  (ReelLightbox + scripts/reels.ts) con los 2 videos de la clase, con flechas prev/next. Antes los videos
+  vivian dentro de la propia tarjeta (volteada en 3D): un <video> dentro de un rotateY con
+  backface-visibility es fragil en Safari/iOS, y el lightbox es el patron que ya funciona en el resto del
+  sitio. Los videos se descargan solo al abrirlos.
 -->
 <section id="clases" class="py-20 md:py-24 bg-gradient-to-b from-white via-[#fdf2f7] to-white relative overflow-hidden">
   <div class="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-primary/[0.07] blur-[130px] -translate-y-1/3 translate-x-1/4 pointer-events-none"></div>
@@ -116,7 +129,7 @@ const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
         <span class="title-main">NUESTRAS <span class="title-accent">CLASES</span></span>
       </h2>
       <p class="mt-4 max-w-xl text-muted-foreground text-base md:text-lg font-light leading-relaxed">
-        Cinco formas de moverte. Toca cualquier tarjeta para ver el trailer de la clase.
+        Cinco formas de moverte. Toca cualquier tarjeta para ver la clase en video.
       </p>
       <a href="#twerk-personalizado" class="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-foreground/70 hover:text-primary transition-colors">
         <span class="w-2 h-2 rounded-full bg-primary" aria-hidden="true"></span>
@@ -138,13 +151,14 @@ const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
                 <div class="class-aura h-[125%] aspect-square rounded-full blur-3xl opacity-[0.17]"></div>
               </div>
               <!-- Ancho derivado del alto (66vh, tope 620px, deja sitio al menú) para que la tarjeta 9:16 siempre quepa en pantalla -->
-              <div data-flip data-trailer={c.trailerUrl ?? ""} class="flip relative aspect-[9/16] w-[82%] max-w-[340px] md:w-[calc(min(66vh,620px)*0.5625)] md:max-w-none">
+              <div data-flip class="flip relative aspect-[9/16] w-[82%] max-w-[340px] md:w-[calc(min(66vh,620px)*0.5625)] md:max-w-none">
                 <!-- Luz de color detrás: degradado simple de la clase, sin exagerar -->
                 <div class="class-aura absolute -inset-3 -z-10 rounded-[2rem] blur-2xl opacity-25 pointer-events-none"></div>
 
                 <div class="flip-inner">
-                  <!-- Frente -->
-                  <button type="button" data-flip-open={i} data-class-card aria-label={`Ver trailer de ${c.title}`} class="flip-face flip-front group text-left cursor-pointer bg-[#f3eef2] shadow-2xl shadow-black/20 ring-1 ring-black/5">
+                  <!-- La tarjeta abre el lightbox compartido (scripts/reels.ts) con los videos de la clase.
+                       Los demás videos no tienen tarjeta propia: entran a la lista como elementos ocultos. -->
+                  <button type="button" data-class-card={i} data-reel-hero data-reel-group={`clase-${i}`} data-reel-loop="false" data-src={`/videos/${c.videos[0].file}.mp4`} data-caption={clipCaption(c, 0)} data-orientation={c.videos[0].landscape ? "landscape" : undefined} aria-label={`Ver los videos de ${c.title}`} class="flip-face flip-front group text-left cursor-pointer bg-[#f3eef2] shadow-2xl shadow-black/20 ring-1 ring-black/5">
                     {c.fit === "cover" ? (
                       <Image
                         src={c.portada}
@@ -175,7 +189,7 @@ const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
                     <span class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5 sm:p-6 text-white">
                       <span class="font-display font-black uppercase leading-[0.95] text-2xl sm:text-3xl drop-shadow">{c.title}</span>
                       {/* Play: botón sólido (nunca se anima su opacidad) con un aro que late detrás, y la
-                          etiqueta "Trailer" para que se entienda que se toca. */}
+                          etiqueta "N videos" para que se entienda que se toca. */}
                       <span class="flex shrink-0 flex-col items-center gap-1.5">
                         <span class="relative grid h-16 w-16 place-items-center">
                           <span data-ambient="pulse" class="absolute inset-0 rounded-full bg-white/50"></span>
@@ -183,31 +197,13 @@ const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
                             <svg viewBox="0 0 24 24" fill="currentColor" class="h-7 w-7 translate-x-0.5" aria-hidden="true"><path d="M8 5v14l11-7z" /></svg>
                           </span>
                         </span>
-                        <span class="text-[10px] font-bold uppercase tracking-[0.22em] drop-shadow">Trailer</span>
+                        <span class="text-[10px] font-bold uppercase tracking-[0.22em] drop-shadow">{c.videos.length} videos</span>
                       </span>
                     </span>
                   </button>
-
-                  <!-- Reverso: el trailer es 9:16 igual que la tarjeta, así que ocupa casi todo el reverso -->
-                  <div class="flip-face flip-back class-back flex flex-col text-white" inert>
-                    <div class="relative min-h-0 flex-1 bg-black">
-                      <iframe
-                        data-flip-iframe
-                        class="absolute inset-0 h-full w-full"
-                        src=""
-                        title={`Trailer ${c.title}`}
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; fullscreen; gyroscope; picture-in-picture"
-                        allowfullscreen
-                      ></iframe>
-                    </div>
-                    <div class="flex shrink-0 items-center gap-2 p-3">
-                      <button type="button" data-flip-close class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white/20 px-4 py-3 text-[11px] font-bold uppercase tracking-widest backdrop-blur transition-colors hover:bg-white hover:text-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
-                        Volver
-                      </button>
-                      <a href={classBookingUrl(c.title)} target="_blank" rel="noopener noreferrer" class="flex-1 rounded-full bg-white py-3 text-center font-display text-xs font-bold uppercase tracking-widest text-primary transition-transform hover:scale-[1.02]">Reserva tu cupo</a>
-                    </div>
-                  </div>
+                  {c.videos.slice(1).map((v, k) => (
+                    <span hidden data-reel-hero data-reel-group={`clase-${i}`} data-reel-loop="false" data-src={`/videos/${v.file}.mp4`} data-caption={clipCaption(c, k + 1)} data-orientation={v.landscape ? "landscape" : undefined}></span>
+                  ))}
                 </div>
               </div>
             </div>
@@ -237,7 +233,7 @@ const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
                 </span>
               </a>
 
-              <!-- Una sola acción principal por clase; el trailer vive en la tarjeta -->
+              <!-- Una sola acción principal por clase; los videos viven en la tarjeta -->
               <div class:list={["mt-6 flex flex-wrap items-center gap-4", isEven && "md:justify-end"]}>
                 <a
                   href={classBookingUrl(c.title)}
@@ -248,9 +244,9 @@ const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
                   Reserva tu cupo
                   <svg class="btn-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
                 </a>
-                {c.trailerUrl && (
-                  <button type="button" data-flip-open={i} data-flip-scroll class="text-sm font-semibold text-foreground/70 hover:text-primary transition-colors underline underline-offset-4 decoration-primary/40">
-                    Ver trailer
+                {c.videos.length > 0 && (
+                  <button type="button" data-open-class={i} class="text-sm font-semibold text-foreground/70 hover:text-primary transition-colors underline underline-offset-4 decoration-primary/40">
+                    Ver videos
                   </button>
                 )}
               </div>
@@ -330,7 +326,6 @@ const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
   /* Familia de color por clase: --g1/--g2 vienen del style de cada fila. */
   .class-level,
   .class-aura { background: linear-gradient(135deg, var(--g1), var(--g2)); }
-  .class-back { background: linear-gradient(160deg, var(--g1), var(--g2)); }
   /* Degradado inferior: solo lo justo para leer el título, sin teñir toda la foto. */
   .class-fade {
     background: linear-gradient(to top, color-mix(in srgb, var(--g2) 82%, transparent) 0%, color-mix(in srgb, var(--g1) 28%, transparent) 34%, transparent 58%);
@@ -375,11 +370,8 @@ const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
   /* Flip 3D */
   /* Sin transition ni :hover sobre transform: el escenario anima este elemento con GSAP (scrub) y una
      transición CSS encima interpola entre cuadros, lo que se veía como un movimiento extraño. */
-  .flip { perspective: 1600px; }
-  .flip-inner { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1); }
-  .flip[data-flipped="true"] .flip-inner { transform: rotateY(180deg); }
-  .flip-face { position: absolute; inset: 0; overflow: hidden; border-radius: 1.5rem; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-  .flip-back { transform: rotateY(180deg); }
+  .flip-inner { position: relative; width: 100%; height: 100%; }
+  .flip-face { position: absolute; inset: 0; overflow: hidden; border-radius: 1.5rem; }
 
   /* Brillo que sigue al cursor: solo cambia el fondo de una capa, no dispara layout */
   .class-glow {
@@ -390,20 +382,14 @@ const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
   }
   .flip-front:hover .class-glow { opacity: 1; }
 
-  @media (prefers-reduced-motion: reduce) {
-    .flip,
-    .flip-inner { transition-duration: 0.01s; }
-  }
 </style>
 
 <script>
   const fine = window.matchMedia("(hover: hover) and (pointer: fine)");
-  const flips = Array.from(document.querySelectorAll<HTMLElement>("[data-flip]"));
 
   // Brillo con el cursor (solo con puntero fino)
-  flips.forEach((flip) => {
-    const front = flip.querySelector<HTMLElement>("[data-class-card]");
-    front?.addEventListener("pointermove", (e) => {
+  document.querySelectorAll<HTMLElement>("[data-class-card]").forEach((front) => {
+    front.addEventListener("pointermove", (e) => {
       if (!fine.matches) return;
       const r = front.getBoundingClientRect();
       front.style.setProperty("--mx", `${((e.clientX - r.left) / r.width) * 100}%`);
@@ -411,47 +397,8 @@ const toneStyle = (t: ClassInfo["tone"]) => `--g1:${t.from};--g2:${t.to}`;
     });
   });
 
-  const setFlipped = (flip: HTMLElement, on: boolean, restoreFocus = true) => {
-    if (flip.dataset.flipped === String(on)) return;
-    const front = flip.querySelector<HTMLElement>(".flip-front")!;
-    const back = flip.querySelector<HTMLElement>(".flip-back")!;
-    const iframe = flip.querySelector<HTMLIFrameElement>("[data-flip-iframe]")!;
-    flip.dataset.flipped = String(on);
-    // La cara oculta no debe recibir foco ni clics (backface-visibility no lo evita en todos los navegadores).
-    front.inert = on;
-    back.inert = !on;
-
-    if (on) {
-      const url = flip.dataset.trailer;
-      // El src se asigna recién al voltear; vaciarlo al volver detiene el audio.
-      if (url) iframe.src = `${url}?autoplay=1&rel=0&playsinline=1`;
-      back.querySelector<HTMLElement>("[data-flip-close]")?.focus({ preventScroll: true });
-    } else {
-      iframe.src = "";
-      if (restoreFocus) front.focus({ preventScroll: true });
-    }
-  };
-
-  document.querySelectorAll<HTMLElement>("[data-flip-open]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const target = flips[Number(btn.dataset.flipOpen)];
-      if (!target) return;
-      // Una a la vez: abrir un trailer cierra el que estuviera sonando.
-      flips.forEach((f) => f !== target && setFlipped(f, false, false));
-      setFlipped(target, true);
-      // El enlace "Ver trailer" del texto puede dejar la tarjeta fuera de pantalla: se centra.
-      if (btn.hasAttribute("data-flip-scroll")) target.scrollIntoView({ behavior: "smooth", block: "center" });
-    });
-  });
-  document.querySelectorAll<HTMLElement>("[data-flip-close]").forEach((btn) => {
-    btn.addEventListener("click", () => setFlipped(btn.closest<HTMLElement>("[data-flip]")!, false));
-  });
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") flips.forEach((f) => setFlipped(f, false));
-  });
-  // El escenario anclado avisa cuando cambia la clase visible: el trailer de la anterior se detiene.
-  document.addEventListener("class-stage-change", (e) => {
-    const active = (e as CustomEvent<{ index: number }>).detail.index;
-    flips.forEach((f, i) => i !== active && setFlipped(f, false, false));
+  // "Ver videos" del texto abre lo mismo que la tarjeta: el lightbox lo gestiona reels.ts (initReels, en la página).
+  document.querySelectorAll<HTMLElement>("[data-open-class]").forEach((btn) => {
+    btn.addEventListener("click", () => document.querySelector<HTMLElement>(`[data-class-card="${btn.dataset.openClass}"]`)?.click());
   });
 </script>

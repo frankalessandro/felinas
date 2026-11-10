@@ -217,12 +217,27 @@ function initLightbox(root: ParentNode): Teardown {
     applyOrientation(tile);
     if (caption) caption.textContent = tile.dataset.caption ?? "";
     if (counter) counter.textContent = `${i + 1} / ${playlist.length}`;
+    updateArrows();
     void video.play().catch(() => {});
+  };
+
+  /**
+   * Un grupo con data-reel-loop="false" (clases, comunidad) no da la vuelta: en el último video no hay
+   * "siguiente" ni en el primero "anterior". Los reels de /show sí ciclan. `invisible` y no `hidden`:
+   * los botones llevan `grid`, que le gana al atributo, y así además salen del orden de tabulación.
+   */
+  const noLoop = () => playlist[current]?.dataset.reelLoop === "false";
+  const updateArrows = () => {
+    const edge = noLoop();
+    prevBtn?.classList.toggle("invisible", edge && current === 0);
+    nextBtn?.classList.toggle("invisible", edge && current === playlist.length - 1);
   };
 
   const step = (delta: number) => {
     if (!playlist.length) return;
-    load((current + delta + playlist.length) % playlist.length);
+    const next = current + delta;
+    if (noLoop() && (next < 0 || next >= playlist.length)) return;
+    load((next + playlist.length) % playlist.length);
   };
 
   const show = (tile: HTMLElement) => {
