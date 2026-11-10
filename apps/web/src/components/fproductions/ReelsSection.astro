@@ -74,7 +74,7 @@ import ReelLightbox from "../shared/ReelLightbox.astro";
           >
             {
               REELS.map((reel, i) => (
-                <Image
+                <Image quality={74}
                   data-stage-poster={i}
                   src={reel.poster}
                   alt={reel.alt}

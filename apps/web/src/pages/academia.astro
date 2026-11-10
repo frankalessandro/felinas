@@ -75,10 +75,9 @@ import maePantherImg from "../assets/academia/mae-panther-hero.webp";
     initReels();
 
     // Las imágenes lazy y las fuentes cambian la altura de la página después de medir: se remide
-    // cuando todo terminó de cargar, para que ningún trigger quede desfasado.
-    const refresh = () => ScrollTrigger.refresh();
-    if (document.readyState === "complete") setTimeout(refresh, 300);
-    else window.addEventListener("load", () => setTimeout(refresh, 300), { once: true });
-    document.fonts?.ready.then(refresh);
+    // UNA sola vez, cuando fuentes y carga terminaron. Antes eran dos refresh seguidos y cada uno
+    // fuerza un layout completo de la página (~40 ms medidos, varias veces eso en un móvil).
+    const loaded = document.readyState === "complete" ? Promise.resolve() : new Promise<void>((r) => window.addEventListener("load", () => r(), { once: true }));
+    Promise.all([loaded, document.fonts?.ready]).then(() => setTimeout(() => ScrollTrigger.refresh(), 300));
   });
 </script>

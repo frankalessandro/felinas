@@ -58,7 +58,7 @@ const instructors: Instructor[] = [
               </div>
 
               <div data-curtain-photo class="instructor-card relative aspect-[3/4] overflow-hidden rounded-3xl bg-white transition-transform duration-500 ease-out group-hover:-translate-y-2">
-                <Image
+                <Image quality={74}
                   data-curtain-img
                   src={p.image}
                   alt={p.name}
@@ -102,8 +102,8 @@ const instructors: Instructor[] = [
   /* Marca de agua del logo, teñida y casi invisible (aparición sutil; la marcada está en la franja y el pie). */
   .instructors-logo {
     background: linear-gradient(135deg, #ff006a, #9b1fd1);
-    -webkit-mask: url(/assets/PanteraFelinasLogo.svg) center / contain no-repeat;
-    mask: url(/assets/PanteraFelinasLogo.svg) center / contain no-repeat;
+    -webkit-mask: url(/assets/PanteraFelinasLogo.webp) center / contain no-repeat;
+    mask: url(/assets/PanteraFelinasLogo.webp) center / contain no-repeat;
     opacity: 0.05;
   }
   .instructor-glow { background: linear-gradient(135deg, var(--g1), var(--g2)); }

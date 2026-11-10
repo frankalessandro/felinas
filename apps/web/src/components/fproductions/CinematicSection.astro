@@ -47,7 +47,7 @@ const PIECES: Piece[] = [
     <div data-reveal class="grid md:grid-cols-2 gap-6 md:gap-8">
       {PIECES.map((piece, i) => (
         <div class="group relative aspect-video rounded-[2rem] overflow-hidden bg-[#11081a] ring-1 ring-white/10 shadow-2xl shadow-black/70">
-          <Image
+          <Image quality={74}
             src={piece.poster}
             alt={piece.alt}
             widths={[640, 1100, 1600]}
