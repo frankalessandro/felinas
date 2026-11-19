@@ -1,18 +1,14 @@
 ---
 import { Image } from "astro:assets";
 import maeImg from "../../assets/fproductions/mae.webp";
-import andreaImg from "../../assets/fproductions/andrea.webp";
 import isaImg from "../../assets/fproductions/isa.webp";
-import saloImg from "../../assets/fproductions/salo.webp";
 import sharyImg from "../../assets/fproductions/shary.webp";
 import angieImg from "../../assets/fproductions/angie.webp";
 
 const team = [
   { name: "Mae", role: "Directora", trait: "La alegre del equipo", img: maeImg },
-  { name: "Andrea", role: "Integrante", trait: "La multifacética del equipo", img: andreaImg },
   { name: "Angie", role: "Integrante", trait: "La apasionada del equipo", img: angieImg },
   { name: "Isa", role: "Integrante", trait: "La auténtica del equipo", img: isaImg },
-  { name: "Salo", role: "Integrante", trait: "La enérgica del equipo", img: saloImg, focusCenter: true },
   { name: "Shary", role: "Integrante", trait: "La soñadora del equipo", img: sharyImg, focusCenter: true },
 ];
 const total = String(team.length).padStart(2, "0");
